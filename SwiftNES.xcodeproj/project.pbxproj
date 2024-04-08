@@ -1,0 +1,592 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		70C401032BC38E63002F325B /* SwiftNESApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401022BC38E63002F325B /* SwiftNESApp.swift */; };
+		70C401052BC38E63002F325B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401042BC38E63002F325B /* ContentView.swift */; };
+		70C401072BC38E63002F325B /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401062BC38E63002F325B /* Item.swift */; };
+		70C401092BC38E64002F325B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70C401082BC38E64002F325B /* Assets.xcassets */; };
+		70C4010C2BC38E64002F325B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70C4010B2BC38E64002F325B /* Preview Assets.xcassets */; };
+		70C401172BC38E64002F325B /* SwiftNESTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401162BC38E64002F325B /* SwiftNESTests.swift */; };
+		70C401212BC38E64002F325B /* SwiftNESUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401202BC38E64002F325B /* SwiftNESUITests.swift */; };
+		70C401232BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401222BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		70C401132BC38E64002F325B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 70C400F72BC38E63002F325B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 70C400FE2BC38E63002F325B;
+			remoteInfo = SwiftNES;
+		};
+		70C4011D2BC38E64002F325B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 70C400F72BC38E63002F325B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 70C400FE2BC38E63002F325B;
+			remoteInfo = SwiftNES;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		70C400FF2BC38E63002F325B /* SwiftNES.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftNES.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		70C401022BC38E63002F325B /* SwiftNESApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNESApp.swift; sourceTree = "<group>"; };
+		70C401042BC38E63002F325B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		70C401062BC38E63002F325B /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
+		70C401082BC38E64002F325B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		70C4010B2BC38E64002F325B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		70C4010D2BC38E64002F325B /* SwiftNES.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SwiftNES.entitlements; sourceTree = "<group>"; };
+		70C401122BC38E64002F325B /* SwiftNESTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftNESTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		70C401162BC38E64002F325B /* SwiftNESTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNESTests.swift; sourceTree = "<group>"; };
+		70C4011C2BC38E64002F325B /* SwiftNESUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftNESUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		70C401202BC38E64002F325B /* SwiftNESUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNESUITests.swift; sourceTree = "<group>"; };
+		70C401222BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNESUITestsLaunchTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		70C400FC2BC38E63002F325B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70C4010F2BC38E64002F325B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70C401192BC38E64002F325B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		70C400F62BC38E63002F325B = {
+			isa = PBXGroup;
+			children = (
+				70C401012BC38E63002F325B /* SwiftNES */,
+				70C401152BC38E64002F325B /* SwiftNESTests */,
+				70C4011F2BC38E64002F325B /* SwiftNESUITests */,
+				70C401002BC38E63002F325B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		70C401002BC38E63002F325B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				70C400FF2BC38E63002F325B /* SwiftNES.app */,
+				70C401122BC38E64002F325B /* SwiftNESTests.xctest */,
+				70C4011C2BC38E64002F325B /* SwiftNESUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		70C401012BC38E63002F325B /* SwiftNES */ = {
+			isa = PBXGroup;
+			children = (
+				70C401022BC38E63002F325B /* SwiftNESApp.swift */,
+				70C401042BC38E63002F325B /* ContentView.swift */,
+				70C401062BC38E63002F325B /* Item.swift */,
+				70C401082BC38E64002F325B /* Assets.xcassets */,
+				70C4010D2BC38E64002F325B /* SwiftNES.entitlements */,
+				70C4010A2BC38E64002F325B /* Preview Content */,
+			);
+			path = SwiftNES;
+			sourceTree = "<group>";
+		};
+		70C4010A2BC38E64002F325B /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				70C4010B2BC38E64002F325B /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		70C401152BC38E64002F325B /* SwiftNESTests */ = {
+			isa = PBXGroup;
+			children = (
+				70C401162BC38E64002F325B /* SwiftNESTests.swift */,
+			);
+			path = SwiftNESTests;
+			sourceTree = "<group>";
+		};
+		70C4011F2BC38E64002F325B /* SwiftNESUITests */ = {
+			isa = PBXGroup;
+			children = (
+				70C401202BC38E64002F325B /* SwiftNESUITests.swift */,
+				70C401222BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift */,
+			);
+			path = SwiftNESUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		70C400FE2BC38E63002F325B /* SwiftNES */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 70C401262BC38E64002F325B /* Build configuration list for PBXNativeTarget "SwiftNES" */;
+			buildPhases = (
+				70C400FB2BC38E63002F325B /* Sources */,
+				70C400FC2BC38E63002F325B /* Frameworks */,
+				70C400FD2BC38E63002F325B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SwiftNES;
+			productName = SwiftNES;
+			productReference = 70C400FF2BC38E63002F325B /* SwiftNES.app */;
+			productType = "com.apple.product-type.application";
+		};
+		70C401112BC38E64002F325B /* SwiftNESTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 70C401292BC38E64002F325B /* Build configuration list for PBXNativeTarget "SwiftNESTests" */;
+			buildPhases = (
+				70C4010E2BC38E64002F325B /* Sources */,
+				70C4010F2BC38E64002F325B /* Frameworks */,
+				70C401102BC38E64002F325B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				70C401142BC38E64002F325B /* PBXTargetDependency */,
+			);
+			name = SwiftNESTests;
+			productName = SwiftNESTests;
+			productReference = 70C401122BC38E64002F325B /* SwiftNESTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		70C4011B2BC38E64002F325B /* SwiftNESUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 70C4012C2BC38E64002F325B /* Build configuration list for PBXNativeTarget "SwiftNESUITests" */;
+			buildPhases = (
+				70C401182BC38E64002F325B /* Sources */,
+				70C401192BC38E64002F325B /* Frameworks */,
+				70C4011A2BC38E64002F325B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				70C4011E2BC38E64002F325B /* PBXTargetDependency */,
+			);
+			name = SwiftNESUITests;
+			productName = SwiftNESUITests;
+			productReference = 70C4011C2BC38E64002F325B /* SwiftNESUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		70C400F72BC38E63002F325B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1520;
+				LastUpgradeCheck = 1520;
+				TargetAttributes = {
+					70C400FE2BC38E63002F325B = {
+						CreatedOnToolsVersion = 15.2;
+					};
+					70C401112BC38E64002F325B = {
+						CreatedOnToolsVersion = 15.2;
+						TestTargetID = 70C400FE2BC38E63002F325B;
+					};
+					70C4011B2BC38E64002F325B = {
+						CreatedOnToolsVersion = 15.2;
+						TestTargetID = 70C400FE2BC38E63002F325B;
+					};
+				};
+			};
+			buildConfigurationList = 70C400FA2BC38E63002F325B /* Build configuration list for PBXProject "SwiftNES" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 70C400F62BC38E63002F325B;
+			productRefGroup = 70C401002BC38E63002F325B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				70C400FE2BC38E63002F325B /* SwiftNES */,
+				70C401112BC38E64002F325B /* SwiftNESTests */,
+				70C4011B2BC38E64002F325B /* SwiftNESUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		70C400FD2BC38E63002F325B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70C4010C2BC38E64002F325B /* Preview Assets.xcassets in Resources */,
+				70C401092BC38E64002F325B /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70C401102BC38E64002F325B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70C4011A2BC38E64002F325B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		70C400FB2BC38E63002F325B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70C401052BC38E63002F325B /* ContentView.swift in Sources */,
+				70C401072BC38E63002F325B /* Item.swift in Sources */,
+				70C401032BC38E63002F325B /* SwiftNESApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70C4010E2BC38E64002F325B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70C401172BC38E64002F325B /* SwiftNESTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70C401182BC38E64002F325B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70C401232BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift in Sources */,
+				70C401212BC38E64002F325B /* SwiftNESUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		70C401142BC38E64002F325B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 70C400FE2BC38E63002F325B /* SwiftNES */;
+			targetProxy = 70C401132BC38E64002F325B /* PBXContainerItemProxy */;
+		};
+		70C4011E2BC38E64002F325B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 70C400FE2BC38E63002F325B /* SwiftNES */;
+			targetProxy = 70C4011D2BC38E64002F325B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		70C401242BC38E64002F325B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		70C401252BC38E64002F325B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		70C401272BC38E64002F325B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SwiftNES/SwiftNES.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"SwiftNES/Preview Content\"";
+				DEVELOPMENT_TEAM = J2VZJQ63FQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jamielesouef.SwiftNES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		70C401282BC38E64002F325B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SwiftNES/SwiftNES.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"SwiftNES/Preview Content\"";
+				DEVELOPMENT_TEAM = J2VZJQ63FQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jamielesouef.SwiftNES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		70C4012A2BC38E64002F325B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = J2VZJQ63FQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jamielesouef.SwiftNESTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SwiftNES.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SwiftNES";
+			};
+			name = Debug;
+		};
+		70C4012B2BC38E64002F325B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = J2VZJQ63FQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jamielesouef.SwiftNESTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SwiftNES.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SwiftNES";
+			};
+			name = Release;
+		};
+		70C4012D2BC38E64002F325B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = J2VZJQ63FQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jamielesouef.SwiftNESUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = SwiftNES;
+			};
+			name = Debug;
+		};
+		70C4012E2BC38E64002F325B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = J2VZJQ63FQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jamielesouef.SwiftNESUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = SwiftNES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		70C400FA2BC38E63002F325B /* Build configuration list for PBXProject "SwiftNES" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				70C401242BC38E64002F325B /* Debug */,
+				70C401252BC38E64002F325B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		70C401262BC38E64002F325B /* Build configuration list for PBXNativeTarget "SwiftNES" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				70C401272BC38E64002F325B /* Debug */,
+				70C401282BC38E64002F325B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		70C401292BC38E64002F325B /* Build configuration list for PBXNativeTarget "SwiftNESTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				70C4012A2BC38E64002F325B /* Debug */,
+				70C4012B2BC38E64002F325B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		70C4012C2BC38E64002F325B /* Build configuration list for PBXNativeTarget "SwiftNESUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				70C4012D2BC38E64002F325B /* Debug */,
+				70C4012E2BC38E64002F325B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 70C400F72BC38E63002F325B /* Project object */;
+}
