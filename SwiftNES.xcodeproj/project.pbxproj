@@ -15,6 +15,7 @@
 		70C401172BC38E64002F325B /* SwiftNESTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401162BC38E64002F325B /* SwiftNESTests.swift */; };
 		70C401212BC38E64002F325B /* SwiftNESUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401202BC38E64002F325B /* SwiftNESUITests.swift */; };
 		70C401232BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401222BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift */; };
+		70C401302BC38E72002F325B /* 6502.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C4012F2BC38E72002F325B /* 6502.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,7 @@
 		70C4011C2BC38E64002F325B /* SwiftNESUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftNESUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		70C401202BC38E64002F325B /* SwiftNESUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNESUITests.swift; sourceTree = "<group>"; };
 		70C401222BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNESUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		70C4012F2BC38E72002F325B /* 6502.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = 6502.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 				70C401082BC38E64002F325B /* Assets.xcassets */,
 				70C4010D2BC38E64002F325B /* SwiftNES.entitlements */,
 				70C4010A2BC38E64002F325B /* Preview Content */,
+				70C4012F2BC38E72002F325B /* 6502.swift */,
 			);
 			path = SwiftNES;
 			sourceTree = "<group>";
@@ -264,6 +267,7 @@
 			files = (
 				70C401052BC38E63002F325B /* ContentView.swift in Sources */,
 				70C401072BC38E63002F325B /* Item.swift in Sources */,
+				70C401302BC38E72002F325B /* 6502.swift in Sources */,
 				70C401032BC38E63002F325B /* SwiftNESApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
