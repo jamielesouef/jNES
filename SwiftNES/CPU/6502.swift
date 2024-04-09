@@ -27,6 +27,7 @@ final class CPU {
       switch oppcode {
       case 0xAA: self.TAX()
       case 0xA9: self.LDA()
+      case 0xE8: self.INX()
         
       case 0x00: run = false
       default: run = false
@@ -36,6 +37,12 @@ final class CPU {
 }
 // instructions
 private extension CPU {
+  func INX() {
+    registers.set(.X, param: registers.X + 1)
+    setZeroFlag(registers.X)
+    setNegativeFlag(registers.X)
+  }
+  
   func TAX() {
     //Copies the current contents of the accumulator into the X register and sets the zero and negative flags as appropriate.
     
