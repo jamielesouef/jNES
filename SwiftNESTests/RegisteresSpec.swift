@@ -51,4 +51,11 @@ final class RegisteresSpec: XCTestCase {
     registers.unset(.negative)
     XCTAssertEqual(registers.p, statusInitValue)
   }
+  
+  func testFlagsIsSet() {
+    Registers.StatusFlag.all.forEach { flag in
+      registers.set(flag)
+      XCTAssertTrue(registers.isSet(flag))
+    }
+  }
 }

@@ -7,8 +7,6 @@
 
 import Foundation
 
-
-
 final class Registers {
   
   // https://www.nesdev.org/wiki/Status_flags
@@ -36,6 +34,10 @@ final class Registers {
     case negative
   }
   
+  enum IndexRegister {
+    case A,X,Y
+  }
+  
   private (set) var A: UInt8 = 0
   private (set) var X: UInt8 = 0
   private (set) var Y: UInt8 = 0
@@ -48,6 +50,18 @@ final class Registers {
   
   func unset(_ flag: StatusFlag) {
     p = p & ~flag.mask
+  }
+  
+  func isSet(_ flag: StatusFlag) -> Bool {
+    p & flag.mask != 0
+  }
+  
+  func set(_ register: IndexRegister, param: UInt8) {
+    switch register {
+    case .A: self.A = param
+    case .X: self.X = param
+    case .Y: self.Y = param
+    }
   }
 }
 
