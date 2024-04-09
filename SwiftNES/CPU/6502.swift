@@ -7,14 +7,6 @@
 
 import Foundation
 
-final class Registers {
-  private (set) var A: UInt8 = 0x00
-  private (set) var X: UInt8 = 0x00
-  private (set) var Y: UInt8 = 0x00
-  private (set) var sp: UInt8 = 0x00
-  private (set) var p: UInt8 = 0x00 //NV-BDIZC
-}
-
 final class CPU {
   private (set) var pc: UInt16 = 0x0000
   private (set) var registers: Registers = Registers()

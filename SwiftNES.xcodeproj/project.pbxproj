@@ -16,6 +16,8 @@
 		70C401212BC38E64002F325B /* SwiftNESUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401202BC38E64002F325B /* SwiftNESUITests.swift */; };
 		70C401232BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401222BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift */; };
 		70C401302BC38E72002F325B /* 6502.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C4012F2BC38E72002F325B /* 6502.swift */; };
+		E4D193EE2BC4ACBC00763090 /* Registers.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D193ED2BC4ACBC00763090 /* Registers.swift */; };
+		E4D193F02BC4AFFE00763090 /* RegisteresSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D193EF2BC4AFFE00763090 /* RegisteresSpec.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +51,8 @@
 		70C401202BC38E64002F325B /* SwiftNESUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNESUITests.swift; sourceTree = "<group>"; };
 		70C401222BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNESUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		70C4012F2BC38E72002F325B /* 6502.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = 6502.swift; sourceTree = "<group>"; };
+		E4D193ED2BC4ACBC00763090 /* Registers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Registers.swift; sourceTree = "<group>"; };
+		E4D193EF2BC4AFFE00763090 /* RegisteresSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisteresSpec.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,7 +109,7 @@
 				70C401082BC38E64002F325B /* Assets.xcassets */,
 				70C4010D2BC38E64002F325B /* SwiftNES.entitlements */,
 				70C4010A2BC38E64002F325B /* Preview Content */,
-				70C4012F2BC38E72002F325B /* 6502.swift */,
+				E4D193EC2BC4ACB400763090 /* CPU */,
 			);
 			path = SwiftNES;
 			sourceTree = "<group>";
@@ -122,6 +126,7 @@
 			isa = PBXGroup;
 			children = (
 				70C401162BC38E64002F325B /* SwiftNESTests.swift */,
+				E4D193EF2BC4AFFE00763090 /* RegisteresSpec.swift */,
 			);
 			path = SwiftNESTests;
 			sourceTree = "<group>";
@@ -133,6 +138,15 @@
 				70C401222BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift */,
 			);
 			path = SwiftNESUITests;
+			sourceTree = "<group>";
+		};
+		E4D193EC2BC4ACB400763090 /* CPU */ = {
+			isa = PBXGroup;
+			children = (
+				70C4012F2BC38E72002F325B /* 6502.swift */,
+				E4D193ED2BC4ACBC00763090 /* Registers.swift */,
+			);
+			path = CPU;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -266,6 +280,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				70C401052BC38E63002F325B /* ContentView.swift in Sources */,
+				E4D193EE2BC4ACBC00763090 /* Registers.swift in Sources */,
 				70C401072BC38E63002F325B /* Item.swift in Sources */,
 				70C401302BC38E72002F325B /* 6502.swift in Sources */,
 				70C401032BC38E63002F325B /* SwiftNESApp.swift in Sources */,
@@ -277,6 +292,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				70C401172BC38E64002F325B /* SwiftNESTests.swift in Sources */,
+				E4D193F02BC4AFFE00763090 /* RegisteresSpec.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
