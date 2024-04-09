@@ -11,13 +11,16 @@ final class CPU {
   private (set) var pc: UInt16 = 0x0000
   private (set) var registers: Registers = Registers()
   
-  private var mem: [UInt8] = []
+  private var mem: [UInt8] = .init(repeating: 0, count: 0xFFFF)
   
   private var run = true //temport until flags
   
   enum CPUError: Error {
     case invalidOpcode(String)
   }
+  
+  
+  
   func interpret(program: Array<UInt8>) throws {
     self.mem = program
     self.pc = 0
@@ -41,6 +44,22 @@ final class CPU {
         throw CPUError.invalidOpcode(String(opcode, radix: 16))
       }
     }
+  }
+}
+// MARK: Memory Access
+extension CPU {
+  
+  func load(program: [UInt8]) {
+    self.mem.insert(contentsOf: program, at: 0x8000)
+    pc = 0x8000
+  }
+  
+  func readMem(at address: UInt16) -> UInt8 {
+    return mem[address]
+  }
+  
+  func writeMem(at address: UInt16, value: UInt8) {
+    mem[address] = value
   }
 }
 

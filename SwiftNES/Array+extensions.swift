@@ -9,6 +9,12 @@ import Foundation
 
 extension Array where Element == UInt8 {
   subscript(index: UInt16) -> UInt8 {
-    self[Int(index)]
+    get {
+      self[Int(index)]
+    }
+    
+    set {
+      self[Int(index)] = newValue
+    }
   }
 }
