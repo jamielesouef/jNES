@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		702750552BC4EECE0090F7BD /* LDASpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 702750542BC4EECE0090F7BD /* LDASpec.swift */; };
 		702750572BC4EF1C0090F7BD /* TAXSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 702750562BC4EF1C0090F7BD /* TAXSpec.swift */; };
+		7056E7952BC4F0BD00FF2D55 /* INXSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7056E7942BC4F0BD00FF2D55 /* INXSpec.swift */; };
 		70C401032BC38E63002F325B /* SwiftNESApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401022BC38E63002F325B /* SwiftNESApp.swift */; };
 		70C401052BC38E63002F325B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401042BC38E63002F325B /* ContentView.swift */; };
 		70C401072BC38E63002F325B /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401062BC38E63002F325B /* Item.swift */; };
@@ -44,6 +45,8 @@
 /* Begin PBXFileReference section */
 		702750542BC4EECE0090F7BD /* LDASpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LDASpec.swift; sourceTree = "<group>"; };
 		702750562BC4EF1C0090F7BD /* TAXSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TAXSpec.swift; sourceTree = "<group>"; };
+		7056E7932BC4F08A00FF2D55 /* SwiftNES.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SwiftNES.xctestplan; sourceTree = "<group>"; };
+		7056E7942BC4F0BD00FF2D55 /* INXSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = INXSpec.swift; sourceTree = "<group>"; };
 		70C400FF2BC38E63002F325B /* SwiftNES.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftNES.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		70C401022BC38E63002F325B /* SwiftNESApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNESApp.swift; sourceTree = "<group>"; };
 		70C401042BC38E63002F325B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -91,6 +94,7 @@
 		70C400F62BC38E63002F325B = {
 			isa = PBXGroup;
 			children = (
+				7056E7932BC4F08A00FF2D55 /* SwiftNES.xctestplan */,
 				70C401012BC38E63002F325B /* SwiftNES */,
 				70C401152BC38E64002F325B /* SwiftNESTests */,
 				70C4011F2BC38E64002F325B /* SwiftNESUITests */,
@@ -139,6 +143,7 @@
 				E45121D82BC4D5F700A34ECB /* 6502Spec.swift */,
 				702750542BC4EECE0090F7BD /* LDASpec.swift */,
 				702750562BC4EF1C0090F7BD /* TAXSpec.swift */,
+				7056E7942BC4F0BD00FF2D55 /* INXSpec.swift */,
 			);
 			path = SwiftNESTests;
 			sourceTree = "<group>";
@@ -306,6 +311,7 @@
 			files = (
 				70C401172BC38E64002F325B /* SwiftNESTests.swift in Sources */,
 				702750572BC4EF1C0090F7BD /* TAXSpec.swift in Sources */,
+				7056E7952BC4F0BD00FF2D55 /* INXSpec.swift in Sources */,
 				702750552BC4EECE0090F7BD /* LDASpec.swift in Sources */,
 				E4D193F02BC4AFFE00763090 /* RegisteresSpec.swift in Sources */,
 				E45121D92BC4D5F700A34ECB /* 6502Spec.swift in Sources */,

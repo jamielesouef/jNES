@@ -15,8 +15,10 @@ final class CPU {
   
   private var run = true //temport until flags
   
-  
-  func interpret(program: Array<UInt8>) {
+  enum CPUError: Error {
+    case invalidOpcode(String)
+  }
+  func interpret(program: Array<UInt8>) throws {
     self.mem = program
     self.pc = 0
     
@@ -24,31 +26,34 @@ final class CPU {
       let oppcode: UInt8 = mem[pc]
       self.pc += 1
       
-      switch oppcode {
+      try dispatch(oppcode)
+    }
+    
+    func dispatch(_ opcode: UInt8) throws {
+      switch opcode {
       case 0xAA: self.TAX()
       case 0xA9: self.LDA()
       case 0xE8: self.INX()
         
       case 0x00: run = false
-      default: run = false
+      default:
+        run = false
+        throw CPUError.invalidOpcode(String(opcode, radix: 16))
       }
     }
   }
 }
-// instructions
+
+// MARK: Instructions
 private extension CPU {
   func INX() {
     registers.set(.X, param: registers.X + 1)
-    setZeroFlag(registers.X)
-    setNegativeFlag(registers.X)
+    setZeroAndNegativeFlag(registers.X)
   }
   
   func TAX() {
-    //Copies the current contents of the accumulator into the X register and sets the zero and negative flags as appropriate.
-    
     registers.set(.X, param: registers.A)
-    setZeroFlag(registers.X)
-    setNegativeFlag(registers.X)
+    setZeroAndNegativeFlag(registers.X)
   }
   
   func LDA() {
@@ -56,20 +61,18 @@ private extension CPU {
     pc += 1
     registers.set(.A, param: param)
     
-    setZeroFlag(param)
-    setNegativeFlag(param)
-    
-    if registers.A & (1 << 7) != 0 {
-      registers.set(.negative)
-    } else {
-      registers.unset(.negative)
-    }
+    setZeroAndNegativeFlag(param)
   }
 }
 
 // Helpers
 
 private extension CPU {
+  func setZeroAndNegativeFlag(_ value: UInt8) {
+    setZeroFlag(value)
+    setNegativeFlag(value)
+  }
+  
   func setZeroFlag(_ value: UInt8) {
     if value == 0 {
       registers.set(.zero)

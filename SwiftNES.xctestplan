@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "6A75A73B-B53D-43E4-9293-C30050A0A97B",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:SwiftNES.xcodeproj",
+      "identifier" : "70C400FE2BC38E63002F325B",
+      "name" : "SwiftNES"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:SwiftNES.xcodeproj",
+        "identifier" : "70C401112BC38E64002F325B",
+        "name" : "SwiftNESTests"
+      }
+    }
+  ],
+  "version" : 1
+}
