@@ -36,11 +36,11 @@ final class Registers {
     case negative
   }
   
-  private (set) var A: UInt8 = 0x00
-  private (set) var X: UInt8 = 0x00
-  private (set) var Y: UInt8 = 0x00
-  private (set) var sp: UInt8 = 0x00
-  private (set) var p: UInt8 = 0b0010_0000 //NV-BDIZC
+  private (set) var A: UInt8 = 0
+  private (set) var X: UInt8 = 0
+  private (set) var Y: UInt8 = 0
+  private (set) var sp: UInt8 = 0
+  private (set) var p: UInt8 = 0x20 //NV-BDIZC
   
   func set(_ flag: StatusFlag) {
     p = p | flag.mask

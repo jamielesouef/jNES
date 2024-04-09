@@ -8,43 +8,47 @@
 import XCTest
 @testable import SwiftNES
 
+extension Registers.StatusFlag {
+  static let all: [Registers.StatusFlag] = [.carry, .zero, .interrupt, .brk, .overflow, .negative]
+}
+
 final class RegisteresSpec: XCTestCase {
   
   var registers: Registers!
+  let statusInitValue: UInt8 = 0x20
   
   override func setUpWithError() throws {
     registers = Registers()
-  }
-  
-  override func tearDownWithError() throws {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
   }
   
   func testBreakFlagIsSetOnInit() throws {
     XCTAssertEqual(registers.p, 1 << 5)
   }
   
-  func testSetNegativeFlag() throws {
-    XCTAssertEqual(registers.p, 0b0010_0000)
-    registers.set(.negative)
-    XCTAssertEqual(registers.p, 0b1010_0000)
-    registers.unset(.negative)
-    XCTAssertEqual(registers.p, 0b0010_0000)
-  }
-  
-  func testSetCarryFlag() throws {
-    XCTAssertEqual(registers.p, 0b0010_0000)
-    registers.set(.carry)
-    XCTAssertEqual(registers.p, 0b0010_0001)
-    registers.unset(.negative)
-    XCTAssertEqual(registers.p, 0b0010_0000)
-  }
-  
-  func testPerformanceExample() throws {
-    // This is an example of a performance test case.
-    self.measure {
-      // Put the code you want to measure the time of here.
+  func testFlags() throws {
+    Registers.StatusFlag.all.forEach { flag in
+      XCTAssertEqual(registers.p, statusInitValue)
+      registers.set(flag)
+      XCTAssertTrue(registers.p & flag.mask != 0)
+      registers.unset(flag)
+      XCTAssertEqual(registers.p, statusInitValue)
     }
   }
   
+  func testSetMultipleFlags() throws {
+    let expected: UInt8 = 0xA3
+    XCTAssertEqual(registers.p, statusInitValue)
+    registers.set(.carry)
+    registers.set(.zero)
+    registers.set(.negative)
+    //0110_0011
+    XCTAssertEqual(registers.p, expected)
+    
+    registers.unset(.carry)
+    XCTAssertEqual(registers.p, 0xA2)
+    registers.unset(.zero)
+    XCTAssertEqual(registers.p, 0xA0)
+    registers.unset(.negative)
+    XCTAssertEqual(registers.p, statusInitValue)
+  }
 }
