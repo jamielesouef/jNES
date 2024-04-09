@@ -13,19 +13,14 @@ final class CPU {
   
   private var mem: [UInt8] = .init(repeating: 0, count: 0xFFFF)
   
-  private var run = true //temport until flags
+  private var loop = true //temport until flags
   
   enum CPUError: Error {
     case invalidOpcode(String)
   }
   
-  
-  
-  func interpret(program: Array<UInt8>) throws {
-    self.mem = program
-    self.pc = 0
-    
-    while run {
+  func run() throws {
+    while loop {
       let oppcode: UInt8 = mem[pc]
       self.pc += 1
       
@@ -38,9 +33,9 @@ final class CPU {
       case 0xA9: self.LDA()
       case 0xE8: self.INX()
         
-      case 0x00: run = false
+      case 0x00: loop = false
       default:
-        run = false
+        loop = false
         throw CPUError.invalidOpcode(String(opcode, radix: 16))
       }
     }
@@ -51,7 +46,13 @@ extension CPU {
   
   func load(program: [UInt8]) {
     self.mem.insert(contentsOf: program, at: 0x8000)
-    pc = 0x8000
+    writeMem16(at: 0xFFFC, value: 0x8000)
+    reset()
+  }
+  
+  func reset() {
+    registers.reset()
+    pc = readMem16(at: 0xFFFC)
   }
   
   func readMem(at address: UInt16) -> UInt8 {
@@ -60,6 +61,15 @@ extension CPU {
   
   func writeMem(at address: UInt16, value: UInt8) {
     mem[address] = value
+  }
+  
+  func readMem16(at address: UInt16) -> UInt16 {
+    return UInt16(mem[address]) | UInt16(mem[address + 1]) << 8
+  }
+  
+  func writeMem16(at address: UInt16, value: UInt16) {
+    mem[address] = UInt8(value & 0xFF)
+    mem[address + 1] = UInt8(value >> 8)
   }
 }
 

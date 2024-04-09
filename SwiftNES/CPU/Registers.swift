@@ -63,6 +63,12 @@ final class Registers {
     case .Y: self.Y = param
     }
   }
+  
+  func reset() {
+    A = 0
+    X = 0
+    p = 0
+  }
 }
 
 extension Registers.StatusFlag {
