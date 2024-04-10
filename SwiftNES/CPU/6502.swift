@@ -9,8 +9,6 @@ import Foundation
 
 final class CPU {
   typealias MemoryAddress = UInt16
-  typealias Opperand = UInt8
-  typealias Oppcode = UInt8
   
   private (set) var pc: MemoryAddress = 0x0000
   private (set) var registers: Registers = Registers()
@@ -36,7 +34,7 @@ final class CPU {
       try dispatch(oppcode)
     }
     
-    func dispatch(_ opcode: Oppcode) throws {
+    func dispatch(_ opcode: UInt8) throws {
       switch opcode {
       case 0xAA: self.TAX()
       case 0xA9: self.LDA()
@@ -60,9 +58,8 @@ enum AddressingMode {
   case absolute
   case absoluteX
   case absoluteY
-  case indirect
-  case indirectIndexed
-  case relative
+  case indirectX
+  case indirectY
 }
 
 extension CPU {
@@ -74,40 +71,46 @@ extension CPU {
     }
   }
   
-  private func getZeroPage(for register: AddressingIndex) -> MemoryAddress {
+  private func getZeroPage(offsetBy register: AddressingIndex) -> MemoryAddress {
     let operand = readMem(at: pc)
     var registerValue: UInt8 = getRegisterValue(for: register)
     
     return MemoryAddress(operand.addingReportingOverflow(registerValue).partialValue)
   }
   
-  private func getAbsolute(for register: AddressingIndex) -> MemoryAddress {
+  private func getAbsolute(offsetBy register: AddressingIndex) -> MemoryAddress {
     let operand = readMem16(at: pc)
     var registerValue: MemoryAddress = MemoryAddress(getRegisterValue(for: register))
     
     return MemoryAddress(operand.addingReportingOverflow(registerValue).partialValue)
   }
   
+  private func indirectX() -> MemoryAddress {
+    let base: UInt8 = readMem(at: pc)
+    let pointer: UInt8 = base.addingReportingOverflow(registers.X).partialValue
+    let lo: UInt8 = readMem(at: MemoryAddress(pointer))
+    let hi: UInt8 = readMem(at: MemoryAddress(pointer.addingReportingOverflow(1).partialValue))
+    return UInt16(hi) << 8 | UInt16(lo)
+  }
+  
+  private func indirectY() -> MemoryAddress {
+    let lo = readMem(at: pc)
+    let hi = readMem(at: pc + 1)
+    let pointer = UInt16(hi) << 8 | UInt16(lo)
+    return pointer.addingReportingOverflow(UInt16(registers.Y)).partialValue
+  }
+  
   func getOpperandAddress(for mode: AddressingMode) -> MemoryAddress {
     switch mode {
-    case .immediate:
-      return pc
-    case .zeroPage:
-      return MemoryAddress(readMem(at: pc))
-    case .zeroPageX: return getZeroPage(for: .X)
-    case .zeroPageY: return getZeroPage(for: .Y)
-    case .relative:
-      <#code#>
-    case .absolute:
-      return readMem16(at: pc)
-    case .absoluteX:
-      <#code#>
-    case .absoluteY:
-      <#code#>
-    case .indirect:
-      <#code#>
-    case .indirectIndexed:
-      <#code#>
+    case .immediate:  return pc
+    case .zeroPage:   return MemoryAddress(readMem(at: pc))
+    case .zeroPageX:  return getZeroPage(offsetBy: .X)
+    case .zeroPageY:  return getZeroPage(offsetBy: .Y)
+    case .absolute:   return readMem16(at: pc)
+    case .absoluteX: return getAbsolute(offsetBy: .X)
+    case .absoluteY: return getAbsolute(offsetBy: .Y)
+    case .indirectX: return indirectX()
+    case .indirectY: return indirectX()
     }
   }
   
@@ -122,13 +125,13 @@ extension CPU {
     pc = readMem16(at: 0xFFFC)
   }
   
- 
   
-  func readMem(at address: MemoryAddress) -> Opperand {
+  
+  func readMem(at address: MemoryAddress) -> UInt8 {
     return mem[address]
   }
   
-  func writeMem(at address: MemoryAddress, value: Opperand) {
+  func writeMem(at address: MemoryAddress, value: UInt8) {
     mem[address] = value
   }
   
