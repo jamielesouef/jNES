@@ -1,5 +1,5 @@
 //
-//  LDA.swift
+//  LDASpec.swift
 //  SwiftNESTests
 //
 //  Created by Jamie Le Souef on 9/4/2024.

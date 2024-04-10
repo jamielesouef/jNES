@@ -12,6 +12,8 @@ typealias Oppecode = UInt8
 typealias MemoryAddress = UInt16
 typealias ZeroMemoryAddress = UInt8
 
+
+
 final class CPU {
   
   let memory: Memory = Memory()
@@ -20,8 +22,9 @@ final class CPU {
   
   enum CPUError: Error {
     case invalidOpcode(String)
+    case missingOpcode(String)
   }
-  
+
   func load(program: [UInt8]) {
     memory.load(program: program)
   }
@@ -35,12 +38,16 @@ final class CPU {
     }
     
     func dispatch(_ opcode: UInt8) throws {
-      switch opcode {
-      case 0xAA: self.TAX()
-      case 0xA9: self.LDA()
-      case 0xE8: self.INX()
+      guard let instruction = InstructionTable[opcode] else {
+        throw CPUError.missingOpcode(String(opcode, radix: 16))
+      }
+      
+      switch instruction.oppcode {
+      case .TAX: self.TAX(addressing: instruction.addressingMode)
+      case .LDA: self.LDA(addressing: instruction.addressingMode)
+      case .INX: self.INX(addressing: instruction.addressingMode)
         
-      case 0x00: loop = false
+      case .BRK: loop = false
       default:
         loop = false
         throw CPUError.invalidOpcode(String(opcode, radix: 16))
@@ -51,17 +58,17 @@ final class CPU {
 
 // MARK: Instructions
 private extension CPU {
-  func INX() {
+  func INX(addressing: AddressingMode) {
     memory.registers.set(.X, param: memory.registers.X + 1)
     setZeroAndNegativeFlag(memory.registers.X)
   }
   
-  func TAX() {
+  func TAX(addressing: AddressingMode) {
     memory.registers.set(.X, param: memory.registers.A)
     setZeroAndNegativeFlag(memory.registers.X)
   }
   
-  func LDA() {
+  func LDA(addressing: AddressingMode) {
     let param: UInt8 = memory.readMemAtCounter()
     memory.pc += 1
     memory.registers.set(.A, param: param)

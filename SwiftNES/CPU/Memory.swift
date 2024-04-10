@@ -8,6 +8,7 @@
 import Foundation
 
 enum AddressingMode {
+  case accumulator
   case immediate
   case zeroPage
   case zeroPageX
@@ -17,6 +18,9 @@ enum AddressingMode {
   case absoluteY
   case indirectX
   case indirectY
+  case relative
+  case implied
+  case indirect
 }
 
 final class Memory {
@@ -43,6 +47,7 @@ final class Memory {
     case .absoluteY: return getAbsolute(offsetBy: .Y)
     case .indirectX: return indirectX()
     case .indirectY: return indirectX()
+    default: fatalError("Addressing mode: \(mode) not implemented")
     }
   }
   
@@ -97,7 +102,7 @@ private extension Memory {
   
   func getAbsolute(offsetBy register: AddressingIndex) -> MemoryAddress {
     let address: MemoryAddress = readMem16(at: pc)
-    var registerValue: MemoryAddress = MemoryAddress(getRegisterValue(for: register))
+    let registerValue: MemoryAddress = MemoryAddress(getRegisterValue(for: register))
     
     return MemoryAddress(address.addingReportingOverflow(registerValue).partialValue)
   }
