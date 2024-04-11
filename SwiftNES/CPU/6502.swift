@@ -16,13 +16,17 @@ typealias ZeroMemoryAddress = UInt8
 
 final class CPU {
   
-  let memory: Memory = Memory()
+  let memory: Memory
   
   private var loop = true //temport until flags
   
   enum CPUError: Error {
     case invalidOpcode(String)
     case missingOpcode(String)
+  }
+  
+  init(memory: Memory = Memory()) {
+    self.memory = memory
   }
 
   func load(program: [UInt8]) {
@@ -69,7 +73,9 @@ private extension CPU {
   }
   
   func LDA(addressing: AddressingMode) {
-    let param: UInt8 = memory.readMemAtCounter()
+    let addr = memory.getOpperandAddress(for: addressing)
+
+    let param: UInt8 = memory.readMem(at: addr)
     memory.pc += 1
     memory.registers.set(.A, param: param)
     

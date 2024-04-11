@@ -36,6 +36,17 @@ final class Memory {
     case Y
   }
   
+  init(
+    registers: Registers = Registers(),
+    buffer: [UInt8] = .init(
+      repeating: 0,
+      count: 0xFFFF
+    )
+  ) {
+    self.registers = registers
+    self.buffer = buffer
+  }
+  
   func getOpperandAddress(for mode: AddressingMode) -> MemoryAddress {
     switch mode {
     case .immediate:  return pc
@@ -75,7 +86,11 @@ final class Memory {
   }
   
   func readMem16(at address: MemoryAddress) -> MemoryAddress {
-    UInt16(buffer[address]) | UInt16(buffer[address + 1]) << 8
+    let lo = readMem(at: address)
+    let hi = readMem(at: address.addingReportingOverflow(1).partialValue)
+    
+    let ptr = UInt16(hi) << 8 | UInt16(lo)
+    return ptr
   }
   
   func writeMem16(at address: UInt16, value: UInt16) {
@@ -112,7 +127,8 @@ private extension Memory {
     let pointer: ZeroMemoryAddress = base.addingReportingOverflow(registers.X).partialValue
     let lo: UInt8 = readMem(at: MemoryAddress(pointer))
     let hi: UInt8 = readMem(at: MemoryAddress(pointer.addingReportingOverflow(1).partialValue))
-    return UInt16(hi) << 8 | UInt16(lo)
+    let ptr = UInt16(hi) << 8 | UInt16(lo)
+    return ptr
   }
   
   func indirectY() -> MemoryAddress {

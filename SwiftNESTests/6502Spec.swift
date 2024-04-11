@@ -13,14 +13,12 @@ final class _6502Spec: XCTestCase {
   var cpu: CPU!
   
   override func setUpWithError() throws {
-    self.cpu = CPU()
+    self.cpu = CPU.mock()
   }
   
   override func tearDownWithError() throws {
     self.cpu = nil
   }
-  
-
   
   func testWriteToMemory() {
     
