@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class Registers {
+class Registers {
   
   // https://www.nesdev.org/wiki/Status_flags
   
@@ -38,11 +38,19 @@ final class Registers {
     case A,X,Y
   }
   
-  private (set) var A: UInt8 = 0
-  private (set) var X: UInt8 = 0
-  private (set) var Y: UInt8 = 0
-  private (set) var sp: UInt8 = 0
-  private (set) var p: UInt8 = 0x20 //NV-BDIZC
+  private (set) var A: UInt8
+  private (set) var X: UInt8
+  private (set) var Y: UInt8
+  private (set) var sp: UInt8
+  private (set) var p: UInt8 //NV-BDIZC
+  
+  init(A: UInt8 = 0, X: UInt8 = 0, Y: UInt8 = 0, sp: UInt8 = 0, p: UInt8 = 0x20) {
+    self.A = A
+    self.X = X
+    self.Y = Y
+    self.sp = sp
+    self.p = p
+  }
   
   func set(_ flag: StatusFlag) {
     p = p | flag.mask
@@ -56,7 +64,7 @@ final class Registers {
     p & flag.mask != 0
   }
   
-  func set(_ register: IndexRegister, param: UInt8) {
+  func set(_ register: IndexRegister, to param: UInt8) {
     switch register {
     case .A: self.A = param
     case .X: self.X = param

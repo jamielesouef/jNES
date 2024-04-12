@@ -13,7 +13,7 @@ final class INXSpec: XCTestCase {
   var cpu: CPU!
   
   override func setUpWithError() throws {
-    self.cpu = CPU()
+    self.cpu = CPU.mock()
   }
   
   func testINXWithNoValue() throws {
