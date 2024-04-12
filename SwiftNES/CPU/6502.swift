@@ -51,6 +51,7 @@ final class CPU {
       
       switch instruction.oppcode {
       case .ADC: self.ADC()
+      case .AND: self.AND()
       case .INX: self.INX()
       case .LDA: self.LDA()
       case .TAX: self.TAX()
@@ -102,7 +103,8 @@ private extension CPU {
   }
   
   func INX() {
-    memory.registers.set(.X, to: memory.registers.X + 1)
+    let newX = memory.registers.X.addingReportingOverflow(1).partialValue
+    memory.registers.set(.X, to: newX)
     setZeroAndNegativeFlag(memory.registers.X)
   }
   
@@ -112,17 +114,17 @@ private extension CPU {
   }
   
   func LDA() {
-
     let param = loadByteFromMemory()
-    
     memory.registers.set(.A, to: param)
-    
     setZeroAndNegativeFlag(param)
   }
   
   func AND() {
     //A,Z,N = A&M
-    fatalError("AND Not Implimented")
+    let param = loadByteFromMemory()
+    let a = memory.registers.A
+    let result = memory.registers.A & param
+    memory.registers.set(.A, to: result)
   }
   
   func ASL() {

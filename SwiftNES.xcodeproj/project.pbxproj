@@ -20,6 +20,7 @@
 		70C401232BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401222BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift */; };
 		70C401302BC38E72002F325B /* 6502.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C4012F2BC38E72002F325B /* 6502.swift */; };
 		E4268F042BC7AE9400B4D0A6 /* ADCSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4268F032BC7AE9400B4D0A6 /* ADCSpec.swift */; };
+		E42B25D12BC8D33500E53258 /* ANDSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42B25D02BC8D33500E53258 /* ANDSpec.swift */; };
 		E45121D92BC4D5F700A34ECB /* 6502Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45121D82BC4D5F700A34ECB /* 6502Spec.swift */; };
 		E45121DB2BC4E01200A34ECB /* Array+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45121DA2BC4E01200A34ECB /* Array+extensions.swift */; };
 		E47639392BC76077004DA2B0 /* CPUMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47639382BC76077004DA2B0 /* CPUMock.swift */; };
@@ -66,6 +67,7 @@
 		70C401222BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNESUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		70C4012F2BC38E72002F325B /* 6502.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = 6502.swift; sourceTree = "<group>"; };
 		E4268F032BC7AE9400B4D0A6 /* ADCSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ADCSpec.swift; sourceTree = "<group>"; };
+		E42B25D02BC8D33500E53258 /* ANDSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANDSpec.swift; sourceTree = "<group>"; };
 		E45121D82BC4D5F700A34ECB /* 6502Spec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = 6502Spec.swift; sourceTree = "<group>"; };
 		E45121DA2BC4E01200A34ECB /* Array+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+extensions.swift"; sourceTree = "<group>"; };
 		E47639382BC76077004DA2B0 /* CPUMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUMock.swift; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 				7056E7942BC4F0BD00FF2D55 /* INXSpec.swift */,
 				E47639382BC76077004DA2B0 /* CPUMock.swift */,
 				E476393A2BC77B39004DA2B0 /* ProgramMock.swift */,
+				E42B25D02BC8D33500E53258 /* ANDSpec.swift */,
 			);
 			path = SwiftNESTests;
 			sourceTree = "<group>";
@@ -332,6 +335,7 @@
 				702750552BC4EECE0090F7BD /* LDASpec.swift in Sources */,
 				E4D193F02BC4AFFE00763090 /* RegisteresSpec.swift in Sources */,
 				E4268F042BC7AE9400B4D0A6 /* ADCSpec.swift in Sources */,
+				E42B25D12BC8D33500E53258 /* ANDSpec.swift in Sources */,
 				E45121D92BC4D5F700A34ECB /* 6502Spec.swift in Sources */,
 				E476393B2BC77B39004DA2B0 /* ProgramMock.swift in Sources */,
 				E47639392BC76077004DA2B0 /* CPUMock.swift in Sources */,
