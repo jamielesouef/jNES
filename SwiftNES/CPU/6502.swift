@@ -166,7 +166,7 @@ extension CPU {
   }
   
   func BPL() {
-    fatalError("BPL Not Implimented")
+    branch(when: !memory.registers.isSet(.negative))
   }
   
   func BRK() {
@@ -174,11 +174,11 @@ extension CPU {
   }
   
   func BVC() {
-    fatalError("BVC Not Implimented")
+    branch(when: !memory.registers.isSet(.overflow))
   }
   
   func BVS() {
-    fatalError("BVS Not Implimented")
+    branch(when: memory.registers.isSet(.overflow))
   }
   
   func CLC() {
