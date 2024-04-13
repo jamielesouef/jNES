@@ -75,18 +75,19 @@ private extension CPU {
     return byte
   }
   
+  func signedValue(from byte: UInt8) -> (UInt8, Bool) {
+    let isSigned = byte & 0b1000_0000 != 0
+    return (byte & 0b0111_1111, isSigned)
+  }
+  
   func branch(when condition: Bool) {
     if condition {
       let offset: UInt8 = memory.readMem(at: memory.pc)
-      let isSigned = offset & 0b1000_0000 != 0
-      let newOffset = UInt16(offset & 0b0111_1111)
+      let (singedValue, isSigned): (UInt8, Bool) = signedValue(from: offset)
       
-      memory.pc = isSigned
-      ? memory.pc.subtractingReportingOverflow(newOffset).partialValue
-      : memory.pc.addingReportingOverflow(newOffset).partialValue
-      
-    } else {
-      memory.pc += 1
+      memory.pc = UInt16(isSigned
+      ? offset.subtractingReportingOverflow(singedValue).partialValue
+      : offset.addingReportingOverflow(singedValue).partialValue)
     }
   }
 }
@@ -157,17 +158,11 @@ extension CPU {
   }
   
   func BMI() {
-// The CPU reads the "BMI" opcode and the following byte, which represents the signed offset value.
-    let param = loadByteFromMemory()
-// If the negative flag (N) in the status register is set (1), indicating that the result of the previous operation was negative (i.e., bit 7 of the result is 1), the program execution will jump to a new memory address calculated by adding the signed offset value to the address of the instruction following the "BMI" instruction.
-    if memory.registers.isSet(.negative) {
-      
-    }
-// If the negative flag (N) is clear (0), indicating that the result of the previous operation was not negative, the program continues to execute the next instruction following the "BMI" instruction without any change in program flow.
+    branch(when: memory.registers.isSet(.negative))
   }
   
   func BNE() {
-    fatalError("BNE Not Implimented")
+    branch(when: !memory.registers.isSet(.zero))
   }
   
   func BPL() {
