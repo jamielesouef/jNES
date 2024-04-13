@@ -64,10 +64,10 @@ final class Memory {
   }
   
   func load(program: [UInt8]) {
-    let insertionPoint: MemoryAddress = 0x0600
+    let insertionPoint: MemoryAddress = 0x0000
     
     for (i, v) in program.enumerated() {
-      buffer[0x0600 + i] = v
+      buffer[insertionPoint + UInt16(i)] = v
     }
     
     writeMem16(at: 0xFFFC, value: insertionPoint)

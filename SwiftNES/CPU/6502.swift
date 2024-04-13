@@ -52,7 +52,7 @@ final class CPU {
 }
 
 // MARK: Instructions
-extension CPU {
+private extension CPU {
   func unsafeGetAddresingMode() -> AddressingMode {
     guard let mode = self.addressingMode else {
       fatalError("Addressing mode not set")
@@ -66,7 +66,7 @@ extension CPU {
     let addressingMode = unsafeGetAddresingMode()
     
     if addressingMode == .accumulator {
-        return memory.registers.A
+      return memory.registers.A
     }
     
     let addr = memory.getOpperandAddress(for: addressingMode)
@@ -75,9 +75,26 @@ extension CPU {
     return byte
   }
   
+  func branch(when condition: Bool) {
+    if condition {
+      let offset: UInt8 = memory.readMem(at: memory.pc)
+      let isSigned = offset & 0b1000_0000 != 0
+      let newOffset = UInt16(offset & 0b0111_1111)
+      
+      memory.pc = isSigned
+      ? memory.pc.subtractingReportingOverflow(newOffset).partialValue
+      : memory.pc.addingReportingOverflow(newOffset).partialValue
+      
+    } else {
+      memory.pc += 1
+    }
+  }
+}
+ 
+extension CPU {
   func ADC() {
     // A,Z,C,N = A+M+C
-
+    
     let param = UInt16(loadByteFromMemory())
     
     let carry: UInt16 = memory.registers.isSet(.carry) ? 1 : 0
@@ -119,23 +136,34 @@ extension CPU {
   }
   
   func BCC() {
-    fatalError("BCC Not Implimented")
+    branch(when: memory.registers.isSet(.carry))
   }
   
   func BCS() {
-    fatalError("BCS Not Implimented")
+    branch(when: !memory.registers.isSet(.carry))
   }
   
   func BEQ() {
-    fatalError("BEQ Not Implimented")
+    branch(when: memory.registers.isSet(.zero))
   }
   
   func BIT() {
-    fatalError("BIT Not Implimented")
+    let param = loadByteFromMemory()
+    let a = memory.registers.A
+    
+    let result = param & a
+    setZeroAndNegativeFlag(result)
+    setOverflowFlag(result)
   }
   
   func BMI() {
-    fatalError("BMI Not Implimented")
+// The CPU reads the "BMI" opcode and the following byte, which represents the signed offset value.
+    let param = loadByteFromMemory()
+// If the negative flag (N) in the status register is set (1), indicating that the result of the previous operation was negative (i.e., bit 7 of the result is 1), the program execution will jump to a new memory address calculated by adding the signed offset value to the address of the instruction following the "BMI" instruction.
+    if memory.registers.isSet(.negative) {
+      
+    }
+// If the negative flag (N) is clear (0), indicating that the result of the previous operation was not negative, the program continues to execute the next instruction following the "BMI" instruction without any change in program flow.
   }
   
   func BNE() {
@@ -147,7 +175,7 @@ extension CPU {
   }
   
   func BRK() {
-    fatalError("BRK Not Implimented")
+    loop = false
   }
   
   func BVC() {
@@ -361,6 +389,15 @@ private extension CPU {
     } else {
       memory.registers.unset(.negative)
     }
+  }
+  
+  func setOverflowFlag(_ value: UInt8) {
+    if (value & 0b0100_0000) > 0 {
+      memory.registers.set(.overflow)
+    } else {
+      memory.registers.unset(.overflow)
+    })
+    
   }
 }
 
