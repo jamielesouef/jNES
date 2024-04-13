@@ -21,10 +21,12 @@
 		70C401302BC38E72002F325B /* 6502.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C4012F2BC38E72002F325B /* 6502.swift */; };
 		E4268F042BC7AE9400B4D0A6 /* ADCSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4268F032BC7AE9400B4D0A6 /* ADCSpec.swift */; };
 		E42B25D12BC8D33500E53258 /* ANDSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42B25D02BC8D33500E53258 /* ANDSpec.swift */; };
+		E42B25D32BC90DB300E53258 /* ASLSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42B25D22BC90DB300E53258 /* ASLSpec.swift */; };
 		E45121D92BC4D5F700A34ECB /* 6502Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45121D82BC4D5F700A34ECB /* 6502Spec.swift */; };
 		E45121DB2BC4E01200A34ECB /* Array+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45121DA2BC4E01200A34ECB /* Array+extensions.swift */; };
 		E47639392BC76077004DA2B0 /* CPUMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47639382BC76077004DA2B0 /* CPUMock.swift */; };
 		E476393B2BC77B39004DA2B0 /* ProgramMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E476393A2BC77B39004DA2B0 /* ProgramMock.swift */; };
+		E49A7F752BCA1A2500E88D1F /* l.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49A7F742BCA1A2500E88D1F /* l.swift */; };
 		E4D193EE2BC4ACBC00763090 /* Registers.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D193ED2BC4ACBC00763090 /* Registers.swift */; };
 		E4D193F02BC4AFFE00763090 /* RegisteresSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D193EF2BC4AFFE00763090 /* RegisteresSpec.swift */; };
 		E4E24A952BC65CD80011D66F /* Memory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E24A942BC65CD80011D66F /* Memory.swift */; };
@@ -68,10 +70,12 @@
 		70C4012F2BC38E72002F325B /* 6502.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = 6502.swift; sourceTree = "<group>"; };
 		E4268F032BC7AE9400B4D0A6 /* ADCSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ADCSpec.swift; sourceTree = "<group>"; };
 		E42B25D02BC8D33500E53258 /* ANDSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANDSpec.swift; sourceTree = "<group>"; };
+		E42B25D22BC90DB300E53258 /* ASLSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASLSpec.swift; sourceTree = "<group>"; };
 		E45121D82BC4D5F700A34ECB /* 6502Spec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = 6502Spec.swift; sourceTree = "<group>"; };
 		E45121DA2BC4E01200A34ECB /* Array+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+extensions.swift"; sourceTree = "<group>"; };
 		E47639382BC76077004DA2B0 /* CPUMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUMock.swift; sourceTree = "<group>"; };
 		E476393A2BC77B39004DA2B0 /* ProgramMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramMock.swift; sourceTree = "<group>"; };
+		E49A7F742BCA1A2500E88D1F /* l.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = l.swift; sourceTree = "<group>"; };
 		E4D193ED2BC4ACBC00763090 /* Registers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Registers.swift; sourceTree = "<group>"; };
 		E4D193EF2BC4AFFE00763090 /* RegisteresSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisteresSpec.swift; sourceTree = "<group>"; };
 		E4E24A942BC65CD80011D66F /* Memory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memory.swift; sourceTree = "<group>"; };
@@ -135,6 +139,7 @@
 				70C4010A2BC38E64002F325B /* Preview Content */,
 				E4D193EC2BC4ACB400763090 /* CPU */,
 				E45121DA2BC4E01200A34ECB /* Array+extensions.swift */,
+				E49A7F742BCA1A2500E88D1F /* l.swift */,
 			);
 			path = SwiftNES;
 			sourceTree = "<group>";
@@ -160,6 +165,7 @@
 				E47639382BC76077004DA2B0 /* CPUMock.swift */,
 				E476393A2BC77B39004DA2B0 /* ProgramMock.swift */,
 				E42B25D02BC8D33500E53258 /* ANDSpec.swift */,
+				E42B25D22BC90DB300E53258 /* ASLSpec.swift */,
 			);
 			path = SwiftNESTests;
 			sourceTree = "<group>";
@@ -314,6 +320,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E49A7F752BCA1A2500E88D1F /* l.swift in Sources */,
 				E4E24A952BC65CD80011D66F /* Memory.swift in Sources */,
 				70C401052BC38E63002F325B /* ContentView.swift in Sources */,
 				E4E24A972BC6716A0011D66F /* Instructions.swift in Sources */,
@@ -338,6 +345,7 @@
 				E42B25D12BC8D33500E53258 /* ANDSpec.swift in Sources */,
 				E45121D92BC4D5F700A34ECB /* 6502Spec.swift in Sources */,
 				E476393B2BC77B39004DA2B0 /* ProgramMock.swift in Sources */,
+				E42B25D32BC90DB300E53258 /* ASLSpec.swift in Sources */,
 				E47639392BC76077004DA2B0 /* CPUMock.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

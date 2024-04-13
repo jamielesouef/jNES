@@ -49,6 +49,7 @@ final class Memory {
   
   func getOpperandAddress(for mode: AddressingMode) -> MemoryAddress {
     switch mode {
+    case .accumulator: return 0x0000
     case .immediate:  return pc
     case .zeroPage:   return MemoryAddress(readMem(at: pc))
     case .zeroPageX:  return getZeroPage(offsetBy: .X)
@@ -57,32 +58,40 @@ final class Memory {
     case .absoluteX: return getAbsolute(offsetBy: .X)
     case .absoluteY: return getAbsolute(offsetBy: .Y)
     case .indirectX: return indirectX()
-    case .indirectY: return indirectX()
+    case .indirectY: return indirectY()
     default: fatalError("Addressing mode: \(mode) not implemented")
     }
   }
   
   func load(program: [UInt8]) {
-    buffer.insert(contentsOf: program, at: 0x8000)
-    writeMem16(at: 0xFFFC, value: 0x8000)
+    let insertionPoint: MemoryAddress = 0x0600
+    
+    for (i, v) in program.enumerated() {
+      buffer[0x0600 + i] = v
+    }
+    
+    writeMem16(at: 0xFFFC, value: insertionPoint)
+    pc = insertionPoint
     reset()
   }
   
   func reset() {
     registers.reset()
-    pc = readMem16(at: 0xFFFC)
+    
   }
   
   func readMemAtCounter() -> UInt8 {
-    readMem(at: pc)
+    buffer[pc]
   }
   
   func readMem(at address: MemoryAddress) -> UInt8 {
-    buffer[address]
+    let tructatedAddress = truncate(address: address)
+    return buffer[tructatedAddress]
   }
   
   func writeMem(at address: MemoryAddress, value: UInt8) {
-    buffer[address] = value
+    let tructatedAddress = truncate(address: address)
+    return buffer[tructatedAddress] = value
   }
   
   func readMem16(at address: MemoryAddress) -> MemoryAddress {
@@ -94,12 +103,19 @@ final class Memory {
   }
   
   func writeMem16(at address: UInt16, value: UInt16) {
-    buffer[address] = UInt8(value & 0xFF)
-    buffer[address + 1] = UInt8(value >> 8)
+    let lo = UInt8(value & 0xFF)
+    let hi = UInt8(value >> 8)
+    self.writeMem(at: address, value: lo)
+    self.writeMem(at: address + 1 , value: hi)
   }
 }
 
 private extension Memory {
+  
+  func truncate(address: MemoryAddress) -> MemoryAddress {
+    let truncated = UInt8(truncatingIfNeeded: address)
+    return MemoryAddress(truncated)
+  }
   
   func getRegisterValue(for register: AddressingIndex) -> UInt8 {
     switch register {
@@ -117,9 +133,9 @@ private extension Memory {
   
   func getAbsolute(offsetBy register: AddressingIndex) -> MemoryAddress {
     let address: MemoryAddress = readMem16(at: pc)
-    let registerValue: MemoryAddress = MemoryAddress(getRegisterValue(for: register))
+    let offsetValue: MemoryAddress = MemoryAddress(getRegisterValue(for: register))
     
-    return MemoryAddress(address.addingReportingOverflow(registerValue).partialValue)
+    return MemoryAddress(address.addingReportingOverflow(offsetValue).partialValue)
   }
   
   func indirectX() -> MemoryAddress {

@@ -17,7 +17,7 @@ final class ADCSpec: XCTestCase {
   }
   
   func testADC_indirectX() throws {
-    let program: [UInt8] = [0xA9, 0x00, 0x61, 0x0F, 0x00]
+    let program: [UInt8] = [0x61, 0xF1, 0x00]
     cpu.load(program: program)
     try cpu.run()
     XCTAssertEqual(cpu.memory.registers.A, 0x6F)
@@ -33,7 +33,7 @@ final class ADCSpec: XCTestCase {
   }
   
   func testADC_immediate() throws {
-    let program: [UInt8] = [0xA9, 0x0A, 0x69, 0x0A, 0x00]
+    let program: [UInt8] = [0xA9, 0x0A, 0x69, 0xFF, 0x00]
     cpu.load(program: program)
     try cpu.run()
     XCTAssertEqual(cpu.memory.registers.A, 0x14)

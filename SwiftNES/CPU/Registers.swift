@@ -35,7 +35,7 @@ class Registers {
   }
   
   enum IndexRegister {
-    case A,X,Y
+    case accumulator,X,Y
   }
   
   private (set) var A: UInt8
@@ -56,6 +56,7 @@ class Registers {
     p = p | flag.mask
   }
   
+  
   func unset(_ flag: StatusFlag) {
     p = p & ~flag.mask
   }
@@ -66,7 +67,7 @@ class Registers {
   
   func set(_ register: IndexRegister, to param: UInt8) {
     switch register {
-    case .A: self.A = param
+    case .accumulator: self.A = param
     case .X: self.X = param
     case .Y: self.Y = param
     }

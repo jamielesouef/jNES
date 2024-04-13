@@ -37,35 +37,22 @@ final class CPU {
   func run() throws {
     while loop {
       let oppcode: UInt8 = memory.readMemAtCounter()
+      l(oppcode, r: 16)
       memory.pc += 1
       
       try dispatch(oppcode)
     }
     
     func dispatch(_ opcode: UInt8) throws {
-      guard let instruction = InstructionTable[opcode] else {
-        throw CPUError.missingOpcode(String(opcode, radix: 16))
-      }
-      
+      let instruction = getInstructions(forOpcode: opcode)
       self.addressingMode = instruction.addressingMode
-      
-      switch instruction.oppcode {
-      case .ADC: self.ADC()
-      case .AND: self.AND()
-      case .INX: self.INX()
-      case .LDA: self.LDA()
-      case .TAX: self.TAX()
-      case .BRK: loop = false
-      default:
-        loop = false
-        throw CPUError.invalidOpcode(String(opcode, radix: 16))
-      }
+      instruction.fn()
     }
   }
 }
 
 // MARK: Instructions
-private extension CPU {
+extension CPU {
   func unsafeGetAddresingMode() -> AddressingMode {
     guard let mode = self.addressingMode else {
       fatalError("Addressing mode not set")
@@ -76,7 +63,13 @@ private extension CPU {
   }
   
   func loadByteFromMemory() -> UInt8 {
-    let addr = memory.getOpperandAddress(for: unsafeGetAddresingMode())
+    let addressingMode = unsafeGetAddresingMode()
+    
+    if addressingMode == .accumulator {
+        return memory.registers.A
+    }
+    
+    let addr = memory.getOpperandAddress(for: addressingMode)
     let byte = memory.readMem(at: addr)
     memory.pc += 1
     return byte
@@ -97,38 +90,32 @@ private extension CPU {
       memory.registers.unset(.carry)
     }
     
-    memory.registers.set(.A, to: UInt8(result & 0xFF))
+    memory.registers.set(.accumulator, to: UInt8(result & 0xFF))
     
     setZeroAndNegativeFlag(memory.registers.A)
   }
-  
-  func INX() {
-    let newX = memory.registers.X.addingReportingOverflow(1).partialValue
-    memory.registers.set(.X, to: newX)
-    setZeroAndNegativeFlag(memory.registers.X)
-  }
-  
-  func TAX() {
-    memory.registers.set(.X, to: memory.registers.A)
-    setZeroAndNegativeFlag(memory.registers.X)
-  }
-  
-  func LDA() {
-    let param = loadByteFromMemory()
-    memory.registers.set(.A, to: param)
-    setZeroAndNegativeFlag(param)
-  }
-  
+    
   func AND() {
     //A,Z,N = A&M
     let param = loadByteFromMemory()
-    let a = memory.registers.A
     let result = memory.registers.A & param
-    memory.registers.set(.A, to: result)
+    memory.registers.set(.accumulator, to: result)
   }
   
   func ASL() {
-    fatalError("ASL Not Implimented")
+    let param = loadByteFromMemory()
+    let bit7 = param >> 7
+    let result = memory.registers.A << 1
+
+    if bit7 == 0 {
+      memory.registers.unset(.carry)
+    } else {
+      memory.registers.set(.carry)
+    }
+    
+    memory.registers.set(.accumulator, to: result)
+    setZeroAndNegativeFlag(result)
+  
   }
   
   func BCC() {
@@ -215,9 +202,18 @@ private extension CPU {
     fatalError("INC Not Implimented")
   }
   
+  func INX() {
+    let newX = memory.registers.X.addingReportingOverflow(1).partialValue
+    memory.registers.set(.X, to: newX)
+    setZeroAndNegativeFlag(memory.registers.X)
+  }
+  
   func INY() {
     fatalError("INY Not Implimented")
   }
+  
+  
+ 
   
   func JMP() {
     fatalError("JMP Not Implimented")
@@ -225,6 +221,12 @@ private extension CPU {
   
   func JSR() {
     fatalError("JSR Not Implimented")
+  }
+  
+  func LDA() {
+    let param = loadByteFromMemory()
+    memory.registers.set(.accumulator, to: param)
+    setZeroAndNegativeFlag(param)
   }
   
   func LDX() {
@@ -305,6 +307,11 @@ private extension CPU {
   
   func STY() {
     fatalError("STY Not Implimented")
+  }
+  
+  func TAX() {
+    memory.registers.set(.X, to: memory.registers.A)
+    setZeroAndNegativeFlag(memory.registers.X)
   }
 
   func TAY() {

@@ -8,265 +8,287 @@
 import Foundation
 
 struct Instruction {
-  let oppcode: InstructionSet
   let addressingMode: AddressingMode
   let cycles: UInt8
   let bytes: UInt8
+  let fn: () -> Void
+  
+  init(
+    addressingMode: AddressingMode,
+    cycles: UInt8,
+    bytes: UInt8,
+    fn: @escaping () -> Void = {}
+  ) {
+    self.addressingMode = addressingMode
+    self.cycles = cycles
+    self.bytes = bytes
+    self.fn = fn
+  }
 }
 
-enum InstructionSet {
-  case ADC
-  case AND
-  case ASL
-  case BCC
-  case BCS
-  case BEQ
-  case BIT
-  case BMI
-  case BNE
-  case BPL
-  case BRK
-  case BVC
-  case BVS
-  case CLC
-  case CLD
-  case CLI
-  case CLV
-  case CMP
-  case CPX
-  case CPY
-  case DEC
-  case DEY
-  case EOR
-  case INC
-  case INX
-  case INY
-  case JMP
-  case JSR
-  case LDA
-  case LDX
-  case LDY
-  case LSR
-  case NOP
-  case ORA
-  case PHA
-  case PHP
-  case PLA
-  case PLP
-  case ROL
-  case ROR
-  case RTI
-  case RTS
-  case SBC
-  case SEC
-  case SED
-  case SEI
-  case STA
-  case STX
-  case STY
-  case TAX
-  case TAY
-  case TSX
-  case TXA
-  case TXS
-  case TYA
-  case DEX
-}
+//enum InstructionSet {
+//  case ADC
+//  case AND
+//  case ASL
+//  case BCC
+//  case BCS
+//  case BEQ
+//  case BIT
+//  case BMI
+//  case BNE
+//  case BPL
+//  case BRK
+//  case BVC
+//  case BVS
+//  case CLC
+//  case CLD
+//  case CLI
+//  case CLV
+//  case CMP
+//  case CPX
+//  case CPY
+//  case DEC
+//  case DEY
+//  case EOR
+//  case INC
+//  case INX
+//  case INY
+//  case JMP
+//  case JSR
+//  case LDA
+//  case LDX
+//  case LDY
+//  case LSR
+//  case NOP
+//  case ORA
+//  case PHA
+//  case PHP
+//  case PLA
+//  case PLP
+//  case ROL
+//  case ROR
+//  case RTI
+//  case RTS
+//  case SBC
+//  case SEC
+//  case SED
+//  case SEI
+//  case STA
+//  case STX
+//  case STY
+//  case TAX
+//  case TAY
+//  case TSX
+//  case TXA
+//  case TXS
+//  case TYA
+//  case DEX
+//}
 
-let InstructionTable: [UInt8: Instruction] = [
-  0x61: Instruction(oppcode: .ADC, addressingMode: .indirectX, cycles: 6, bytes: 2),
-  0x65: Instruction(oppcode: .ADC, addressingMode: .zeroPage, cycles: 3, bytes: 2),
-  0x69: Instruction(oppcode: .ADC, addressingMode: .immediate, cycles: 2, bytes: 2),
-  0x6D: Instruction(oppcode: .ADC, addressingMode: .absolute, cycles: 4, bytes: 3),
-  0x71: Instruction(oppcode: .ADC, addressingMode: .indirectY, cycles: 5, bytes: 2),
-  0x75: Instruction(oppcode: .ADC, addressingMode: .zeroPageX, cycles: 4, bytes: 2),
-  0x79: Instruction(oppcode: .ADC, addressingMode: .absoluteY, cycles: 4, bytes: 3),
-  0x7D: Instruction(oppcode: .ADC, addressingMode: .absoluteX, cycles: 4, bytes: 3),
-  
-  0x21: Instruction(oppcode: .AND, addressingMode: .indirectX, cycles: 6, bytes: 2),
-  0x25: Instruction(oppcode: .AND, addressingMode: .zeroPage, cycles: 3, bytes: 2),
-  0x29: Instruction(oppcode: .AND, addressingMode: .immediate, cycles: 2, bytes: 2),
-  0x2D: Instruction(oppcode: .AND, addressingMode: .absolute, cycles: 4, bytes: 3),
-  0x31: Instruction(oppcode: .AND, addressingMode: .indirectY, cycles: 5, bytes: 2),
-  0x35: Instruction(oppcode: .AND, addressingMode: .zeroPageX, cycles: 4, bytes: 2),
-  0x39: Instruction(oppcode: .AND, addressingMode: .absoluteY, cycles: 4, bytes: 3),
-  0x3D: Instruction(oppcode: .AND, addressingMode: .absoluteX, cycles: 4, bytes: 3),
-  
-  0x06: Instruction(oppcode: .ASL, addressingMode: .zeroPage, cycles: 5, bytes: 2),
-  0x0A: Instruction(oppcode: .ASL, addressingMode: .accumulator, cycles: 2, bytes: 1),
-  0x0E: Instruction(oppcode: .ASL, addressingMode: .absolute, cycles: 6, bytes: 3),
-  0x16: Instruction(oppcode: .ASL, addressingMode: .zeroPageX, cycles: 6, bytes: 2),
-  0x1E: Instruction(oppcode: .ASL, addressingMode: .absoluteX, cycles: 7, bytes: 3),
-  
-  0x90: Instruction(oppcode: .BCC, addressingMode: .relative, cycles: 2, bytes: 2),
-  
-  0xB0: Instruction(oppcode: .BCS, addressingMode: .relative, cycles: 2, bytes: 2),
-  
-  0xF0: Instruction(oppcode: .BEQ, addressingMode: .relative, cycles: 2, bytes: 2),
-  
-  0x24: Instruction(oppcode: .BIT, addressingMode: .zeroPage, cycles: 3, bytes: 2),
-  0x2C: Instruction(oppcode: .BIT, addressingMode: .absolute, cycles: 4, bytes: 3),
-  
-  0x30: Instruction(oppcode: .BMI, addressingMode: .relative, cycles: 2, bytes: 2),
-  
-  0xD0: Instruction(oppcode: .BNE, addressingMode: .relative, cycles: 2, bytes: 2),
-  
-  0x10: Instruction(oppcode: .BPL, addressingMode: .relative, cycles: 2, bytes: 2),
-  
-  0x00: Instruction(oppcode: .BRK, addressingMode: .implied, cycles: 7, bytes: 1),
-  
-  0x50: Instruction(oppcode: .BVC, addressingMode: .relative, cycles: 2, bytes: 2),
-  
-  0x70: Instruction(oppcode: .BVS, addressingMode: .relative, cycles: 2, bytes: 2),
-  
-  0x18: Instruction(oppcode: .CLC, addressingMode: .implied, cycles: 2, bytes: 1),
-  
-  0xD8: Instruction(oppcode: .CLD, addressingMode: .implied, cycles: 2, bytes: 1),
-  
-  0x58: Instruction(oppcode: .CLI, addressingMode: .implied, cycles: 2, bytes: 1),
-  
-  0xB8: Instruction(oppcode: .CLV, addressingMode: .implied, cycles: 2, bytes: 1),
-  
-  0xC1: Instruction(oppcode: .CMP, addressingMode: .indirectX, cycles: 6, bytes: 2),
-  0xC5: Instruction(oppcode: .CMP, addressingMode: .zeroPage, cycles: 3, bytes: 2),
-  0xC9: Instruction(oppcode: .CMP, addressingMode: .immediate, cycles: 2, bytes: 2),
-  0xCD: Instruction(oppcode: .CMP, addressingMode: .absolute, cycles: 4, bytes: 3),
-  0xD1: Instruction(oppcode: .CMP, addressingMode: .indirectY, cycles: 5, bytes: 2),
-  0xD5: Instruction(oppcode: .CMP, addressingMode: .zeroPageX, cycles: 4, bytes: 2),
-  0xD9: Instruction(oppcode: .CMP, addressingMode: .absoluteY, cycles: 4, bytes: 3),
-  0xDD: Instruction(oppcode: .CMP, addressingMode: .absoluteX, cycles: 4, bytes: 3),
-  
-  0xE0: Instruction(oppcode: .CPX, addressingMode: .immediate, cycles: 2, bytes: 2),
-  0xE4: Instruction(oppcode: .CPX, addressingMode: .zeroPage, cycles: 3, bytes: 2),
-  0xEC: Instruction(oppcode: .CPX, addressingMode: .absolute, cycles: 4, bytes: 3),
-  0xC0: Instruction(oppcode: .CPY, addressingMode: .immediate, cycles: 2, bytes: 2),
-  0xC4: Instruction(oppcode: .CPY, addressingMode: .zeroPage, cycles: 3, bytes: 2),
-  0xCC: Instruction(oppcode: .CPY, addressingMode: .absolute, cycles: 4, bytes: 3),
-  
-  0xC6: Instruction(oppcode: .DEC, addressingMode: .zeroPage, cycles: 5, bytes: 2),
-  0xCE: Instruction(oppcode: .DEC, addressingMode: .absolute, cycles: 6, bytes: 3),
-  0xD6: Instruction(oppcode: .DEC, addressingMode: .zeroPageX, cycles: 6, bytes: 2),
-  0xDE: Instruction(oppcode: .DEC, addressingMode: .absoluteX, cycles: 7, bytes: 3),
-  
-  0xCA: Instruction(oppcode: .DEX, addressingMode: .implied, cycles: 2, bytes: 1),
-  0x88: Instruction(oppcode: .DEY, addressingMode: .implied, cycles: 2, bytes: 1),
-  
-  0x41: Instruction(oppcode: .EOR, addressingMode: .indirectX, cycles: 6, bytes: 2),
-  0x45: Instruction(oppcode: .EOR, addressingMode: .zeroPage, cycles: 3, bytes: 2),
-  0x49: Instruction(oppcode: .EOR, addressingMode: .immediate, cycles: 2, bytes: 2),
-  0x4D: Instruction(oppcode: .EOR, addressingMode: .absolute, cycles: 4, bytes: 3),
-  0x51: Instruction(oppcode: .EOR, addressingMode: .indirectY, cycles: 5, bytes: 2),
-  0x55: Instruction(oppcode: .EOR, addressingMode: .zeroPageX, cycles: 4, bytes: 2),
-  0x59: Instruction(oppcode: .EOR, addressingMode: .absoluteY, cycles: 4, bytes: 3),
-  0x5D: Instruction(oppcode: .EOR, addressingMode: .absoluteX, cycles: 4, bytes: 3),
-  
-  0xE6: Instruction(oppcode: .INC, addressingMode: .zeroPage, cycles: 5, bytes: 2),
-  0xEE: Instruction(oppcode: .INC, addressingMode: .absolute, cycles: 6, bytes: 3),
-  0xF6: Instruction(oppcode: .INC, addressingMode: .zeroPageX, cycles: 6, bytes: 2),
-  0xFE: Instruction(oppcode: .INC, addressingMode: .absoluteX, cycles: 7, bytes: 3),
-  
-  0xE8: Instruction(oppcode: .INX, addressingMode: .implied, cycles: 2, bytes: 1),
-  0xC8: Instruction(oppcode: .INY, addressingMode: .implied, cycles: 2, bytes: 1),
-  
-  0x4C: Instruction(oppcode: .JMP, addressingMode: .absolute, cycles: 3, bytes: 3),
-  0x6C: Instruction(oppcode: .JMP, addressingMode: .indirect, cycles: 5, bytes: 3),
-  
-  0x20: Instruction(oppcode: .JSR, addressingMode: .absolute, cycles: 6, bytes: 3),
-  
-  0xA1: Instruction(oppcode: .LDA, addressingMode: .indirectX, cycles: 6, bytes: 2),
-  0xA5: Instruction(oppcode: .LDA, addressingMode: .zeroPage, cycles: 3, bytes: 2),
-  0xA9: Instruction(oppcode: .LDA, addressingMode: .immediate, cycles: 2, bytes: 2),
-  0xAD: Instruction(oppcode: .LDA, addressingMode: .absolute, cycles: 4, bytes: 3),
-  0xB1: Instruction(oppcode: .LDA, addressingMode: .indirectY, cycles: 5, bytes: 2),
-  0xB5: Instruction(oppcode: .LDA, addressingMode: .zeroPageX, cycles: 4, bytes: 2),
-  0xB9: Instruction(oppcode: .LDA, addressingMode: .absoluteY, cycles: 4, bytes: 3),
-  0xBD: Instruction(oppcode: .LDA, addressingMode: .absoluteX, cycles: 4, bytes: 3),
-  
-  0xA2: Instruction(oppcode: .LDX, addressingMode: .immediate, cycles: 2, bytes: 2),
-  0xA6: Instruction(oppcode: .LDX, addressingMode: .zeroPage, cycles: 3, bytes: 2),
-  0xAE: Instruction(oppcode: .LDX, addressingMode: .absolute, cycles: 4, bytes: 3),
-  0xB6: Instruction(oppcode: .LDX, addressingMode: .zeroPageY, cycles: 4, bytes: 2),
-  0xBE: Instruction(oppcode: .LDX, addressingMode: .absoluteY, cycles: 4, bytes: 3),
-  
-  0xA0: Instruction(oppcode: .LDY, addressingMode: .immediate, cycles: 2, bytes: 2),
-  0xA4: Instruction(oppcode: .LDY, addressingMode: .zeroPage, cycles: 3, bytes: 2),
-  0xAC: Instruction(oppcode: .LDY, addressingMode: .absolute, cycles: 4, bytes: 3),
-  0xB4: Instruction(oppcode: .LDY, addressingMode: .zeroPageX, cycles: 4, bytes: 2),
-  0xBC: Instruction(oppcode: .LDY, addressingMode: .absoluteX, cycles: 4, bytes: 3),
-  
-  0x46: Instruction(oppcode: .LSR, addressingMode: .zeroPage, cycles: 5, bytes: 2),
-  0x4A: Instruction(oppcode: .LSR, addressingMode: .accumulator, cycles: 2, bytes: 1),
-  0x4E: Instruction(oppcode: .LSR, addressingMode: .absolute, cycles: 6, bytes: 3),
-  0x56: Instruction(oppcode: .LSR, addressingMode: .zeroPageX, cycles: 6, bytes: 2),
-  0x5E: Instruction(oppcode: .LSR, addressingMode: .absoluteX, cycles: 7, bytes: 3),
-  
-  0xEA: Instruction(oppcode: .NOP, addressingMode: .implied, cycles: 2, bytes: 1),
-  
-  0x01: Instruction(oppcode: .ORA, addressingMode: .indirectX, cycles: 6, bytes: 2),
-  0x05: Instruction(oppcode: .ORA, addressingMode: .zeroPage, cycles: 3, bytes: 2),
-  0x09: Instruction(oppcode: .ORA, addressingMode: .immediate, cycles: 2, bytes: 2),
-  0x0D: Instruction(oppcode: .ORA, addressingMode: .absolute, cycles: 4, bytes: 3),
-  0x11: Instruction(oppcode: .ORA, addressingMode: .indirectY, cycles: 5, bytes: 2),
-  0x15: Instruction(oppcode: .ORA, addressingMode: .zeroPageX, cycles: 4, bytes: 2),
-  0x19: Instruction(oppcode: .ORA, addressingMode: .absoluteY, cycles: 4, bytes: 3),
-  0x1D: Instruction(oppcode: .ORA, addressingMode: .absoluteX, cycles: 4, bytes: 3),
-  
-  0x48: Instruction(oppcode: .PHA, addressingMode: .implied, cycles: 3, bytes: 1),
-  0x08: Instruction(oppcode: .PHP, addressingMode: .implied, cycles: 3, bytes: 1),
-  
-  0x68: Instruction(oppcode: .PLA, addressingMode: .implied, cycles: 4, bytes: 1),
-  
-  0x28: Instruction(oppcode: .PLP, addressingMode: .implied, cycles: 4, bytes: 1),
-  
-  0x26: Instruction(oppcode: .ROL, addressingMode: .zeroPage, cycles: 5, bytes: 2),
-  
-  0x2A: Instruction(oppcode: .ROL, addressingMode: .accumulator, cycles: 2, bytes: 1),
-  0x2E: Instruction(oppcode: .ROL, addressingMode: .absolute, cycles: 6, bytes: 3),
-  0x36: Instruction(oppcode: .ROL, addressingMode: .zeroPageX, cycles: 6, bytes: 2),
-  0x3E: Instruction(oppcode: .ROL, addressingMode: .absoluteX, cycles: 7, bytes: 3),
-  
-  0x66: Instruction(oppcode: .ROR, addressingMode: .zeroPage, cycles: 5, bytes: 2),
-  0x6A: Instruction(oppcode: .ROR, addressingMode: .accumulator, cycles: 2, bytes: 1),
-  0x6E: Instruction(oppcode: .ROR, addressingMode: .absolute, cycles: 6, bytes: 3),
-  0x76: Instruction(oppcode: .ROR, addressingMode: .zeroPageX, cycles: 6, bytes: 2),
-  0x7E: Instruction(oppcode: .ROR, addressingMode: .absoluteX, cycles: 7, bytes: 3),
-  
-  0x40: Instruction(oppcode: .RTI, addressingMode: .implied, cycles: 6, bytes: 1),
-  
-  0x60: Instruction(oppcode: .RTS, addressingMode: .implied, cycles: 6, bytes: 1),
-  
-  0xE1: Instruction(oppcode: .SBC, addressingMode: .indirectX, cycles: 6, bytes: 2),
-  0xE5: Instruction(oppcode: .SBC, addressingMode: .zeroPage, cycles: 3, bytes: 2),
-  0xE9: Instruction(oppcode: .SBC, addressingMode: .immediate, cycles: 2, bytes: 2),
-  0xED: Instruction(oppcode: .SBC, addressingMode: .absolute, cycles: 4, bytes: 3),
-  0xF1: Instruction(oppcode: .SBC, addressingMode: .indirectY, cycles: 5, bytes: 2),
-  0xF5: Instruction(oppcode: .SBC, addressingMode: .zeroPageX, cycles: 4, bytes: 2),
-  0xF9: Instruction(oppcode: .SBC, addressingMode: .absoluteY, cycles: 4, bytes: 3),
-  0xFD: Instruction(oppcode: .SBC, addressingMode: .absoluteX, cycles: 4, bytes: 3),
-  0x38: Instruction(oppcode: .SEC, addressingMode: .implied, cycles: 2, bytes: 1),
-  
-  0xF8: Instruction(oppcode: .SED, addressingMode: .implied, cycles: 2, bytes: 1),
-  
-  0x78: Instruction(oppcode: .SEI, addressingMode: .implied, cycles: 2, bytes: 1),
-  
-  0x81: Instruction(oppcode: .STA, addressingMode: .indirectX, cycles: 6, bytes: 2),
-  0x85: Instruction(oppcode: .STA, addressingMode: .zeroPage, cycles: 3, bytes: 2),
-  0x8D: Instruction(oppcode: .STA, addressingMode: .absolute, cycles: 4, bytes: 3),
-  0x91: Instruction(oppcode: .STA, addressingMode: .indirectY, cycles: 6, bytes: 2),
-  0x95: Instruction(oppcode: .STA, addressingMode: .zeroPageX, cycles: 4, bytes: 2),
-  0x99: Instruction(oppcode: .STA, addressingMode: .absoluteY, cycles: 5, bytes: 3),
-  0x9D: Instruction(oppcode: .STA, addressingMode: .absoluteX, cycles: 5, bytes: 3),
-  
-  0x86: Instruction(oppcode: .STX, addressingMode: .zeroPage, cycles: 3, bytes: 2),
-  0x8E: Instruction(oppcode: .STX, addressingMode: .absolute, cycles: 4, bytes: 3),
-  0x96: Instruction(oppcode: .STX, addressingMode: .zeroPageY, cycles: 4, bytes: 2),
-  0x84: Instruction(oppcode: .STY, addressingMode: .zeroPage, cycles: 3, bytes: 2),
-  0x8C: Instruction(oppcode: .STY, addressingMode: .absolute, cycles: 4, bytes: 3),
-  0x94: Instruction(oppcode: .STY, addressingMode: .zeroPageX, cycles: 4, bytes: 2),
-  0xAA: Instruction(oppcode: .TAX, addressingMode: .implied, cycles: 2, bytes: 1),
-  0xA8: Instruction(oppcode: .TAY, addressingMode: .implied, cycles: 2, bytes: 1),
-  0xBA: Instruction(oppcode: .TSX, addressingMode: .implied, cycles: 2, bytes: 1),
-  0x8A: Instruction(oppcode: .TXA, addressingMode: .implied, cycles: 2, bytes: 1),
-  0x9A: Instruction(oppcode: .TXS, addressingMode: .implied, cycles: 2, bytes: 1),
-  0x98: Instruction(oppcode: .TYA, addressingMode: .implied, cycles: 2, bytes: 1),
-]
+extension CPU {
+  func getInstructions(forOpcode opcode: UInt8) -> Instruction {
+    
+    let table: [UInt8: Instruction] = [
+      0x61: Instruction(addressingMode: .indirectX, cycles: 6, bytes: 2, fn: self.ADC),
+      0x65: Instruction(addressingMode: .zeroPage, cycles: 3, bytes: 2, fn: self.ADC),
+      0x69: Instruction(addressingMode: .immediate, cycles: 2, bytes: 2, fn: self.ADC),
+      0x6D: Instruction(addressingMode: .absolute, cycles: 4, bytes: 3, fn: self.ADC),
+      0x71: Instruction(addressingMode: .indirectY, cycles: 5, bytes: 2, fn: self.ADC),
+      0x75: Instruction(addressingMode: .zeroPageX, cycles: 4, bytes: 2, fn: self.ADC),
+      0x79: Instruction(addressingMode: .absoluteY, cycles: 4, bytes: 3, fn: self.ADC),
+      0x7D: Instruction(addressingMode: .absoluteX, cycles: 4, bytes: 3, fn: self.ADC),
+      
+      0x21: Instruction(addressingMode: .indirectX, cycles: 6, bytes: 2, fn: self.AND),
+      0x25: Instruction(addressingMode: .zeroPage, cycles: 3, bytes: 2, fn: self.AND),
+      0x29: Instruction(addressingMode: .immediate, cycles: 2, bytes: 2, fn: self.AND),
+      0x2D: Instruction(addressingMode: .absolute, cycles: 4, bytes: 3, fn: self.AND),
+      0x31: Instruction(addressingMode: .indirectY, cycles: 5, bytes: 2, fn: self.AND),
+      0x35: Instruction(addressingMode: .zeroPageX, cycles: 4, bytes: 2, fn: self.AND),
+      0x39: Instruction(addressingMode: .absoluteY, cycles: 4, bytes: 3, fn: self.AND),
+      0x3D: Instruction(addressingMode: .absoluteX, cycles: 4, bytes: 3, fn: self.AND),
+      
+      0x06: Instruction(addressingMode: .zeroPage, cycles: 5, bytes: 2, fn: self.ASL),
+      0x0A: Instruction(addressingMode: .accumulator, cycles: 2, bytes: 1, fn: self.ASL),
+      0x0E: Instruction(addressingMode: .absolute, cycles: 6, bytes: 3, fn: self.ASL),
+      0x16: Instruction(addressingMode: .zeroPageX, cycles: 6, bytes: 2, fn: self.ASL),
+      0x1E: Instruction(addressingMode: .absoluteX, cycles: 7, bytes: 3, fn: self.ASL),
+      
+      0x90: Instruction(addressingMode: .relative, cycles: 2, bytes: 2, fn: self.BCC),
+      
+      0xB0: Instruction(addressingMode: .relative, cycles: 2, bytes: 2, fn: self.BCS),
+      
+      0xF0: Instruction(addressingMode: .relative, cycles: 2, bytes: 2, fn: self.BEQ),
+      
+      0x24: Instruction(addressingMode: .zeroPage, cycles: 3, bytes: 2, fn: self.BIT),
+      0x2C: Instruction(addressingMode: .absolute, cycles: 4, bytes: 3, fn: self.BIT),
+      
+      0x30: Instruction(addressingMode: .relative, cycles: 2, bytes: 2, fn: self.BMI),
+      
+      0xD0: Instruction(addressingMode: .relative, cycles: 2, bytes: 2, fn: self.BNE),
+      
+      0x10: Instruction(addressingMode: .relative, cycles: 2, bytes: 2, fn: self.BPL),
+      
+      0x00: Instruction(addressingMode: .implied, cycles: 7, bytes: 1, fn: self.BRK),
+      
+      0x50: Instruction(addressingMode: .relative, cycles: 2, bytes: 2, fn: self.BVC),
+      
+      0x70: Instruction(addressingMode: .relative, cycles: 2, bytes: 2, fn: self.BVS),
+      
+      0x18: Instruction(addressingMode: .implied, cycles: 2, bytes: 1, fn: self.CLC),
+      
+      0xD8: Instruction(addressingMode: .implied, cycles: 2, bytes: 1, fn: self.CLD),
+      
+      0x58: Instruction(addressingMode: .implied, cycles: 2, bytes: 1, fn: self.CLI),
+      
+      0xB8: Instruction(addressingMode: .implied, cycles: 2, bytes: 1, fn: self.CLV),
+      
+      0xC1: Instruction(addressingMode: .indirectX, cycles: 6, bytes: 2, fn: self.CMP),
+      0xC5: Instruction(addressingMode: .zeroPage, cycles: 3, bytes: 2, fn: self.CMP),
+      0xC9: Instruction(addressingMode: .immediate, cycles: 2, bytes: 2, fn: self.CMP),
+      0xCD: Instruction(addressingMode: .absolute, cycles: 4, bytes: 3, fn: self.CMP),
+      0xD1: Instruction(addressingMode: .indirectY, cycles: 5, bytes: 2, fn: self.CMP),
+      0xD5: Instruction(addressingMode: .zeroPageX, cycles: 4, bytes: 2, fn: self.CMP),
+      0xD9: Instruction(addressingMode: .absoluteY, cycles: 4, bytes: 3, fn: self.CMP),
+      0xDD: Instruction(addressingMode: .absoluteX, cycles: 4, bytes: 3, fn: self.CMP),
+      
+      0xE0: Instruction(addressingMode: .immediate, cycles: 2, bytes: 2, fn: self.CPX),
+      0xE4: Instruction(addressingMode: .zeroPage, cycles: 3, bytes: 2, fn: self.CPX),
+      0xEC: Instruction(addressingMode: .absolute, cycles: 4, bytes: 3, fn: self.CPX),
+      0xC0: Instruction(addressingMode: .immediate, cycles: 2, bytes: 2, fn: self.CPY),
+      0xC4: Instruction(addressingMode: .zeroPage, cycles: 3, bytes: 2, fn: self.CPY),
+      0xCC: Instruction(addressingMode: .absolute, cycles: 4, bytes: 3, fn: self.CPY),
+      
+      0xC6: Instruction(addressingMode: .zeroPage, cycles: 5, bytes: 2, fn: self.DEC),
+      0xCE: Instruction(addressingMode: .absolute, cycles: 6, bytes: 3, fn: self.DEC),
+      0xD6: Instruction(addressingMode: .zeroPageX, cycles: 6, bytes: 2, fn: self.DEC),
+      0xDE: Instruction(addressingMode: .absoluteX, cycles: 7, bytes: 3, fn: self.DEC),
+      
+      0xCA: Instruction(addressingMode: .implied, cycles: 2, bytes: 1, fn: self.DEX),
+      0x88: Instruction(addressingMode: .implied, cycles: 2, bytes: 1, fn: self.DEY),
+      
+      0x41: Instruction(addressingMode: .indirectX, cycles: 6, bytes: 2, fn: self.EOR),
+      0x45: Instruction(addressingMode: .zeroPage, cycles: 3, bytes: 2, fn: self.EOR),
+      0x49: Instruction(addressingMode: .immediate, cycles: 2, bytes: 2, fn: self.EOR),
+      0x4D: Instruction(addressingMode: .absolute, cycles: 4, bytes: 3, fn: self.EOR),
+      0x51: Instruction(addressingMode: .indirectY, cycles: 5, bytes: 2, fn: self.EOR),
+      0x55: Instruction(addressingMode: .zeroPageX, cycles: 4, bytes: 2, fn: self.EOR),
+      0x59: Instruction(addressingMode: .absoluteY, cycles: 4, bytes: 3, fn: self.EOR),
+      0x5D: Instruction(addressingMode: .absoluteX, cycles: 4, bytes: 3, fn: self.EOR),
+      
+      0xE6: Instruction(addressingMode: .zeroPage, cycles: 5, bytes: 2, fn: self.INC),
+      0xEE: Instruction(addressingMode: .absolute, cycles: 6, bytes: 3, fn: self.INC),
+      0xF6: Instruction(addressingMode: .zeroPageX, cycles: 6, bytes: 2, fn: self.INC),
+      0xFE: Instruction(addressingMode: .absoluteX, cycles: 7, bytes: 3, fn: self.INC),
+      
+      0xE8: Instruction(addressingMode: .implied, cycles: 2, bytes: 1, fn: self.INX),
+      0xC8: Instruction(addressingMode: .implied, cycles: 2, bytes: 1, fn: self.INY),
+      
+      0x4C: Instruction(addressingMode: .absolute, cycles: 3, bytes: 3, fn: self.JMP),
+      0x6C: Instruction(addressingMode: .indirect, cycles: 5, bytes: 3, fn: self.JMP),
+      
+      0x20: Instruction(addressingMode: .absolute, cycles: 6, bytes: 3, fn: self.JSR),
+      
+      0xA1: Instruction(addressingMode: .indirectX, cycles: 6, bytes: 2, fn: self.LDA),
+      0xA5: Instruction(addressingMode: .zeroPage, cycles: 3, bytes: 2, fn: self.LDA),
+      0xA9: Instruction(addressingMode: .immediate, cycles: 2, bytes: 2, fn: self.LDA),
+      0xAD: Instruction(addressingMode: .absolute, cycles: 4, bytes: 3, fn: self.LDA),
+      0xB1: Instruction(addressingMode: .indirectY, cycles: 5, bytes: 2, fn: self.LDA),
+      0xB5: Instruction(addressingMode: .zeroPageX, cycles: 4, bytes: 2, fn: self.LDA),
+      0xB9: Instruction(addressingMode: .absoluteY, cycles: 4, bytes: 3, fn: self.LDA),
+      0xBD: Instruction(addressingMode: .absoluteX, cycles: 4, bytes: 3, fn: self.LDA),
+      
+      0xA2: Instruction(addressingMode: .immediate, cycles: 2, bytes: 2, fn: self.LDX),
+      0xA6: Instruction(addressingMode: .zeroPage, cycles: 3, bytes: 2, fn: self.LDX),
+      0xAE: Instruction(addressingMode: .absolute, cycles: 4, bytes: 3, fn: self.LDX),
+      0xB6: Instruction(addressingMode: .zeroPageY, cycles: 4, bytes: 2, fn: self.LDX),
+      0xBE: Instruction(addressingMode: .absoluteY, cycles: 4, bytes: 3, fn: self.LDX),
+      
+      0xA0: Instruction(addressingMode: .immediate, cycles: 2, bytes: 2, fn: self.LDY),
+      0xA4: Instruction(addressingMode: .zeroPage, cycles: 3, bytes: 2, fn: self.LDY),
+      0xAC: Instruction(addressingMode: .absolute, cycles: 4, bytes: 3, fn: self.LDY),
+      0xB4: Instruction(addressingMode: .zeroPageX, cycles: 4, bytes: 2, fn: self.LDY),
+      0xBC: Instruction(addressingMode: .absoluteX, cycles: 4, bytes: 3, fn: self.LDY),
+      
+      0x46: Instruction(addressingMode: .zeroPage, cycles: 5, bytes: 2, fn: self.LSR),
+      0x4A: Instruction(addressingMode: .accumulator, cycles: 2, bytes: 1, fn: self.LSR),
+      0x4E: Instruction(addressingMode: .absolute, cycles: 6, bytes: 3, fn: self.LSR),
+      0x56: Instruction(addressingMode: .zeroPageX, cycles: 6, bytes: 2, fn: self.LSR),
+      0x5E: Instruction(addressingMode: .absoluteX, cycles: 7, bytes: 3, fn: self.LSR),
+      
+      0xEA: Instruction(addressingMode: .implied, cycles: 2, bytes: 1, fn: self.NOP),
+      
+      0x01: Instruction(addressingMode: .indirectX, cycles: 6, bytes: 2, fn: self.ORA),
+      0x05: Instruction(addressingMode: .zeroPage, cycles: 3, bytes: 2, fn: self.ORA),
+      0x09: Instruction(addressingMode: .immediate, cycles: 2, bytes: 2, fn: self.ORA),
+      0x0D: Instruction(addressingMode: .absolute, cycles: 4, bytes: 3, fn: self.ORA),
+      0x11: Instruction(addressingMode: .indirectY, cycles: 5, bytes: 2, fn: self.ORA),
+      0x15: Instruction(addressingMode: .zeroPageX, cycles: 4, bytes: 2, fn: self.ORA),
+      0x19: Instruction(addressingMode: .absoluteY, cycles: 4, bytes: 3, fn: self.ORA),
+      0x1D: Instruction(addressingMode: .absoluteX, cycles: 4, bytes: 3, fn: self.ORA),
+      
+      0x48: Instruction(addressingMode: .implied, cycles: 3, bytes: 1, fn: self.PHA),
+      0x08: Instruction(addressingMode: .implied, cycles: 3, bytes: 1, fn: self.PHP),
+      
+      0x68: Instruction(addressingMode: .implied, cycles: 4, bytes: 1, fn: self.PLA),
+      
+      0x28: Instruction(addressingMode: .implied, cycles: 4, bytes: 1, fn: self.PLP),
+      
+      0x26: Instruction(addressingMode: .zeroPage, cycles: 5, bytes: 2, fn: self.ROL),
+      
+      0x2A: Instruction(addressingMode: .accumulator, cycles: 2, bytes: 1, fn: self.ROL),
+      0x2E: Instruction(addressingMode: .absolute, cycles: 6, bytes: 3, fn: self.ROL),
+      0x36: Instruction(addressingMode: .zeroPageX, cycles: 6, bytes: 2, fn: self.ROL),
+      0x3E: Instruction(addressingMode: .absoluteX, cycles: 7, bytes: 3, fn: self.ROL),
+      
+      0x66: Instruction(addressingMode: .zeroPage, cycles: 5, bytes: 2, fn: self.ROR),
+      0x6A: Instruction(addressingMode: .accumulator, cycles: 2, bytes: 1, fn: self.ROR),
+      0x6E: Instruction(addressingMode: .absolute, cycles: 6, bytes: 3, fn: self.ROR),
+      0x76: Instruction(addressingMode: .zeroPageX, cycles: 6, bytes: 2, fn: self.ROR),
+      0x7E: Instruction(addressingMode: .absoluteX, cycles: 7, bytes: 3, fn: self.ROR),
+      
+      0x40: Instruction(addressingMode: .implied, cycles: 6, bytes: 1, fn: self.RTI),
+      
+      0x60: Instruction(addressingMode: .implied, cycles: 6, bytes: 1, fn: self.RTS),
+      
+      0xE1: Instruction(addressingMode: .indirectX, cycles: 6, bytes: 2, fn: self.SBC),
+      0xE5: Instruction(addressingMode: .zeroPage, cycles: 3, bytes: 2, fn: self.SBC),
+      0xE9: Instruction(addressingMode: .immediate, cycles: 2, bytes: 2, fn: self.SBC),
+      0xED: Instruction(addressingMode: .absolute, cycles: 4, bytes: 3, fn: self.SBC),
+      0xF1: Instruction(addressingMode: .indirectY, cycles: 5, bytes: 2, fn: self.SBC),
+      0xF5: Instruction(addressingMode: .zeroPageX, cycles: 4, bytes: 2, fn: self.SBC),
+      0xF9: Instruction(addressingMode: .absoluteY, cycles: 4, bytes: 3, fn: self.SBC),
+      0xFD: Instruction(addressingMode: .absoluteX, cycles: 4, bytes: 3, fn: self.SBC),
+      0x38: Instruction(addressingMode: .implied, cycles: 2, bytes: 1, fn: self.SEC),
+      
+      0xF8: Instruction(addressingMode: .implied, cycles: 2, bytes: 1, fn: self.SED),
+      
+      0x78: Instruction(addressingMode: .implied, cycles: 2, bytes: 1, fn: self.SEI),
+      
+      0x81: Instruction(addressingMode: .indirectX, cycles: 6, bytes: 2, fn: self.STA),
+      0x85: Instruction(addressingMode: .zeroPage, cycles: 3, bytes: 2, fn: self.STA),
+      0x8D: Instruction(addressingMode: .absolute, cycles: 4, bytes: 3, fn: self.STA),
+      0x91: Instruction(addressingMode: .indirectY, cycles: 6, bytes: 2, fn: self.STA),
+      0x95: Instruction(addressingMode: .zeroPageX, cycles: 4, bytes: 2, fn: self.STA),
+      0x99: Instruction(addressingMode: .absoluteY, cycles: 5, bytes: 3, fn: self.STA),
+      0x9D: Instruction(addressingMode: .absoluteX, cycles: 5, bytes: 3, fn: self.STA),
+      
+      0x86: Instruction(addressingMode: .zeroPage, cycles: 3, bytes: 2, fn: self.STX),
+      0x8E: Instruction(addressingMode: .absolute, cycles: 4, bytes: 3, fn: self.STX),
+      0x96: Instruction(addressingMode: .zeroPageY, cycles: 4, bytes: 2, fn: self.STX),
+      0x84: Instruction(addressingMode: .zeroPage, cycles: 3, bytes: 2, fn: self.STY),
+      0x8C: Instruction(addressingMode: .absolute, cycles: 4, bytes: 3, fn: self.STY),
+      0x94: Instruction(addressingMode: .zeroPageX, cycles: 4, bytes: 2, fn: self.STY),
+      0xAA: Instruction(addressingMode: .implied, cycles: 2, bytes: 1, fn: self.TAX),
+      0xA8: Instruction(addressingMode: .implied, cycles: 2, bytes: 1, fn: self.TAY),
+      0xBA: Instruction(addressingMode: .implied, cycles: 2, bytes: 1, fn: self.TSX),
+      0x8A: Instruction(addressingMode: .implied, cycles: 2, bytes: 1, fn: self.TXA),
+      0x9A: Instruction(addressingMode: .implied, cycles: 2, bytes: 1, fn: self.TXS),
+      0x98: Instruction(addressingMode: .implied, cycles: 2, bytes: 1, fn: self.TYA)
+    ]
+    guard let instruction = table[opcode] else {
+      fatalError("Unknown opcode: \(opcode)")
+    }
+    
+    return instruction
+  }
+}
