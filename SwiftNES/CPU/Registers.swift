@@ -28,7 +28,7 @@ class Registers {
     case carry
     case zero
     case interrupt
-    case decimalMode
+    case decimal
     case brk //break
     case overflow
     case negative

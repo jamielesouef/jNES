@@ -90,6 +90,19 @@ private extension CPU {
       : offset.addingReportingOverflow(singedValue).partialValue)
     }
   }
+  
+  func compare(against value: UInt8) {
+    let param = loadByteFromMemory()
+    let result = value.subtractingReportingOverflow(param).partialValue
+    
+    if param <= value {
+      memory.registers.set(.carry)
+    } else {
+      memory.registers.unset(.carry)
+    }
+    
+    setZeroAndNegativeFlag(result)
+  }
 }
  
 extension CPU {
@@ -182,39 +195,50 @@ extension CPU {
   }
   
   func CLC() {
-    fatalError("CLC Not Implimented")
+    memory.registers.unset(.carry)
   }
   
   func CLD() {
-    fatalError("CLD Not Implimented")
+    memory.registers.unset(.decimal)
   }
   
   func CLI() {
-    fatalError("CLI Not Implimented")
+     memory.registers.unset(.interrupt)
   }
   
   func CLV() {
-    fatalError("CLV Not Implimented")
+    memory.registers.unset(.overflow)
   }
   
   func CMP() {
-    fatalError("CMP Not Implimented")
+    compare(against: memory.registers.A)
   }
   
   func CPX() {
-    fatalError("CPX Not Implimented")
+    compare(against: memory.registers.X)
   }
   
   func CPY() {
-    fatalError("CPY Not Implimented")
+    compare(against: memory.registers.Y)
   }
   
   func DEC() {
-    fatalError("DEC Not Implimented")
+    let param = loadByteFromMemory()
+    let result = param - 1
+    memory.writeMem(at: memory.pc, value: result)
+    setZeroAndNegativeFlag(result)
+  }
+  
+  func DEX() {
+    let param = memory.registers.X - 1
+    memory.registers.set(.X, to: param)
+    setZeroFlag(param)
   }
   
   func DEY() {
-    fatalError("DEY Not Implimented")
+    let param = memory.registers.Y - 1
+    memory.registers.set(.X, to: param)
+    setZeroFlag(param)
   }
   
   func EOR() {
@@ -229,6 +253,7 @@ extension CPU {
     let newX = memory.registers.X.addingReportingOverflow(1).partialValue
     memory.registers.set(.X, to: newX)
     setZeroAndNegativeFlag(memory.registers.X)
+    
   }
   
   func INY() {
@@ -356,15 +381,12 @@ extension CPU {
   func TYA() {
     fatalError("TYA Not Implimented")
   }
-  
-  func DEX() {
-    fatalError("DEX Not ImplimentedlError")
-  }
 }
 
 // Helpers
 
 private extension CPU {
+  
   func setZeroAndNegativeFlag(_ value: UInt8) {
     setZeroFlag(value)
     setNegativeFlag(value)
