@@ -37,7 +37,7 @@ final class CPU {
   func run() throws {
     while loop {
       let oppcode: UInt8 = memory.readMemAtCounter()
-      l(oppcode, r: 16)
+      log(oppcode, r: 16)
       memory.pc += 1
       
       try dispatch(oppcode)
@@ -45,7 +45,7 @@ final class CPU {
     
     func dispatch(_ opcode: UInt8) throws {
       let instruction = getInstructions(forOpcode: opcode)
-      self.addressingMode = instruction.addressingMode
+      self.addressingMode = instruction.mode
       instruction.fn()
     }
   }
@@ -59,6 +59,7 @@ private extension CPU {
     }
     
     self.addressingMode = nil
+    log("Addressing mode: \(mode)")
     return mode
   }
   
@@ -66,12 +67,14 @@ private extension CPU {
     let addressingMode = unsafeGetAddresingMode()
     
     if addressingMode == .accumulator {
+      log("return A register value \(memory.registers.A))")
       return memory.registers.A
     }
     
     let addr = memory.getOpperandAddress(for: addressingMode)
     let byte = memory.readMem(at: addr)
     memory.pc += 1
+    log("return byte \(byte)")
     return byte
   }
   

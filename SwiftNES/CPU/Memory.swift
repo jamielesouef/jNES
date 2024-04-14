@@ -86,6 +86,8 @@ final class Memory {
     buffer[pc]
   }
   
+  // MARK: - Memory operations
+  
   func readMem(at address: MemoryAddress) -> UInt8 {
     let tructatedAddress = truncate(address: address)
     return buffer[tructatedAddress]
@@ -110,14 +112,18 @@ final class Memory {
     self.writeMem(at: address, value: lo)
     self.writeMem(at: address + 1 , value: hi)
   }
-}
 
-// MARK: - Stack operations
-extension Memory {
+
+  // MARK: - Stack operations
   
   func pushStack(_ value: UInt8) {
     writeMem(at: 0x0100 + UInt16(sp), value: value)
     sp = sp.subtractingReportingOverflow(1).partialValue
+  }
+  
+  func popStack() -> UInt8 {
+    sp = sp.addingReportingOverflow(1).partialValue
+    return readMem(at: 0x100 + UInt16(sp))
   }
   
   func pushStack16(_ value: UInt16) {
@@ -125,11 +131,6 @@ extension Memory {
     let hi = UInt8(value >> 8)
     pushStack(hi)
     pushStack(lo)
-  }
-  
-  func popStack() -> UInt8 {
-    sp = sp.addingReportingOverflow(1).partialValue
-    return readMem(at: 0x100 + UInt16(sp))
   }
   
   func popStack16() -> UInt16 {
@@ -152,6 +153,8 @@ private extension Memory {
     case .Y: return registers.Y
     }
   }
+  
+  // MARK: - Addressing mode
   
   func getZeroPage(offsetBy register: AddressingIndex) -> MemoryAddress {
     let operand: Operand = readMem(at: pc)
