@@ -34,8 +34,8 @@ class Registers {
     case negative
   }
   
-  enum IndexRegister {
-    case accumulator,X,Y
+  enum Accumulator {
+    case A,X,Y
   }
   
   private (set) var A: UInt8
@@ -65,9 +65,9 @@ class Registers {
     p & flag.mask != 0
   }
   
-  func set(_ register: IndexRegister, to param: UInt8) {
+  func set(_ register: Accumulator, to param: UInt8) {
     switch register {
-    case .accumulator: self.A = param
+    case .A: self.A = param
     case .X: self.X = param
     case .Y: self.Y = param
     }
@@ -86,7 +86,7 @@ extension Registers.StatusFlag {
     case .carry: 1 << 0
     case .zero: 1 << 1
     case .interrupt: 1 << 2
-    case .decimalMode: 1 << 3
+    case .decimal: 1 << 3
     case .brk: 1 << 4
     case .overflow: 1 << 6
     case .negative: 1 << 7

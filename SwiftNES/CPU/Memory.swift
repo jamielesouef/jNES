@@ -27,6 +27,8 @@ final class Memory {
  
   var pc: MemoryAddress = 0x0000
   
+  private var sp: UInt8 = 0xFF
+  
   private var buffer: [UInt8] = .init(repeating: 0, count: 0xFFFF)
   
   private (set) var registers: Registers = Registers()
@@ -107,6 +109,33 @@ final class Memory {
     let hi = UInt8(value >> 8)
     self.writeMem(at: address, value: lo)
     self.writeMem(at: address + 1 , value: hi)
+  }
+}
+
+// MARK: - Stack operations
+extension Memory {
+  
+  func pushStack(_ value: UInt8) {
+    writeMem(at: 0x0100 + UInt16(sp), value: value)
+    sp = sp.subtractingReportingOverflow(1).partialValue
+  }
+  
+  func pushStack16(_ value: UInt16) {
+    let lo = UInt8(value & 0xFF)
+    let hi = UInt8(value >> 8)
+    pushStack(hi)
+    pushStack(lo)
+  }
+  
+  func popStack() -> UInt8 {
+    sp = sp.addingReportingOverflow(1).partialValue
+    return readMem(at: 0x100 + UInt16(sp))
+  }
+  
+  func popStack16() -> UInt16 {
+    let lo = UInt16(popStack())
+    let hi = UInt16(popStack())
+    return hi << 8 | lo
   }
 }
 

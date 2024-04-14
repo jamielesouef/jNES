@@ -51,7 +51,7 @@ final class CPU {
   }
 }
 
-// MARK: Instructions
+// MARK: Opcode functions helpers
 private extension CPU {
   func unsafeGetAddresingMode() -> AddressingMode {
     guard let mode = self.addressingMode else {
@@ -103,8 +103,29 @@ private extension CPU {
     
     setZeroAndNegativeFlag(result)
   }
+  
+  func increment(param: UInt8) -> UInt8 {
+    let result = param.addingReportingOverflow(1)
+   
+    setZeroAndNegativeFlag(result.partialValue)
+    
+    if result.overflow {
+      memory.registers.set(.carry)
+    } else {
+      memory.registers.unset(.carry)
+    }
+    
+    return result.partialValue
+  }
+  
+  func loadMem(to register: Registers.Accumulator) {
+    let param = loadByteFromMemory()
+    memory.registers.set(register, to: param)
+    setZeroAndNegativeFlag(param)
+  }
 }
  
+// MARK: Opcode functions
 extension CPU {
   func ADC() {
     // A,Z,C,N = A+M+C
@@ -121,7 +142,7 @@ extension CPU {
       memory.registers.unset(.carry)
     }
     
-    memory.registers.set(.accumulator, to: UInt8(result & 0xFF))
+    memory.registers.set(.A, to: UInt8(result & 0xFF))
     
     setZeroAndNegativeFlag(memory.registers.A)
   }
@@ -130,7 +151,7 @@ extension CPU {
     //A,Z,N = A&M
     let param = loadByteFromMemory()
     let result = memory.registers.A & param
-    memory.registers.set(.accumulator, to: result)
+    memory.registers.set(.A, to: result)
   }
   
   func ASL() {
@@ -144,7 +165,7 @@ extension CPU {
       memory.registers.set(.carry)
     }
     
-    memory.registers.set(.accumulator, to: result)
+    memory.registers.set(.A, to: result)
     setZeroAndNegativeFlag(result)
   
   }
@@ -167,7 +188,12 @@ extension CPU {
     
     let result = param & a
     setZeroAndNegativeFlag(result)
-    setOverflowFlag(result)
+    
+    if (result & 0b0100_0000) > 0 {
+      memory.registers.set(.overflow)
+    } else {
+      memory.registers.unset(.overflow)
+    }
   }
   
   func BMI() {
@@ -242,29 +268,33 @@ extension CPU {
   }
   
   func EOR() {
-    fatalError("EOR Not Implimented")
+    let param = loadByteFromMemory()
+    let result = memory.registers.A ^ param
+    memory.registers.set(.A, to: result)
+    setZeroAndNegativeFlag(result)
   }
-  
+    
   func INC() {
-    fatalError("INC Not Implimented")
+    var param = loadByteFromMemory()
+    let i = increment(param: param)
+    memory.writeMem(at: memory.pc, value: param)
+    
   }
   
   func INX() {
-    let newX = memory.registers.X.addingReportingOverflow(1).partialValue
-    memory.registers.set(.X, to: newX)
-    setZeroAndNegativeFlag(memory.registers.X)
+    let i = increment(param: memory.registers.X)
+    memory.registers.set(.X, to: i)
     
   }
   
   func INY() {
-    fatalError("INY Not Implimented")
+    let i = increment(param: memory.registers.Y)
+    memory.registers.set(.Y, to: i)
   }
-  
-  
- 
-  
+    
   func JMP() {
-    fatalError("JMP Not Implimented")
+    let ptr = memory.readMem16(at: memory.pc)
+    memory.pc = ptr
   }
   
   func JSR() {
@@ -272,29 +302,43 @@ extension CPU {
   }
   
   func LDA() {
-    let param = loadByteFromMemory()
-    memory.registers.set(.accumulator, to: param)
-    setZeroAndNegativeFlag(param)
+    loadMem(to: .A)
   }
   
   func LDX() {
-    fatalError("LDX Not Implimented")
+    loadMem(to: .X)
   }
   
   func LDY() {
-    fatalError("LDY Not Implimented")
+    loadMem(to: .Y)
   }
   
   func LSR() {
-    fatalError("LSR Not Implimented")
+    
+    let ptr = loadByteFromMemory()
+    var mem = memory.readMem(at: MemoryAddress(ptr))
+    
+    if (mem & 0x01) == 1 {
+      memory.registers.set(.carry)
+    } else {
+      memory.registers.unset(.carry)
+    }
+    
+    mem = mem >> 1
+    memory.writeMem(at: MemoryAddress(ptr), value: mem)
+    setZeroAndNegativeFlag(mem)
+    
   }
   
   func NOP() {
-    fatalError("NOP Not Implimented")
+    // NOP
   }
   
   func ORA() {
-    fatalError("ORA Not Implimented")
+    let param = loadByteFromMemory()
+    let result = memory.registers.A
+    memory.registers.set(.A, to: result)
+    setZeroAndNegativeFlag(result)
   }
   
   func PHA() {
@@ -408,14 +452,7 @@ private extension CPU {
     }
   }
   
-  func setOverflowFlag(_ value: UInt8) {
-    if (value & 0b0100_0000) > 0 {
-      memory.registers.set(.overflow)
-    } else {
-      memory.registers.unset(.overflow)
-    })
-    
-  }
+ 
 }
 
 
