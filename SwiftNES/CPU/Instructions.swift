@@ -108,7 +108,7 @@ extension CPU {
       0x3D: Instruction(mode: .absoluteX, cycles: 4, bytes: 3, fn: self.AND),
       
       0x06: Instruction(mode: .zeroPage, cycles: 5, bytes: 2, fn: self.ASL),
-      0x0A: Instruction(mode: .accumulator, cycles: 2, bytes: 1, fn: self.ASL),
+      0x0A: Instruction(mode: .accumulator, cycles: 2, bytes: 1, fn: self.ASL_accumulator),
       0x0E: Instruction(mode: .absolute, cycles: 6, bytes: 3, fn: self.ASL),
       0x16: Instruction(mode: .zeroPageX, cycles: 6, bytes: 2, fn: self.ASL),
       0x1E: Instruction(mode: .absoluteX, cycles: 7, bytes: 3, fn: self.ASL),
@@ -210,7 +210,7 @@ extension CPU {
       0xBC: Instruction(mode: .absoluteX, cycles: 4, bytes: 3, fn: self.LDY),
       
       0x46: Instruction(mode: .zeroPage, cycles: 5, bytes: 2, fn: self.LSR),
-      0x4A: Instruction(mode: .accumulator, cycles: 2, bytes: 1, fn: self.LSR),
+      0x4A: Instruction(mode: .accumulator, cycles: 2, bytes: 1, fn: self.LSR_accumulator),
       0x4E: Instruction(mode: .absolute, cycles: 6, bytes: 3, fn: self.LSR),
       0x56: Instruction(mode: .zeroPageX, cycles: 6, bytes: 2, fn: self.LSR),
       0x5E: Instruction(mode: .absoluteX, cycles: 7, bytes: 3, fn: self.LSR),
@@ -235,13 +235,13 @@ extension CPU {
       
       0x26: Instruction(mode: .zeroPage, cycles: 5, bytes: 2, fn: self.ROL),
       
-      0x2A: Instruction(mode: .accumulator, cycles: 2, bytes: 1, fn: self.ROL),
+      0x2A: Instruction(mode: .accumulator, cycles: 2, bytes: 1, fn: self.ROL_accumulator),
       0x2E: Instruction(mode: .absolute, cycles: 6, bytes: 3, fn: self.ROL),
       0x36: Instruction(mode: .zeroPageX, cycles: 6, bytes: 2, fn: self.ROL),
       0x3E: Instruction(mode: .absoluteX, cycles: 7, bytes: 3, fn: self.ROL),
       
       0x66: Instruction(mode: .zeroPage, cycles: 5, bytes: 2, fn: self.ROR),
-      0x6A: Instruction(mode: .accumulator, cycles: 2, bytes: 1, fn: self.ROR),
+      0x6A: Instruction(mode: .accumulator, cycles: 2, bytes: 1, fn: self.ROR_accumulator),
       0x6E: Instruction(mode: .absolute, cycles: 6, bytes: 3, fn: self.ROR),
       0x76: Instruction(mode: .zeroPageX, cycles: 6, bytes: 2, fn: self.ROR),
       0x7E: Instruction(mode: .absoluteX, cycles: 7, bytes: 3, fn: self.ROR),

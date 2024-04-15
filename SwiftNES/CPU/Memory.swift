@@ -116,26 +116,26 @@ final class Memory {
 
   // MARK: - Stack operations
   
-  func pushStack(_ value: UInt8) {
+  func stackPush(_ value: UInt8) {
     writeMem(at: 0x0100 + UInt16(sp), value: value)
     sp = sp.subtractingReportingOverflow(1).partialValue
   }
   
-  func popStack() -> UInt8 {
+  func stackPop() -> UInt8 {
     sp = sp.addingReportingOverflow(1).partialValue
     return readMem(at: 0x100 + UInt16(sp))
   }
   
-  func pushStack16(_ value: UInt16) {
+  func stackPush16(_ value: UInt16) {
     let lo = UInt8(value & 0xFF)
     let hi = UInt8(value >> 8)
-    pushStack(hi)
-    pushStack(lo)
+    stackPush(hi)
+    stackPush(lo)
   }
   
-  func popStack16() -> UInt16 {
-    let lo = UInt16(popStack())
-    let hi = UInt16(popStack())
+  func stackPop16() -> UInt16 {
+    let lo = UInt16(stackPop())
+    let hi = UInt16(stackPop())
     return hi << 8 | lo
   }
 }

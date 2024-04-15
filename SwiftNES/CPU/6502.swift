@@ -78,6 +78,21 @@ private extension CPU {
     return byte
   }
   
+  func loadByteFromMemory() -> UInt16 {
+    let addressingMode = unsafeGetAddresingMode()
+    
+    if addressingMode == .accumulator {
+      log("return A register value \(memory.registers.A))")
+      return UInt16(memory.registers.A)
+    }
+    
+    let addr = memory.getOpperandAddress(for: addressingMode)
+    let byte = memory.readMem16(at: addr)
+    memory.pc += 1
+    log("return byte \(byte)")
+    return byte
+  }
+  
   func signedValue(from byte: UInt8) -> (UInt8, Bool) {
     let isSigned = byte & 0b1000_0000 != 0
     return (byte & 0b0111_1111, isSigned)
@@ -95,7 +110,7 @@ private extension CPU {
   }
   
   func compare(against value: UInt8) {
-    let param = loadByteFromMemory()
+    let param: UInt8 = loadByteFromMemory()
     let result = value.subtractingReportingOverflow(param).partialValue
     
     if param <= value {
@@ -122,7 +137,7 @@ private extension CPU {
   }
   
   func loadMem(to register: Registers.Accumulator) {
-    let param = loadByteFromMemory()
+    let param: UInt8 = loadByteFromMemory()
     memory.registers.set(register, to: param)
     setZeroAndNegativeFlag(param)
   }
@@ -133,11 +148,11 @@ extension CPU {
   func ADC() {
     // A,Z,C,N = A+M+C
     
-    let param = UInt16(loadByteFromMemory())
+    let param: UInt8 = loadByteFromMemory()
     
     let carry: UInt16 = memory.registers.isSet(.carry) ? 1 : 0
     let a = UInt16(memory.registers.A)
-    let result = a + param + carry
+    let result = a + UInt16(param) + carry
 
     if result > 0xFF {
       memory.registers.set(.carry)
@@ -152,25 +167,26 @@ extension CPU {
     
   func AND() {
     //A,Z,N = A&M
-    let param = loadByteFromMemory()
+    let param: UInt8 = loadByteFromMemory()
     let result = memory.registers.A & param
     memory.registers.set(.A, to: result)
   }
   
-  func ASL() {
-    let param = loadByteFromMemory()
+  private func _ASL(param: UInt8) {
     let bit7 = param >> 7
     let result = memory.registers.A << 1
 
-    if bit7 == 0 {
-      memory.registers.unset(.carry)
-    } else {
-      memory.registers.set(.carry)
-    }
-    
     memory.registers.set(.A, to: result)
     setZeroAndNegativeFlag(result)
+    setCarryFlag(result)
+  }
   
+  func ASL() {
+    _ASL(param: loadByteFromMemory())
+  }
+  
+  func ASL_accumulator(){
+    _ASL(param: memory.registers.A)
   }
   
   func BCC() {
@@ -186,7 +202,7 @@ extension CPU {
   }
   
   func BIT() {
-    let param = loadByteFromMemory()
+    let param: UInt8 = loadByteFromMemory()
     let a = memory.registers.A
     
     let result = param & a
@@ -252,7 +268,7 @@ extension CPU {
   }
   
   func DEC() {
-    let param = loadByteFromMemory()
+    let param: UInt8 = loadByteFromMemory()
     let result = param - 1
     memory.writeMem(at: memory.pc, value: result)
     setZeroAndNegativeFlag(result)
@@ -271,17 +287,16 @@ extension CPU {
   }
   
   func EOR() {
-    let param = loadByteFromMemory()
+    let param: UInt8 = loadByteFromMemory()
     let result = memory.registers.A ^ param
     memory.registers.set(.A, to: result)
     setZeroAndNegativeFlag(result)
   }
     
   func INC() {
-    var param = loadByteFromMemory()
+    var param: UInt8 = loadByteFromMemory()
     let i = increment(param: param)
     memory.writeMem(at: memory.pc, value: param)
-    
   }
   
   func INX() {
@@ -301,7 +316,9 @@ extension CPU {
   }
   
   func JSR() {
-    fatalError("JSR Not Implimented")
+    let param: UInt16 = loadByteFromMemory()
+    memory.stackPush16(memory.pc)
+    memory.pc = param
   }
   
   func LDA() {
@@ -316,21 +333,24 @@ extension CPU {
     loadMem(to: .Y)
   }
   
-  func LSR() {
+  func _LSR(param: UInt8) -> UInt8 {
+    let result = param >> 1
+    setZeroAndNegativeFlag(result)
+    setCarryFlag(result)
+    return result
+  }
     
-    let ptr = loadByteFromMemory()
+  func LSR() {
+    let ptr: UInt8 = loadByteFromMemory()
     var mem = memory.readMem(at: MemoryAddress(ptr))
     
-    if (mem & 0x01) == 1 {
-      memory.registers.set(.carry)
-    } else {
-      memory.registers.unset(.carry)
-    }
-    
-    mem = mem >> 1
+    mem = _LSR(param: mem)
     memory.writeMem(at: MemoryAddress(ptr), value: mem)
-    setZeroAndNegativeFlag(mem)
-    
+  }
+  
+  func LSR_accumulator() {
+    var mem = _LSR(param: memory.registers.A)
+    memory.registers.set(.A, to: mem)
   }
   
   func NOP() {
@@ -338,34 +358,73 @@ extension CPU {
   }
   
   func ORA() {
-    let param = loadByteFromMemory()
+    let param: UInt8 = loadByteFromMemory()
     let result = memory.registers.A
     memory.registers.set(.A, to: result)
     setZeroAndNegativeFlag(result)
   }
   
   func PHA() {
-    fatalError("PHA Not Implimented")
+    memory.stackPush(memory.registers.A)
   }
   
   func PHP() {
-    fatalError("PHP Not Implimented")
+    memory.stackPush(memory.registers.p)
   }
   
   func PLA() {
-    fatalError("PLA Not Implimented")
+    memory.registers.set(.A, to: memory.stackPop())
   }
   
   func PLP() {
-    fatalError("PLP Not Implimented")
+    memory.registers.set(programStatus: memory.stackPop())
+  }
+  
+  private func _ROL(param: UInt8) -> UInt8 {
+    let msb = param >> 7
+    let result = (param << 1) | msb
+    
+    setZeroAndNegativeFlag(param)
+    setCarryFlag(param)
+    
+    return result
   }
   
   func ROL() {
-    fatalError("ROL Not Implimented")
+    let memoryAddress: UInt8 = loadByteFromMemory()
+    var param = memory.readMem(at: MemoryAddress(memoryAddress))
+    memory.writeMem(at: MemoryAddress(memoryAddress), value: _ROL(param: param))
+  }
+  
+  func ROL_accumulator() {
+    memory.registers.set(.A, to: _ROL(param: memory.registers.A))
+  }
+  
+  private func _ROR(param: UInt8) -> UInt8 {
+    let previousCarry: UInt8 = memory.registers.isSet(.carry) ? 1 : 0
+    let lsb = param & 1
+    
+    let result = (param >> 1) | (previousCarry << 7)
+    
+    setZeroFlag(result)
+    setNegativeFlag(result)
+    setCarryFlag(lsb)
+    
+    return result
   }
   
   func ROR() {
-    fatalError("ROR Not Implimented")
+    let memoryAddress: UInt8 = loadByteFromMemory()
+    var param = memory.readMem(at: MemoryAddress(memoryAddress))
+    
+    let result = _ROL(param: param)
+    
+    memory.writeMem(at: memory.pc, value: result)
+  }
+  
+  func ROR_accumulator() {
+    let result = _ROL(param: memory.registers.A)
+    memory.registers.set(.A, to: result)
   }
   
   func RTI() {
@@ -433,6 +492,14 @@ extension CPU {
 // Helpers
 
 private extension CPU {
+  
+  func setCarryFlag(_ value: UInt8) {
+    if value & (1 << 7) != 0 {
+      memory.registers.set(.carry)
+    } else {
+      memory.registers.unset(.carry)
+    }
+  }
   
   func setZeroAndNegativeFlag(_ value: UInt8) {
     setZeroFlag(value)

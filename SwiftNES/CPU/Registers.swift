@@ -41,14 +41,12 @@ class Registers {
   private (set) var A: UInt8
   private (set) var X: UInt8
   private (set) var Y: UInt8
-  private (set) var sp: UInt8
   private (set) var p: UInt8 //NV-BDIZC
   
-  init(A: UInt8 = 0, X: UInt8 = 0, Y: UInt8 = 0, sp: UInt8 = 0, p: UInt8 = 0x20) {
+  init(A: UInt8 = 0, X: UInt8 = 0, Y: UInt8 = 0, p: UInt8 = 0x20) {
     self.A = A
     self.X = X
     self.Y = Y
-    self.sp = sp
     self.p = p
   }
   
@@ -56,13 +54,16 @@ class Registers {
     p = p | flag.mask
   }
   
-  
   func unset(_ flag: StatusFlag) {
     p = p & ~flag.mask
   }
   
   func isSet(_ flag: StatusFlag) -> Bool {
     p & flag.mask != 0
+  }
+  
+  func set(programStatus p: UInt8) {
+    self.p = p
   }
   
   func set(_ register: Accumulator, to param: UInt8) {
