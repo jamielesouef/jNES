@@ -274,19 +274,55 @@ final class _6502_Opcodes: XCTestCase {
   }
   
   func testCPX() throws {
+    cpu.memory.registers.set(.X, to: 0x01)
+    cpu.memory.writeMem(at: 0x00, value: 0xA1)
     cpu.CPX()
+    
+    XCTAssertFalse(cpu.memory.registers.isSet(.carry))
+    XCTAssertFalse(cpu.memory.registers.isSet(.zero))
+    XCTAssertFalse(cpu.memory.registers.isSet(.negative))
   }
   
   func testCPY() throws {
+    cpu.memory.registers.set(.Y, to: 0x01)
+    cpu.memory.writeMem(at: 0x00, value: 0xA1)
     cpu.CPY()
+    
+    XCTAssertFalse(cpu.memory.registers.isSet(.carry))
+    XCTAssertFalse(cpu.memory.registers.isSet(.zero))
+    XCTAssertFalse(cpu.memory.registers.isSet(.negative))
   }
   
   func testDEC() throws {
+    cpu.memory.setProgramCounter(0x00)
+    cpu.memory.writeMem(at: 0x00, value: 0xFF)
     cpu.DEC()
+    
+    XCTAssertEqual(cpu.memory.readMem(at: 0x00), 0xFE)
+    XCTAssertFalse(cpu.memory.registers.isSet(.carry))
+    XCTAssertFalse(cpu.memory.registers.isSet(.zero))
+    XCTAssertTrue(cpu.memory.registers.isSet(.negative))
   }
   
   func testDEY() throws {
+    cpu.memory.registers.set(.Y, to: 0x01)
     cpu.DEY()
+    
+    XCTAssertEqual(cpu.memory.registers.Y, 0x00)
+    XCTAssertFalse(cpu.memory.registers.isSet(.carry))
+    XCTAssertTrue(cpu.memory.registers.isSet(.zero))
+    XCTAssertFalse(cpu.memory.registers.isSet(.negative))
+  }
+  
+  func testDEX() throws {
+    cpu.memory.registers.set(.X, to: 0x01)
+    cpu.DEX()
+    
+    XCTAssertEqual(cpu.memory.registers.X, 0x00)
+    XCTAssertFalse(cpu.memory.registers.isSet(.carry))
+    XCTAssertTrue(cpu.memory.registers.isSet(.zero))
+    XCTAssertFalse(cpu.memory.registers.isSet(.negative))
+    
   }
   
   func testEOR() throws {
@@ -420,9 +456,4 @@ final class _6502_Opcodes: XCTestCase {
   func testTYA() throws {
     cpu.TYA()
   }
-  
-  func testDEX() throws {
-    cpu.DEX()
-  }
-  
 }

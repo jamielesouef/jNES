@@ -28,7 +28,7 @@ final class CPU {
     self.memory = memory
     self.addressingMode = addressingMode
   }
-
+  
   func load(program: [UInt8]) {
     memory.load(program: program)
   }
@@ -124,16 +124,16 @@ private extension CPU {
     let param: UInt8 = loadByteFromMemory()
     let subtractedResult = value.subtractingReportingOverflow(param).partialValue
     
-   
+    
     setZeroFlag(subtractedResult)
     setNegativeFlag(subtractedResult)
-   
+    
     setCarryFlag( value >= param ? 1 : 0)
   }
   
   func increment(param: UInt8) -> UInt8 {
     let result = param.addingReportingOverflow(1)
-   
+    
     setZeroAndNegativeFlag(result.partialValue)
     
     if result.overflow {
@@ -200,7 +200,7 @@ private extension CPU {
   }
   
 }
- 
+
 // MARK: Opcode functions
 extension CPU {
   func ADC() {
@@ -210,7 +210,7 @@ extension CPU {
     let carry: UInt8 = memory.registers.isSet(.carry) ? 1 : 0
     let a = memory.registers.A
     let result = a.addingReportingOverflow(param + carry)
-
+    
     if result.overflow {
       memory.registers.set(.carry)
     } else {
@@ -221,14 +221,14 @@ extension CPU {
     
     setZeroAndNegativeFlag(memory.registers.A)
   }
-    
+  
   func AND() {
     //A,Z,N = A&M
     let param: UInt8 = loadByteFromMemory()
     let result = memory.registers.A & param
     memory.registers.set(.A, to: result)
   }
-
+  
   func ASL() {
     _ASL(param: loadByteFromMemory())
   }
@@ -297,7 +297,7 @@ extension CPU {
   }
   
   func CLI() {
-     memory.registers.clear(.interrupt)
+    memory.registers.clear(.interrupt)
   }
   
   func CLV() {
@@ -319,7 +319,7 @@ extension CPU {
   func DEC() {
     let param: UInt8 = loadByteFromMemory()
     let result = param - 1
-    let pc = memory.getprogramCounter()
+    let pc = memory.getprogramCounter() - 1
     memory.writeMem(at: pc, value: result)
     setZeroAndNegativeFlag(result)
   }
@@ -327,13 +327,13 @@ extension CPU {
   func DEX() {
     let param = memory.registers.X - 1
     memory.registers.set(.X, to: param)
-    setZeroFlag(param)
+    setZeroAndNegativeFlag(param)
   }
   
   func DEY() {
     let param = memory.registers.Y - 1
-    memory.registers.set(.X, to: param)
-    setZeroFlag(param)
+    memory.registers.set(.Y, to: param)
+    setZeroAndNegativeFlag(param)
   }
   
   func EOR() {
@@ -342,7 +342,7 @@ extension CPU {
     memory.registers.set(.A, to: result)
     setZeroAndNegativeFlag(result)
   }
-    
+  
   func INC() {
     let param: UInt8 = loadByteFromMemory()
     let i = increment(param: param)
@@ -360,7 +360,7 @@ extension CPU {
     let i = increment(param: memory.registers.Y)
     memory.registers.set(.Y, to: i)
   }
-    
+  
   func JMP() {
     let pc = memory.getprogramCounter()
     let ptr = memory.readMem16(at: pc)
@@ -508,7 +508,7 @@ extension CPU {
     memory.registers.set(.X, to: memory.registers.A)
     setZeroAndNegativeFlag(memory.registers.X)
   }
-
+  
   func TAY() {
     memory.registers.set(.Y, to: memory.registers.A)
     setZeroAndNegativeFlag(memory.registers.Y)
