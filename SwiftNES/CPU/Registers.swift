@@ -54,7 +54,7 @@ class Registers {
     p = p | flag.mask
   }
   
-  func unset(_ flag: StatusFlag) {
+  func clear(_ flag: StatusFlag) {
     p = p & ~flag.mask
   }
   

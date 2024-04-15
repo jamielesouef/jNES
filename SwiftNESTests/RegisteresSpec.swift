@@ -30,7 +30,7 @@ final class RegisteresSpec: XCTestCase {
       XCTAssertEqual(registers.p, statusInitValue)
       registers.set(flag)
       XCTAssertTrue(registers.p & flag.mask != 0)
-      registers.unset(flag)
+      registers.clear(flag)
       XCTAssertEqual(registers.p, statusInitValue)
     }
   }
@@ -44,11 +44,11 @@ final class RegisteresSpec: XCTestCase {
     //0110_0011
     XCTAssertEqual(registers.p, expected)
     
-    registers.unset(.carry)
+    registers.clear(.carry)
     XCTAssertEqual(registers.p, 0xA2)
-    registers.unset(.zero)
+    registers.clear(.zero)
     XCTAssertEqual(registers.p, 0xA0)
-    registers.unset(.negative)
+    registers.clear(.negative)
     XCTAssertEqual(registers.p, statusInitValue)
   }
   

@@ -26,8 +26,7 @@ enum AddressingMode {
 final class Memory {
  
   var pc: MemoryAddress = 0x0000
-  
-  private var sp: UInt8 = 0xFF
+  var sp: UInt8 = 0xFF
   
   private var buffer: [UInt8] = .init(repeating: 0, count: 0xFFFF)
   

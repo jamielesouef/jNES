@@ -116,7 +116,7 @@ private extension CPU {
     if param <= value {
       memory.registers.set(.carry)
     } else {
-      memory.registers.unset(.carry)
+      memory.registers.clear(.carry)
     }
     
     setZeroAndNegativeFlag(result)
@@ -130,7 +130,7 @@ private extension CPU {
     if result.overflow {
       memory.registers.set(.carry)
     } else {
-      memory.registers.unset(.carry)
+      memory.registers.clear(.carry)
     }
     
     return result.partialValue
@@ -157,7 +157,7 @@ extension CPU {
     if result > 0xFF {
       memory.registers.set(.carry)
     } else {
-      memory.registers.unset(.carry)
+      memory.registers.clear(.carry)
     }
     
     memory.registers.set(.A, to: UInt8(result & 0xFF))
@@ -211,7 +211,7 @@ extension CPU {
     if (result & 0b0100_0000) > 0 {
       memory.registers.set(.overflow)
     } else {
-      memory.registers.unset(.overflow)
+      memory.registers.clear(.overflow)
     }
   }
   
@@ -228,7 +228,10 @@ extension CPU {
   }
   
   func BRK() {
-    loop = false
+    memory.stackPush16(memory.pc)
+    memory.stackPush(memory.registers.p)
+    let vector = memory.readMem16(at: 0xFFFE)
+    memory.pc = vector
   }
   
   func BVC() {
@@ -240,19 +243,19 @@ extension CPU {
   }
   
   func CLC() {
-    memory.registers.unset(.carry)
+    memory.registers.clear(.carry)
   }
   
   func CLD() {
-    memory.registers.unset(.decimal)
+    memory.registers.clear(.decimal)
   }
   
   func CLI() {
-     memory.registers.unset(.interrupt)
+     memory.registers.clear(.interrupt)
   }
   
   func CLV() {
-    memory.registers.unset(.overflow)
+    memory.registers.clear(.overflow)
   }
   
   func CMP() {
@@ -428,39 +431,61 @@ extension CPU {
   }
   
   func RTI() {
-    fatalError("RTI Not Implimented")
+    let programStatus = memory.stackPop()
+    let pc = memory.stackPop16()
+    
+    memory.registers.set(programStatus: programStatus)
+    memory.pc = pc
   }
   
   func RTS() {
-    fatalError("RTS Not Implimented")
+    let returnAddress = memory.stackPop16()
+    memory.pc = returnAddress
   }
   
   func SBC() {
-    fatalError("SBC Not Implimented")
+    let param: UInt8 = loadByteFromMemory()
+    
+    let result = memory.registers.A.subtractingReportingOverflow(param)
+    memory.registers.set(.A, to: result.partialValue)
+    
+    setZeroAndNegativeFlag(result.partialValue)
+    
+    if result.overflow {
+      memory.registers.set(.carry)
+    } else {
+      memory.registers.clear(.carry)
+    }
+    
   }
   
   func SEC() {
-    fatalError("SEC Not Implimented")
+    memory.registers.set(.carry)
   }
   
   func SED() {
-    fatalError("SED Not Implimented")
+    memory.registers.set(.decimal)
   }
   
   func SEI() {
-    fatalError("SEI Not Implimented")
+    memory.registers.set(.interrupt)
+  }
+  
+  private func _STA(value: UInt8) {
+    let memoryAddress: UInt8 = loadByteFromMemory()
+    memory.writeMem(at: MemoryAddress(memoryAddress), value: value)
   }
   
   func STA() {
-    fatalError("STA Not Implimented")
+    _STA(value: memory.registers.A)
   }
   
   func STX() {
-    fatalError("STX Not Implimented")
+    _STA(value: memory.registers.X)
   }
   
   func STY() {
-    fatalError("STY Not Implimented")
+    _STA(value: memory.registers.Y)
   }
   
   func TAX() {
@@ -469,23 +494,27 @@ extension CPU {
   }
 
   func TAY() {
-    fatalError("TAY Not Implimented")
+    memory.registers.set(.Y, to: memory.registers.A)
+    setZeroAndNegativeFlag(memory.registers.Y)
   }
   
   func TSX() {
-    fatalError("TSX Not Implimented")
+    memory.registers.set(.X, to: memory.sp)
+    setZeroFlag(memory.sp)
   }
   
   func TXA() {
-    fatalError("TXA Not Implimented")
+    memory.registers.set(.X, to: memory.registers.A)
+    setZeroFlag(memory.registers.A)
   }
   
   func TXS() {
-    fatalError("TXS Not Implimented")
+    memory.sp = memory.registers.X
   }
   
   func TYA() {
-    fatalError("TYA Not Implimented")
+    memory.registers.set(.A, to: memory.registers.Y)
+    setZeroFlag(<#T##value: UInt8##UInt8#>)
   }
 }
 
@@ -497,7 +526,7 @@ private extension CPU {
     if value & (1 << 7) != 0 {
       memory.registers.set(.carry)
     } else {
-      memory.registers.unset(.carry)
+      memory.registers.clear(.carry)
     }
   }
   
@@ -510,7 +539,7 @@ private extension CPU {
     if value == 0 {
       memory.registers.set(.zero)
     } else {
-      memory.registers.unset(.zero)
+      memory.registers.clear(.zero)
     }
   }
   
@@ -518,11 +547,9 @@ private extension CPU {
     if value & (1 << 7) != 0 {
       memory.registers.set(.negative)
     } else {
-      memory.registers.unset(.negative)
+      memory.registers.clear(.negative)
     }
   }
-  
- 
 }
 
 
