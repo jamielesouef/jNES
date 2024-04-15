@@ -12,22 +12,21 @@ typealias Oppecode = UInt8
 typealias MemoryAddress = UInt16
 typealias ZeroMemoryAddress = UInt8
 
-
-
 final class CPU {
   
-  let memory: Memory
+  let memory: MemoryInjectable
   
   private var loop = true //temport until flags
-  private var addressingMode: AddressingMode? = nil
+  private var addressingMode: AddressingMode?
   
   enum CPUError: Error {
     case invalidOpcode(String)
     case missingOpcode(String)
   }
   
-  init(memory: Memory = Memory()) {
+  init(memory: MemoryInjectable = Memory(), addressingMode: AddressingMode? = nil) {
     self.memory = memory
+    self.addressingMode = addressingMode
   }
 
   func load(program: [UInt8]) {
@@ -36,11 +35,11 @@ final class CPU {
   
   func run() throws {
     while loop {
-      let oppcode: UInt8 = memory.readMemAtCounter()
-      log(oppcode, r: 16)
-      memory.pc += 1
+      let opcode: UInt8 = memory.readMemAtCounter()
+      log(opcode, r: 16)
+      memory.incrementProgramCounter()
       
-      try dispatch(oppcode)
+      try dispatch(opcode)
     }
     
     func dispatch(_ opcode: UInt8) throws {
@@ -59,7 +58,7 @@ private extension CPU {
     }
     
     self.addressingMode = nil
-    log("Addressing mode: \(mode)")
+    
     return mode
   }
   
@@ -67,14 +66,16 @@ private extension CPU {
     let addressingMode = unsafeGetAddresingMode()
     
     if addressingMode == .accumulator {
-      log("return A register value \(memory.registers.A))")
+      log("return A register value")
+      log(memory.registers.A)
       return memory.registers.A
     }
     
     let addr = memory.getOpperandAddress(for: addressingMode)
     let byte = memory.readMem(at: addr)
-    memory.pc += 1
-    log("return byte \(byte)")
+    memory.incrementProgramCounter()
+    log("return byte")
+    log(byte)
     return byte
   }
   
@@ -82,14 +83,16 @@ private extension CPU {
     let addressingMode = unsafeGetAddresingMode()
     
     if addressingMode == .accumulator {
-      log("return A register value \(memory.registers.A))")
+      log("return A register value")
+      log(memory.registers.A)
       return UInt16(memory.registers.A)
     }
     
     let addr = memory.getOpperandAddress(for: addressingMode)
     let byte = memory.readMem16(at: addr)
-    memory.pc += 1
-    log("return byte \(byte)")
+    memory.incrementProgramCounter()
+    log("return byte")
+    log(byte)
     return byte
   }
   
@@ -100,26 +103,32 @@ private extension CPU {
   
   func branch(when condition: Bool) {
     if condition {
-      let offset: UInt8 = memory.readMem(at: memory.pc)
+      let offset: UInt8 = memory.readMem(at: memory.getprogramCounter())
       let (singedValue, isSigned): (UInt8, Bool) = signedValue(from: offset)
       
-      memory.pc = UInt16(isSigned
-      ? offset.subtractingReportingOverflow(singedValue).partialValue
-      : offset.addingReportingOverflow(singedValue).partialValue)
+      memory.setProgramCounter(
+        UInt16(
+          isSigned
+          ? offset.subtractingReportingOverflow(
+            singedValue
+          ).partialValue
+          : offset.addingReportingOverflow(
+            singedValue
+          ).partialValue
+        )
+      )
     }
   }
   
   func compare(against value: UInt8) {
     let param: UInt8 = loadByteFromMemory()
-    let result = value.subtractingReportingOverflow(param).partialValue
+    let subtractedResult = value.subtractingReportingOverflow(param).partialValue
     
-    if param <= value {
-      memory.registers.set(.carry)
-    } else {
-      memory.registers.clear(.carry)
-    }
-    
-    setZeroAndNegativeFlag(result)
+   
+    setZeroFlag(subtractedResult)
+    setNegativeFlag(subtractedResult)
+   
+    setCarryFlag( value >= param ? 1 : 0)
   }
   
   func increment(param: UInt8) -> UInt8 {
@@ -141,26 +150,74 @@ private extension CPU {
     memory.registers.set(register, to: param)
     setZeroAndNegativeFlag(param)
   }
+  
+  func _ASL(param: UInt8) {
+    let bit7 = param & 0b1000_0000
+    let result = memory.registers.A << 1
+    
+    log("bit7", bit7)
+    
+    log("result", result)
+    
+    memory.registers.set(.A, to: result)
+    setZeroAndNegativeFlag(result)
+    setCarryFlag(bit7)
+  }
+  
+  func _LSR(param: UInt8) -> UInt8 {
+    let result = param >> 1
+    setZeroAndNegativeFlag(result)
+    setCarryFlag(result)
+    return result
+  }
+  
+  func _ROL(param: UInt8) -> UInt8 {
+    let msb = param >> 7
+    let result = (param << 1) | msb
+    
+    setZeroAndNegativeFlag(param)
+    setCarryFlag(param)
+    
+    return result
+  }
+  
+  func _ROR(param: UInt8) -> UInt8 {
+    let previousCarry: UInt8 = memory.registers.isSet(.carry) ? 1 : 0
+    let lsb = param & 1
+    
+    let result = (param >> 1) | (previousCarry << 7)
+    
+    setZeroFlag(result)
+    setNegativeFlag(result)
+    setCarryFlag(lsb)
+    
+    return result
+  }
+  
+  func _STA(value: UInt8) {
+    let memoryAddress: UInt8 = loadByteFromMemory()
+    memory.writeMem(at: MemoryAddress(memoryAddress), value: value)
+  }
+  
 }
  
 // MARK: Opcode functions
 extension CPU {
   func ADC() {
-    // A,Z,C,N = A+M+C
     
     let param: UInt8 = loadByteFromMemory()
     
-    let carry: UInt16 = memory.registers.isSet(.carry) ? 1 : 0
-    let a = UInt16(memory.registers.A)
-    let result = a + UInt16(param) + carry
+    let carry: UInt8 = memory.registers.isSet(.carry) ? 1 : 0
+    let a = memory.registers.A
+    let result = a.addingReportingOverflow(param + carry)
 
-    if result > 0xFF {
+    if result.overflow {
       memory.registers.set(.carry)
     } else {
       memory.registers.clear(.carry)
     }
     
-    memory.registers.set(.A, to: UInt8(result & 0xFF))
+    memory.registers.set(.A, to: result.partialValue)
     
     setZeroAndNegativeFlag(memory.registers.A)
   }
@@ -171,16 +228,7 @@ extension CPU {
     let result = memory.registers.A & param
     memory.registers.set(.A, to: result)
   }
-  
-  private func _ASL(param: UInt8) {
-    let bit7 = param >> 7
-    let result = memory.registers.A << 1
 
-    memory.registers.set(.A, to: result)
-    setZeroAndNegativeFlag(result)
-    setCarryFlag(result)
-  }
-  
   func ASL() {
     _ASL(param: loadByteFromMemory())
   }
@@ -208,11 +256,7 @@ extension CPU {
     let result = param & a
     setZeroAndNegativeFlag(result)
     
-    if (result & 0b0100_0000) > 0 {
-      memory.registers.set(.overflow)
-    } else {
-      memory.registers.clear(.overflow)
-    }
+    setOverflowFlag(result)
   }
   
   func BMI() {
@@ -228,10 +272,12 @@ extension CPU {
   }
   
   func BRK() {
-    memory.stackPush16(memory.pc)
-    memory.stackPush(memory.registers.p)
+    let pc = memory.getprogramCounter()
     let vector = memory.readMem16(at: 0xFFFE)
-    memory.pc = vector
+    
+    memory.stackPush16(pc)
+    memory.stackPush(memory.registers.p)
+    memory.setProgramCounter(vector)
   }
   
   func BVC() {
@@ -273,7 +319,8 @@ extension CPU {
   func DEC() {
     let param: UInt8 = loadByteFromMemory()
     let result = param - 1
-    memory.writeMem(at: memory.pc, value: result)
+    let pc = memory.getprogramCounter()
+    memory.writeMem(at: pc, value: result)
     setZeroAndNegativeFlag(result)
   }
   
@@ -297,9 +344,10 @@ extension CPU {
   }
     
   func INC() {
-    var param: UInt8 = loadByteFromMemory()
+    let param: UInt8 = loadByteFromMemory()
     let i = increment(param: param)
-    memory.writeMem(at: memory.pc, value: param)
+    let pc = memory.getprogramCounter()
+    memory.writeMem(at: pc, value: param)
   }
   
   func INX() {
@@ -314,14 +362,16 @@ extension CPU {
   }
     
   func JMP() {
-    let ptr = memory.readMem16(at: memory.pc)
-    memory.pc = ptr
+    let pc = memory.getprogramCounter()
+    let ptr = memory.readMem16(at: pc)
+    memory.setProgramCounter(ptr)
   }
   
   func JSR() {
     let param: UInt16 = loadByteFromMemory()
-    memory.stackPush16(memory.pc)
-    memory.pc = param
+    let pc = memory.getprogramCounter()
+    memory.stackPush16(pc)
+    memory.setProgramCounter(param)
   }
   
   func LDA() {
@@ -336,13 +386,7 @@ extension CPU {
     loadMem(to: .Y)
   }
   
-  func _LSR(param: UInt8) -> UInt8 {
-    let result = param >> 1
-    setZeroAndNegativeFlag(result)
-    setCarryFlag(result)
-    return result
-  }
-    
+  
   func LSR() {
     let ptr: UInt8 = loadByteFromMemory()
     var mem = memory.readMem(at: MemoryAddress(ptr))
@@ -352,7 +396,7 @@ extension CPU {
   }
   
   func LSR_accumulator() {
-    var mem = _LSR(param: memory.registers.A)
+    let mem = _LSR(param: memory.registers.A)
     memory.registers.set(.A, to: mem)
   }
   
@@ -362,7 +406,7 @@ extension CPU {
   
   func ORA() {
     let param: UInt8 = loadByteFromMemory()
-    let result = memory.registers.A
+    let result = memory.registers.A ^ param
     memory.registers.set(.A, to: result)
     setZeroAndNegativeFlag(result)
   }
@@ -383,37 +427,14 @@ extension CPU {
     memory.registers.set(programStatus: memory.stackPop())
   }
   
-  private func _ROL(param: UInt8) -> UInt8 {
-    let msb = param >> 7
-    let result = (param << 1) | msb
-    
-    setZeroAndNegativeFlag(param)
-    setCarryFlag(param)
-    
-    return result
-  }
-  
   func ROL() {
     let memoryAddress: UInt8 = loadByteFromMemory()
-    var param = memory.readMem(at: MemoryAddress(memoryAddress))
+    let param = memory.readMem(at: MemoryAddress(memoryAddress))
     memory.writeMem(at: MemoryAddress(memoryAddress), value: _ROL(param: param))
   }
   
   func ROL_accumulator() {
     memory.registers.set(.A, to: _ROL(param: memory.registers.A))
-  }
-  
-  private func _ROR(param: UInt8) -> UInt8 {
-    let previousCarry: UInt8 = memory.registers.isSet(.carry) ? 1 : 0
-    let lsb = param & 1
-    
-    let result = (param >> 1) | (previousCarry << 7)
-    
-    setZeroFlag(result)
-    setNegativeFlag(result)
-    setCarryFlag(lsb)
-    
-    return result
   }
   
   func ROR() {
@@ -422,7 +443,7 @@ extension CPU {
     
     let result = _ROL(param: param)
     
-    memory.writeMem(at: memory.pc, value: result)
+    memory.writeMem(at: memory.getprogramCounter(), value: result)
   }
   
   func ROR_accumulator() {
@@ -435,12 +456,12 @@ extension CPU {
     let pc = memory.stackPop16()
     
     memory.registers.set(programStatus: programStatus)
-    memory.pc = pc
+    memory.setProgramCounter(pc)
   }
   
   func RTS() {
     let returnAddress = memory.stackPop16()
-    memory.pc = returnAddress
+    memory.setProgramCounter(returnAddress)
   }
   
   func SBC() {
@@ -471,11 +492,6 @@ extension CPU {
     memory.registers.set(.interrupt)
   }
   
-  private func _STA(value: UInt8) {
-    let memoryAddress: UInt8 = loadByteFromMemory()
-    memory.writeMem(at: MemoryAddress(memoryAddress), value: value)
-  }
-  
   func STA() {
     _STA(value: memory.registers.A)
   }
@@ -499,8 +515,8 @@ extension CPU {
   }
   
   func TSX() {
-    memory.registers.set(.X, to: memory.sp)
-    setZeroFlag(memory.sp)
+    memory.registers.set(.X, to: memory.getStackPointer())
+    setZeroFlag(memory.getStackPointer())
   }
   
   func TXA() {
@@ -509,12 +525,12 @@ extension CPU {
   }
   
   func TXS() {
-    memory.sp = memory.registers.X
+    memory.setStackPointer(memory.registers.X)
   }
   
   func TYA() {
     memory.registers.set(.A, to: memory.registers.Y)
-    setZeroFlag(<#T##value: UInt8##UInt8#>)
+    setZeroFlag(memory.registers.Y)
   }
 }
 
@@ -523,7 +539,10 @@ extension CPU {
 private extension CPU {
   
   func setCarryFlag(_ value: UInt8) {
-    if value & (1 << 7) != 0 {
+    log("Setting carry flag")
+    log(value)
+    
+    if value != 0 {
       memory.registers.set(.carry)
     } else {
       memory.registers.clear(.carry)
@@ -540,6 +559,14 @@ private extension CPU {
       memory.registers.set(.zero)
     } else {
       memory.registers.clear(.zero)
+    }
+  }
+  
+  func setOverflowFlag(_ value: UInt8) {
+    if (value & 1 << 6) != 0 {
+      memory.registers.set(.overflow)
+    } else {
+      memory.registers.clear(.overflow)
     }
   }
   

@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		702750552BC4EECE0090F7BD /* LDASpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 702750542BC4EECE0090F7BD /* LDASpec.swift */; };
-		702750572BC4EF1C0090F7BD /* TAXSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 702750562BC4EF1C0090F7BD /* TAXSpec.swift */; };
-		7056E7952BC4F0BD00FF2D55 /* INXSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7056E7942BC4F0BD00FF2D55 /* INXSpec.swift */; };
 		70C401032BC38E63002F325B /* SwiftNESApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401022BC38E63002F325B /* SwiftNESApp.swift */; };
 		70C401052BC38E63002F325B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401042BC38E63002F325B /* ContentView.swift */; };
 		70C401072BC38E63002F325B /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401062BC38E63002F325B /* Item.swift */; };
@@ -19,14 +16,12 @@
 		70C401212BC38E64002F325B /* SwiftNESUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401202BC38E64002F325B /* SwiftNESUITests.swift */; };
 		70C401232BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401222BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift */; };
 		70C401302BC38E72002F325B /* 6502.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C4012F2BC38E72002F325B /* 6502.swift */; };
-		E4268F042BC7AE9400B4D0A6 /* ADCSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4268F032BC7AE9400B4D0A6 /* ADCSpec.swift */; };
-		E42B25D12BC8D33500E53258 /* ANDSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42B25D02BC8D33500E53258 /* ANDSpec.swift */; };
-		E42B25D32BC90DB300E53258 /* ASLSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42B25D22BC90DB300E53258 /* ASLSpec.swift */; };
 		E45121D92BC4D5F700A34ECB /* 6502Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45121D82BC4D5F700A34ECB /* 6502Spec.swift */; };
 		E45121DB2BC4E01200A34ECB /* Array+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45121DA2BC4E01200A34ECB /* Array+extensions.swift */; };
 		E47639392BC76077004DA2B0 /* CPUMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47639382BC76077004DA2B0 /* CPUMock.swift */; };
-		E476393B2BC77B39004DA2B0 /* ProgramMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E476393A2BC77B39004DA2B0 /* ProgramMock.swift */; };
 		E49A7F752BCA1A2500E88D1F /* log.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49A7F742BCA1A2500E88D1F /* log.swift */; };
+		E49A7F792BCCCFCC00E88D1F /* 6502+Opcodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49A7F782BCCCFCC00E88D1F /* 6502+Opcodes.swift */; };
+		E49A7F7B2BCCDF2500E88D1F /* ProgramMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49A7F7A2BCCDF2500E88D1F /* ProgramMock.swift */; };
 		E4D193EE2BC4ACBC00763090 /* Registers.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D193ED2BC4ACBC00763090 /* Registers.swift */; };
 		E4D193F02BC4AFFE00763090 /* RegisteresSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D193EF2BC4AFFE00763090 /* RegisteresSpec.swift */; };
 		E4E24A952BC65CD80011D66F /* Memory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E24A942BC65CD80011D66F /* Memory.swift */; };
@@ -51,10 +46,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		702750542BC4EECE0090F7BD /* LDASpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LDASpec.swift; sourceTree = "<group>"; };
-		702750562BC4EF1C0090F7BD /* TAXSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TAXSpec.swift; sourceTree = "<group>"; };
 		7056E7932BC4F08A00FF2D55 /* SwiftNES.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SwiftNES.xctestplan; sourceTree = "<group>"; };
-		7056E7942BC4F0BD00FF2D55 /* INXSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = INXSpec.swift; sourceTree = "<group>"; };
 		70C400FF2BC38E63002F325B /* SwiftNES.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftNES.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		70C401022BC38E63002F325B /* SwiftNESApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNESApp.swift; sourceTree = "<group>"; };
 		70C401042BC38E63002F325B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -68,14 +60,12 @@
 		70C401202BC38E64002F325B /* SwiftNESUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNESUITests.swift; sourceTree = "<group>"; };
 		70C401222BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNESUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		70C4012F2BC38E72002F325B /* 6502.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = 6502.swift; sourceTree = "<group>"; };
-		E4268F032BC7AE9400B4D0A6 /* ADCSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ADCSpec.swift; sourceTree = "<group>"; };
-		E42B25D02BC8D33500E53258 /* ANDSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANDSpec.swift; sourceTree = "<group>"; };
-		E42B25D22BC90DB300E53258 /* ASLSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASLSpec.swift; sourceTree = "<group>"; };
 		E45121D82BC4D5F700A34ECB /* 6502Spec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = 6502Spec.swift; sourceTree = "<group>"; };
 		E45121DA2BC4E01200A34ECB /* Array+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+extensions.swift"; sourceTree = "<group>"; };
 		E47639382BC76077004DA2B0 /* CPUMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUMock.swift; sourceTree = "<group>"; };
-		E476393A2BC77B39004DA2B0 /* ProgramMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramMock.swift; sourceTree = "<group>"; };
 		E49A7F742BCA1A2500E88D1F /* log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = log.swift; sourceTree = "<group>"; };
+		E49A7F782BCCCFCC00E88D1F /* 6502+Opcodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "6502+Opcodes.swift"; sourceTree = "<group>"; };
+		E49A7F7A2BCCDF2500E88D1F /* ProgramMock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgramMock.swift; sourceTree = "<group>"; };
 		E4D193ED2BC4ACBC00763090 /* Registers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Registers.swift; sourceTree = "<group>"; };
 		E4D193EF2BC4AFFE00763090 /* RegisteresSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisteresSpec.swift; sourceTree = "<group>"; };
 		E4E24A942BC65CD80011D66F /* Memory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memory.swift; sourceTree = "<group>"; };
@@ -156,16 +146,11 @@
 			isa = PBXGroup;
 			children = (
 				70C401162BC38E64002F325B /* SwiftNESTests.swift */,
+				E49A7F7A2BCCDF2500E88D1F /* ProgramMock.swift */,
 				E4D193EF2BC4AFFE00763090 /* RegisteresSpec.swift */,
 				E45121D82BC4D5F700A34ECB /* 6502Spec.swift */,
-				702750542BC4EECE0090F7BD /* LDASpec.swift */,
-				702750562BC4EF1C0090F7BD /* TAXSpec.swift */,
-				E4268F032BC7AE9400B4D0A6 /* ADCSpec.swift */,
-				7056E7942BC4F0BD00FF2D55 /* INXSpec.swift */,
 				E47639382BC76077004DA2B0 /* CPUMock.swift */,
-				E476393A2BC77B39004DA2B0 /* ProgramMock.swift */,
-				E42B25D02BC8D33500E53258 /* ANDSpec.swift */,
-				E42B25D22BC90DB300E53258 /* ASLSpec.swift */,
+				E49A7F782BCCCFCC00E88D1F /* 6502+Opcodes.swift */,
 			);
 			path = SwiftNESTests;
 			sourceTree = "<group>";
@@ -337,15 +322,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				70C401172BC38E64002F325B /* SwiftNESTests.swift in Sources */,
-				702750572BC4EF1C0090F7BD /* TAXSpec.swift in Sources */,
-				7056E7952BC4F0BD00FF2D55 /* INXSpec.swift in Sources */,
-				702750552BC4EECE0090F7BD /* LDASpec.swift in Sources */,
 				E4D193F02BC4AFFE00763090 /* RegisteresSpec.swift in Sources */,
-				E4268F042BC7AE9400B4D0A6 /* ADCSpec.swift in Sources */,
-				E42B25D12BC8D33500E53258 /* ANDSpec.swift in Sources */,
+				E49A7F792BCCCFCC00E88D1F /* 6502+Opcodes.swift in Sources */,
 				E45121D92BC4D5F700A34ECB /* 6502Spec.swift in Sources */,
-				E476393B2BC77B39004DA2B0 /* ProgramMock.swift in Sources */,
-				E42B25D32BC90DB300E53258 /* ASLSpec.swift in Sources */,
+				E49A7F7B2BCCDF2500E88D1F /* ProgramMock.swift in Sources */,
 				E47639392BC76077004DA2B0 /* CPUMock.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

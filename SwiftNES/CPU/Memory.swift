@@ -23,14 +23,101 @@ enum AddressingMode {
   case indirect
 }
 
+protocol MemoryInjectable {
+  var registers: Registers { get}
+  func getOpperandAddress(for mode: AddressingMode) -> MemoryAddress
+  func load(program: [UInt8])
+  func readMem(at address: MemoryAddress) -> UInt8
+  func readMem16(at address: MemoryAddress) -> MemoryAddress
+  func writeMem(at address: MemoryAddress, value: UInt8)
+  func writeMem16(at address: UInt16, value: UInt16)
+  func stackPush(_ value: UInt8)
+  func stackPop() -> UInt8
+  func stackPush16(_ value: UInt16)
+  func stackPop16() -> UInt16
+  
+  func writeBuffer(at address: UInt16, value: UInt8)
+  func readBuffer(at address: UInt16) -> UInt8
+  
+  func setProgramCounter(_ value: UInt16)
+  func getprogramCounter() -> UInt16
+  func incrementProgramCounter()
+  
+  func setStackPointer(_ value: UInt8)
+  func getStackPointer() -> UInt8
+  func readMemAtCounter() -> UInt8
+}
+
+
+extension MemoryInjectable where Self: AnyObject {
+  
+  private func truncate(address: MemoryAddress) -> MemoryAddress {
+    let truncated = UInt8(truncatingIfNeeded: address)
+    return MemoryAddress(truncated)
+  }
+  
+  func readMem(at address: MemoryAddress) -> UInt8 {
+    let tructatedAddress = truncate(address: address)
+    return readBuffer(at: tructatedAddress)
+  }
+  
+  func writeMem(at address: MemoryAddress, value: UInt8) {
+    let tructatedAddress = truncate(address: address)
+    writeBuffer(at: tructatedAddress, value: value)
+  }
+  
+  func readMem16(at address: MemoryAddress) -> MemoryAddress {
+    let lo = readMem(at: address)
+    let hi = readMem(at: address.addingReportingOverflow(1).partialValue)
+    
+    let ptr = UInt16(hi) << 8 | UInt16(lo)
+    log("readMem16 ptr", ptr, r: 16)
+    return ptr
+  }
+  
+  func writeMem16(at address: UInt16, value: UInt16) {
+    let lo = UInt8(value & 0xFF)
+    let hi = UInt8(value >> 8)
+    self.writeMem(at: address, value: lo)
+    self.writeMem(at: address + 1 , value: hi)
+  }
+  
+  func stackPush(_ value: UInt8) {
+    let sp = getStackPointer()
+    writeMem(at: 0x0100 + UInt16(sp), value: value)
+    setStackPointer(sp.subtractingReportingOverflow(1).partialValue)
+  }
+  
+  func stackPop() -> UInt8 {
+    let sp = getStackPointer()
+    setStackPointer(sp.addingReportingOverflow(1).partialValue)
+    return readMem(at: 0x100 + UInt16(sp))
+  }
+  
+  func stackPush16(_ value: UInt16) {
+    let lo = UInt8(value & 0xFF)
+    let hi = UInt8(value >> 8)
+    stackPush(hi)
+    stackPush(lo)
+    
+    log("stackPush16 lo hi", lo, hi,r: 16)
+    log("stackPush16 value", value, r: 16)
+  }
+  
+  func stackPop16() -> UInt16 {
+    let lo = UInt16(stackPop())
+    let hi = UInt16(stackPop())
+    return hi << 8 | lo
+  }
+}
+
 final class Memory {
- 
+  
   var pc: MemoryAddress = 0x0000
-  var sp: UInt8 = 0xFF
+  let registers: Registers
   
+  private var sp: UInt8 = 0xFF
   private var buffer: [UInt8] = .init(repeating: 0, count: 0xFFFF)
-  
-  private (set) var registers: Registers = Registers()
   
   enum AddressingIndex {
     case X
@@ -84,67 +171,39 @@ final class Memory {
   func readMemAtCounter() -> UInt8 {
     buffer[pc]
   }
-  
-  // MARK: - Memory operations
-  
-  func readMem(at address: MemoryAddress) -> UInt8 {
-    let tructatedAddress = truncate(address: address)
-    return buffer[tructatedAddress]
-  }
-  
-  func writeMem(at address: MemoryAddress, value: UInt8) {
-    let tructatedAddress = truncate(address: address)
-    return buffer[tructatedAddress] = value
-  }
-  
-  func readMem16(at address: MemoryAddress) -> MemoryAddress {
-    let lo = readMem(at: address)
-    let hi = readMem(at: address.addingReportingOverflow(1).partialValue)
-    
-    let ptr = UInt16(hi) << 8 | UInt16(lo)
-    return ptr
-  }
-  
-  func writeMem16(at address: UInt16, value: UInt16) {
-    let lo = UInt8(value & 0xFF)
-    let hi = UInt8(value >> 8)
-    self.writeMem(at: address, value: lo)
-    self.writeMem(at: address + 1 , value: hi)
-  }
+}
 
-
-  // MARK: - Stack operations
-  
-  func stackPush(_ value: UInt8) {
-    writeMem(at: 0x0100 + UInt16(sp), value: value)
-    sp = sp.subtractingReportingOverflow(1).partialValue
+extension Memory: MemoryInjectable {
+  func writeBuffer(at address: UInt16, value: UInt8) {
+    buffer[address] = value
   }
   
-  func stackPop() -> UInt8 {
-    sp = sp.addingReportingOverflow(1).partialValue
-    return readMem(at: 0x100 + UInt16(sp))
+  func readBuffer(at address: UInt16) -> UInt8 {
+    return buffer[address]
   }
   
-  func stackPush16(_ value: UInt16) {
-    let lo = UInt8(value & 0xFF)
-    let hi = UInt8(value >> 8)
-    stackPush(hi)
-    stackPush(lo)
+  func setStackPointer(_ value: UInt8) {
+    sp = value
   }
   
-  func stackPop16() -> UInt16 {
-    let lo = UInt16(stackPop())
-    let hi = UInt16(stackPop())
-    return hi << 8 | lo
+  func getStackPointer() -> UInt8 {
+    return sp
   }
+  
+  func setProgramCounter(_ value: UInt16) {
+    pc = value
+  }
+  func getprogramCounter() -> UInt16 {
+    return pc
+  }
+  
+  func incrementProgramCounter() {
+    pc += 1
+  }
+  
 }
 
 private extension Memory {
-  
-  func truncate(address: MemoryAddress) -> MemoryAddress {
-    let truncated = UInt8(truncatingIfNeeded: address)
-    return MemoryAddress(truncated)
-  }
   
   func getRegisterValue(for register: AddressingIndex) -> UInt8 {
     switch register {

@@ -7,18 +7,23 @@
 
 import Foundation
 
-func log(_ thing: Any...){
-  #if DEBUG
-  thing.forEach {
-    print("Debug: —" + String(describing: $0))
-  }
-  #endif
-}
 
 func log<T: BinaryInteger>(_ thing: T..., r: Int = 2){
   #if DEBUG
   thing.forEach {
-    print("Debug: —" + String($0, radix: r))
+    log(String($0, radix: r))
   }
+  #endif
+}
+
+func log<T: BinaryInteger>(_ message: String, _ thing: T..., r: Int = 2){
+  #if DEBUG
+  log("\(message), " + thing.map { String($0, radix: r) }.joined(separator: " ") )
+  #endif
+}
+
+func log(_ message: String){
+  #if DEBUG
+  print("Debug: \t \(message)")
   #endif
 }
