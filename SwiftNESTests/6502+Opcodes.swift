@@ -326,27 +326,53 @@ final class _6502_Opcodes: XCTestCase {
   }
   
   func testEOR() throws {
+    cpu.memory.registers.set(.A, to: 0b1010_0101)
+    cpu.memory.writeMem(at: 0x00, value: 0b1010_1010)
     cpu.EOR()
+    
+    XCTAssertEqual(cpu.memory.registers.A, 0b0000_1111)
   }
   
   func testINC() throws {
+    cpu.memory.writeMem(at: 0x00, value: 0x00)
     cpu.INC()
+    
+    XCTAssertEqual(cpu.memory.readMem(at: 0x00), 0x01)
   }
   
   func testINX() throws {
+    cpu.memory.registers.set(.X, to: 0x00)
+    cpu.memory.writeMem(at: 0x00, value: 0x00)
     cpu.INX()
+    
+    XCTAssertEqual(cpu.memory.registers.X, 0x01)
   }
   
   func testINY() throws {
+    cpu.memory.registers.set(.Y, to: 0x00)
+    cpu.memory.writeMem(at: 0x00, value: 0x00)
     cpu.INY()
+    
+    XCTAssertEqual(cpu.memory.registers.Y, 0x01)
   }
   
   func testJMP() throws {
+    XCTAssertEqual(cpu.memory.getprogramCounter(), 0x0000)
+    cpu.memory.writeMem(at: 0x00, value: 0x33)
+    cpu.memory.writeMem(at: 0x01, value: 0xFF)
     cpu.JMP()
+    XCTAssertEqual(cpu.memory.getprogramCounter(), 0xFF33)
   }
   
   func testJSR() throws {
+    let pc:UInt16 = 0xAAFF
+    cpu.memory.setProgramCounter(pc)
+    XCTAssertEqual(cpu.memory.getprogramCounter(), pc)
+    cpu.memory.writeMem16(at: pc, value: 0x33FF)
+    
     cpu.JSR()
+    XCTAssertEqual(cpu.memory.getprogramCounter(), 0x33FF)
+    XCTAssertEqual(cpu.memory.stackPop16(), pc - 1)
   }
   
   func testLDA() throws {

@@ -84,30 +84,38 @@ extension MemoryInjectable where Self: AnyObject {
   
   func stackPush(_ value: UInt8) {
     let sp = getStackPointer()
+    log("sp, value", sp, value)
     writeMem(at: 0x0100 + UInt16(sp), value: value)
     setStackPointer(sp.subtractingReportingOverflow(1).partialValue)
+    
   }
   
   func stackPop() -> UInt8 {
-    let sp = getStackPointer()
-    setStackPointer(sp.addingReportingOverflow(1).partialValue)
-    return readMem(at: 0x100 + UInt16(sp))
+    let sp = getStackPointer().addingReportingOverflow(1).partialValue
+    setStackPointer(sp)
+    let value = readMem(at: 0x100 + UInt16(sp))
+    log("sp, value", sp, value)
+    return value
   }
   
   func stackPush16(_ value: UInt16) {
-    let lo = UInt8(value & 0xFF)
     let hi = UInt8(value >> 8)
+    let lo = UInt8(value & 0xFF)
+    
+    log("stackPush16 lo hi, value", UInt16(lo), UInt16(hi), value ,r: 16)
+
     stackPush(hi)
     stackPush(lo)
     
-    log("stackPush16 lo hi", lo, hi,r: 16)
-    log("stackPush16 value", value, r: 16)
+  
   }
   
   func stackPop16() -> UInt16 {
     let lo = UInt16(stackPop())
     let hi = UInt16(stackPop())
-    return hi << 8 | lo
+    let value = hi << 8 | lo
+    log("lo, hi, value", lo, hi, value)
+    return value
   }
 }
 

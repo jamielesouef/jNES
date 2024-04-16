@@ -132,20 +132,14 @@ private extension CPU {
   }
   
   func increment(param: UInt8) -> UInt8 {
-    let result = param.addingReportingOverflow(1)
+    let result = param.addingReportingOverflow(1).partialValue
     
-    setZeroAndNegativeFlag(result.partialValue)
+    setZeroAndNegativeFlag(result)
     
-    if result.overflow {
-      memory.registers.set(.carry)
-    } else {
-      memory.registers.clear(.carry)
-    }
-    
-    return result.partialValue
+    return result
   }
   
-  func loadMem(to register: Registers.Accumulator) {
+  func loadFromMemory(into register: Registers.Accumulator) {
     let param: UInt8 = loadByteFromMemory()
     memory.registers.set(register, to: param)
     setZeroAndNegativeFlag(param)
@@ -346,20 +340,24 @@ extension CPU {
   func INC() {
     let param: UInt8 = loadByteFromMemory()
     let i = increment(param: param)
-    let pc = memory.getprogramCounter()
-    memory.writeMem(at: pc, value: param)
+    let pc = memory.getprogramCounter() - 1
+    memory.writeMem(at: pc, value: i)
   }
   
   func INX() {
     let i = increment(param: memory.registers.X)
     memory.registers.set(.X, to: i)
-    
   }
   
   func INY() {
     let i = increment(param: memory.registers.Y)
     memory.registers.set(.Y, to: i)
   }
+  
+  /*
+   NB:
+   An original 6502 has does not correctly fetch the target address if the indirect vector falls on a page boundary (e.g. $xxFF where xx is any value from $00 to $FF). In this case fetches the LSB from $xxFF as expected but takes the MSB from $xx00. This is fixed in some later chips like the 65SC02 so for compatibility always ensure the indirect vector is not at the end of the page.
+   */
   
   func JMP() {
     let pc = memory.getprogramCounter()
@@ -368,22 +366,25 @@ extension CPU {
   }
   
   func JSR() {
+    
     let param: UInt16 = loadByteFromMemory()
-    let pc = memory.getprogramCounter()
-    memory.stackPush16(pc)
+    let returnPoint = memory.getprogramCounter() - 1
+    log("param", param)
+    log("returnPoint", returnPoint)
+    memory.stackPush16(returnPoint)
     memory.setProgramCounter(param)
   }
   
   func LDA() {
-    loadMem(to: .A)
+    loadFromMemory(into: .A)
   }
   
   func LDX() {
-    loadMem(to: .X)
+    loadFromMemory(into: .X)
   }
   
   func LDY() {
-    loadMem(to: .Y)
+    loadFromMemory(into: .Y)
   }
   
   

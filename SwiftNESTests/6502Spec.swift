@@ -20,6 +20,36 @@ final class _6502Spec: XCTestCase {
     self.cpu = nil
   }
   
+  func testWriting16BitAddressTomMemoy() {
+    
+    let address : UInt16 = 0x8000
+    let value: UInt16 = 0xA9AA
+    cpu.memory.writeMem16(at: address, value: value)
+    
+    let lo = cpu.memory.readMem(at: address)
+    let hi = cpu.memory.readMem(at: address + 1)
+    let readBackValue = cpu.memory.readMem16(at: address)
+    
+    XCTAssertEqual(lo, 0xAA)
+    XCTAssertEqual(hi, 0xA9)
+    XCTAssertEqual(readBackValue, 0xA9AA)
+
+  }
+  
+  func testWriting16BitAddressTomStack() {
+
+    
+    let value: UInt16 = 0xA9AA
+    log("push")
+    cpu.memory.stackPush16(value)
+    log("pop")
+    let result = cpu.memory.stackPop16()
+    
+    XCTAssertEqual(result, value)
+    
+
+  }
+  
   func testWriteToMemoeryWith8BitAddress() {
     
     cpu.memory.writeMem(at: 0x8000, value: 0xA9)
