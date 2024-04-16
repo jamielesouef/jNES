@@ -593,62 +593,164 @@ final class _6502_Opcodes: XCTestCase {
   }
   
   func testRTI() throws {
-    XCTAssertFalse(true)
+    cpu.memory.writeMem16(at: 0xFFFE, value: 0xFFCC)
+    cpu.memory.setProgramCounter(0xc1)
+    cpu.memory.registers.set(programStatus: 0b1100_0101)
+    cpu.BRK()
+    cpu.memory.registers.set(programStatus: 0b1100_1111)
+    
+    XCTAssertEqual(cpu.memory.getprogramCounter(), 0xFFCC)
+    XCTAssertEqual(cpu.memory.registers.p, 0b1100_1111)
+    cpu.RTI()
+    XCTAssertEqual(cpu.memory.registers.p, 0b1100_0101)
+    XCTAssertEqual(cpu.memory.getprogramCounter(), 0xc1)
   }
   
   func testRTS() throws {
-    XCTAssertFalse(true)
+    
+    let pc: UInt16 = 0xC1C1
+    cpu.memory.writeMem16(at: pc, value: 0x110B)
+    cpu.memory.setProgramCounter(pc)
+    cpu.JSR()
+    
+    XCTAssertEqual(cpu.memory.getprogramCounter(), 0x110B)
+    
+    cpu.RTS()
+    
+    XCTAssertEqual(cpu.memory.getprogramCounter(), 0xC1C1)
+    
   }
   
   func testSBC() throws {
-    XCTAssertFalse(true)
+    let val: UInt8 = 0x0A
+    let exp: UInt8 = 0xF5
+    let pc: UInt16 = 0x23
+    
+    cpu.memory.registers.set(.A, to: 0xFF)
+    cpu.memory.setProgramCounter(pc)
+    cpu.memory.writeMem(at: pc, value: val)
+    cpu.SBC()
+    
+    XCTAssertEqual(cpu.memory.registers.A, exp)
+    XCTAssertTrue(cpu.memory.registers.isSet(.carry))
+    
   }
   
   func testSEC() throws {
-    XCTAssertFalse(true)
+    cpu.SEC()
+    XCTAssertTrue(cpu.memory.registers.isSet(.carry))
   }
   
   func testSED() throws {
-    XCTAssertFalse(true)
+    cpu.SED()
+    XCTAssertTrue(cpu.memory.registers.isSet(.decimal))
   }
   
   func testSEI() throws {
-    XCTAssertFalse(true)
+    cpu.SEI()
+    XCTAssertTrue(cpu.memory.registers.isSet(.interrupt))
   }
   
   func testSTA() throws {
-    XCTAssertFalse(true)
+    cpu.memory.writeMem(at: 0xC1, value: 0xAA)
+    cpu.memory.setProgramCounter(0xC1)
+    cpu.memory.registers.set(.A, to: 0xFF)
+    cpu.STA()
+    
+    let result = cpu.memory.readMem(at: 0xAA)
+    XCTAssertEqual(result, 0xFF)
+    
   }
   
   func testSTX() throws {
-    XCTAssertFalse(true)
+    cpu.memory.writeMem(at: 0xC1, value: 0xAA)
+    cpu.memory.setProgramCounter(0xC1)
+    cpu.memory.registers.set(.X, to: 0xFF)
+    cpu.STX()
+    
+    let result = cpu.memory.readMem(at: 0xAA)
+    XCTAssertEqual(result, 0xFF)
   }
   
   func testSTY() throws {
-    XCTAssertFalse(true)
+    cpu.memory.writeMem(at: 0xC1, value: 0xAA)
+    cpu.memory.setProgramCounter(0xC1)
+    cpu.memory.registers.set(.Y, to: 0xF1)
+    cpu.STY()
+    
+    let result = cpu.memory.readMem(at: 0xAA)
+    XCTAssertEqual(result, 0xF1)
   }
   
   func testTAX() throws {
-    XCTAssertFalse(true)
+    cpu.memory.registers.set(.A, to: 0x01)
+    cpu.TAX()
+    XCTAssertEqual(cpu.memory.registers.A, 0x01)
+  }
+  
+  func testTAX_zero() throws {
+    cpu.memory.registers.set(.A, to: 0x0)
+    cpu.TAX()
+    XCTAssertTrue(cpu.memory.registers.isSet(.zero))
+  }
+  
+  func testTAX_zegative() throws {
+    cpu.memory.registers.set(.A, to: 0b1000_0000)
+    cpu.TAX()
+    XCTAssertTrue(cpu.memory.registers.isSet(.negative))
   }
   
   func testTAY() throws {
-    XCTAssertFalse(true)
+    cpu.memory.registers.set(.A, to: 0x01)
+    cpu.TAY()
+    XCTAssertEqual(cpu.memory.registers.Y, 0x01)
+  }
+  
+  func testTAY_zero() throws {
+    cpu.memory.registers.set(.A, to: 0x0)
+    cpu.TAY()
+    XCTAssertTrue(cpu.memory.registers.isSet(.zero))
+  }
+  
+  func testTAY_zegative() throws {
+    cpu.memory.registers.set(.A, to: 0b1000_0000)
+    cpu.TAY()
+    XCTAssertTrue(cpu.memory.registers.isSet(.negative))
   }
   
   func testTSX() throws {
-    XCTAssertFalse(true)
+    cpu.memory.setStackPointer(0xC1)
+    cpu.TSX()
+    XCTAssertEqual(cpu.memory.registers.X, 0xC1)
+  }
+  
+  func testTSX_zero() throws {
+    cpu.memory.setStackPointer(0x0)
+    cpu.TSX()
+    XCTAssertTrue(cpu.memory.registers.isSet(.zero))
+  }
+  
+  func testTSX_zegative() throws {
+    cpu.memory.setStackPointer(0b1000_0001) //
+    cpu.TSX()
+    XCTAssertTrue(cpu.memory.registers.isSet(.negative))
   }
   
   func testTXA() throws {
-    XCTAssertFalse(true)
+      cpu.memory.registers.set(.X, to: 0x01)
+      cpu.TXA()
+      XCTAssertEqual(cpu.memory.registers.A, 0x01)
   }
   
   func testTXS() throws {
-    XCTAssertFalse(true)
+    cpu.memory.registers.set(.X, to: 0xC1)
+    cpu.TXS()
+    XCTAssertEqual(cpu.memory.getStackPointer(), cpu.memory.registers.X)
   }
   
   func testTYA() throws {
-    XCTAssertFalse(true)
+    cpu.memory.registers.set(.Y, to: 0x01)
+    cpu.TYA()
+    XCTAssertEqual(cpu.memory.registers.A, cpu.memory.registers.Y)
   }
 }

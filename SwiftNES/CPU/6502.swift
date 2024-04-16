@@ -165,7 +165,7 @@ private extension CPU {
     return result
   }
   
-  func _STA(value: UInt8) {
+  func _ST(value: UInt8) {
     let memoryAddress: UInt8 = loadByteFromMemory()
     memory.writeMem(at: MemoryAddress(memoryAddress), value: value)
   }
@@ -173,7 +173,7 @@ private extension CPU {
   private func _ROL(param: UInt8) -> UInt8 {
     // DON'T TOUCH THIS
     let msb = param >> 7
-
+    
     let lsb: UInt8 = memory.registers.isSet(.carry) ? 1 : 0
     
     let result = (param << 1) | lsb
@@ -274,6 +274,7 @@ extension CPU {
     branch(when: !memory.registers.isSet(.negative))
   }
   
+  // Break
   func BRK() {
     let pc = memory.getprogramCounter()
     let vector = memory.readMem16(at: 0xFFFE)
@@ -283,42 +284,52 @@ extension CPU {
     memory.setProgramCounter(vector)
   }
   
+  // Branch if Overflow Clear
   func BVC() {
     branch(when: !memory.registers.isSet(.overflow))
   }
   
+  // Branch if Overflow Set
   func BVS() {
     branch(when: memory.registers.isSet(.overflow))
   }
   
+  // Clear Carry Flag
   func CLC() {
     memory.registers.clear(.carry)
   }
   
+  // Clear Decimal Mode
   func CLD() {
     memory.registers.clear(.decimal)
   }
   
+  // Clear Interrupt Disable
   func CLI() {
     memory.registers.clear(.interrupt)
   }
   
+  // Clear Overflow Flag
   func CLV() {
     memory.registers.clear(.overflow)
   }
   
+  // Compare Accumulator
   func CMP() {
     compare(against: memory.registers.A)
   }
   
+  // Compare X Register
   func CPX() {
     compare(against: memory.registers.X)
   }
   
+  // Compare Y Register
   func CPY() {
     compare(against: memory.registers.Y)
   }
   
+  // Decrement Memory
   func DEC() {
     let param: UInt8 = loadByteFromMemory()
     let result = param - 1
@@ -327,18 +338,21 @@ extension CPU {
     setZeroAndNegativeFlag(result)
   }
   
+  // Decrement X Register
   func DEX() {
     let param = memory.registers.X - 1
     memory.registers.set(.X, to: param)
     setZeroAndNegativeFlag(param)
   }
   
+  // Decrement Y Register
   func DEY() {
     let param = memory.registers.Y - 1
     memory.registers.set(.Y, to: param)
     setZeroAndNegativeFlag(param)
   }
   
+  // Exclusive OR
   func EOR() {
     let param: UInt8 = loadByteFromMemory()
     let result = memory.registers.A ^ param
@@ -346,6 +360,7 @@ extension CPU {
     setZeroAndNegativeFlag(result)
   }
   
+  // Increment Memory
   func INC() {
     let param: UInt8 = loadByteFromMemory()
     let i = increment(param: param)
@@ -353,11 +368,13 @@ extension CPU {
     memory.writeMem(at: pc, value: i)
   }
   
+  // Increment X Register
   func INX() {
     let i = increment(param: memory.registers.X)
     memory.registers.set(.X, to: i)
   }
   
+  // Increment Y Register
   func INY() {
     let i = increment(param: memory.registers.Y)
     memory.registers.set(.Y, to: i)
@@ -368,35 +385,41 @@ extension CPU {
    An original 6502 has does not correctly fetch the target address if the indirect vector falls on a page boundary (e.g. $xxFF where xx is any value from $00 to $FF). In this case fetches the LSB from $xxFF as expected but takes the MSB from $xx00. This is fixed in some later chips like the 65SC02 so for compatibility always ensure the indirect vector is not at the end of the page.
    */
   
+  // Jump
   func JMP() {
     let pc = memory.getprogramCounter()
     let ptr = memory.readMem16(at: pc)
     memory.setProgramCounter(ptr)
   }
   
+  
+  // Jump to Subroutine
   func JSR() {
     
     let returnPoint = memory.getprogramCounter()
-    let param: UInt16 = loadByteFromMemory()
-    log("param, returnPoint", param, returnPoint)
+    let newPtr: UInt16 = loadByteFromMemory()
+    log("newPtr, returnPoint", newPtr, returnPoint)
     
     memory.stackPush16(returnPoint)
-    memory.setProgramCounter(param)
+    memory.setProgramCounter(newPtr)
   }
   
+  // Load Accumulator
   func LDA() {
     loadFromMemory(into: .A)
   }
   
+  // Load X Register
   func LDX() {
     loadFromMemory(into: .X)
   }
   
+  // Load Y Register
   func LDY() {
     loadFromMemory(into: .Y)
   }
   
-  
+  // Logical Shift Right
   func LSR() {
     let ptr: UInt8 = loadByteFromMemory()
     var mem = memory.readMem(at: MemoryAddress(ptr))
@@ -405,15 +428,18 @@ extension CPU {
     memory.writeMem(at: MemoryAddress(ptr), value: mem)
   }
   
+  // Logical Shift Right Accumulator
   func LSR_accumulator() {
     let mem = _LSR(param: memory.registers.A)
     memory.registers.set(.A, to: mem)
   }
   
+  // No Operation
   func NOP() {
     // NOP
   }
   
+  // Logical Inclusive OR
   func ORA() {
     let param: UInt8 = loadByteFromMemory()
     let result = memory.registers.A | param
@@ -421,24 +447,29 @@ extension CPU {
     setZeroAndNegativeFlag(result)
   }
   
+  // Push Accumulator
   func PHA() {
     memory.stackPush(memory.registers.A)
   }
   
+  // Push Processor Status
   func PHP() {
     memory.stackPush(memory.registers.p)
   }
   
+  // Pull Accumulator
   func PLA() {
     let result = memory.stackPop()
     setZeroFlag(result)
     memory.registers.set(.A, to: result)
   }
   
+  // Pull Processor Status
   func PLP() {
     memory.registers.set(programStatus: memory.stackPop())
   }
   
+  // Rotate Left
   func ROL() {
     let ptr: UInt8 = loadByteFromMemory()
     let address = MemoryAddress(ptr)
@@ -447,13 +478,14 @@ extension CPU {
     memory.writeMem(at: address, value: result)
     log("address", address, r:10)
   }
-   
   
+  // Rotate Left Accumulator
   func ROL_accumulator() {
     let result = _ROL(param: memory.registers.A)
     memory.registers.set(.A, to: result)
   }
   
+  // Rotate Right
   func ROR() {
     let ptr: UInt8 = loadByteFromMemory()
     let address = MemoryAddress(ptr)
@@ -463,11 +495,13 @@ extension CPU {
     log("address", address, r:10)
   }
   
+  // Rotate Right Accumulator
   func ROR_accumulator() {
     let result = _ROR(param: memory.registers.A)
     memory.registers.set(.A, to: result)
   }
   
+  // Return from interrupt
   func RTI() {
     let programStatus = memory.stackPop()
     let pc = memory.stackPop16()
@@ -476,78 +510,102 @@ extension CPU {
     memory.setProgramCounter(pc)
   }
   
+  // Return from Subroutine
   func RTS() {
     let returnAddress = memory.stackPop16()
     memory.setProgramCounter(returnAddress)
   }
   
+  // Subtract with Carry
   func SBC() {
-    let param: UInt8 = loadByteFromMemory()
+    let param: UInt16 = loadByteFromMemory()
+    let currentCarryValue: UInt16 = memory.registers.isSet(.carry) ? 1 : 0
+    let a = UInt16(memory.registers.A)
+    let result = a.subtractingReportingOverflow(param + currentCarryValue)
+    let _8bitResult = UInt8(truncatingIfNeeded: result.partialValue)
+    let carry = result.partialValue > 0xff
     
-    let result = memory.registers.A.subtractingReportingOverflow(param)
-    memory.registers.set(.A, to: result.partialValue)
-    
-    setZeroAndNegativeFlag(result.partialValue)
-    
-    if result.overflow {
+    if carry {
       memory.registers.set(.carry)
     } else {
       memory.registers.clear(.carry)
     }
     
+    if result.overflow {
+      memory.registers.set(.overflow)
+    } else {
+      memory.registers.clear(.overflow)
+    }
+    
+    memory.registers.set(.A, to: _8bitResult)
+    setZeroAndNegativeFlag(_8bitResult)
   }
   
+  // Set Carry Flag
   func SEC() {
     memory.registers.set(.carry)
   }
   
+  
+  // Set Decimal Flag
   func SED() {
     memory.registers.set(.decimal)
   }
   
+  // Set Interrupt Disable
   func SEI() {
     memory.registers.set(.interrupt)
   }
   
+  // Store Accumulator
   func STA() {
-    _STA(value: memory.registers.A)
+    _ST(value: memory.registers.A)
   }
   
+  // Store X Register
   func STX() {
-    _STA(value: memory.registers.X)
+    _ST(value: memory.registers.X)
   }
   
+  // Store Y Register
   func STY() {
-    _STA(value: memory.registers.Y)
+    _ST(value: memory.registers.Y)
   }
   
+  // Transfer Accumulator to X
   func TAX() {
     memory.registers.set(.X, to: memory.registers.A)
     setZeroAndNegativeFlag(memory.registers.X)
   }
   
+  // Transfer Accumulator to Y
   func TAY() {
     memory.registers.set(.Y, to: memory.registers.A)
     setZeroAndNegativeFlag(memory.registers.Y)
   }
   
+  // Transfer Stack Pointer to X
   func TSX() {
     memory.registers.set(.X, to: memory.getStackPointer())
-    setZeroFlag(memory.getStackPointer())
+    setZeroAndNegativeFlag(memory.registers.X)
   }
   
+  //Transfer X to Accumulator
   func TXA() {
-    memory.registers.set(.X, to: memory.registers.A)
-    setZeroFlag(memory.registers.A)
+    memory.registers.set(.A, to: memory.registers.X)
+    setZeroAndNegativeFlag(memory.registers.A)
   }
   
+  // Transfer X to Stack Pointer
   func TXS() {
     memory.setStackPointer(memory.registers.X)
+    setZeroAndNegativeFlag(memory.registers.X)
   }
   
+  //Transfer Y to Accumulator
   func TYA() {
     memory.registers.set(.A, to: memory.registers.Y)
-    setZeroFlag(memory.registers.Y)
+    setZeroAndNegativeFlag(memory.registers.Y)
   }
 }
 
