@@ -157,9 +157,11 @@ private extension CPU {
   }
   
   func _LSR(param: UInt8) -> UInt8 {
+    let lsb = param & 1
     let result = param >> 1
-    setZeroAndNegativeFlag(result)
-    setCarryFlag(result)
+    setZeroFlag(result)
+    setNegativeFlag(result)
+    setCarryFlag(lsb)
     return result
   }
   

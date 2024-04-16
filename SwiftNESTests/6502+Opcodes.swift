@@ -202,7 +202,7 @@ final class _6502_Opcodes: XCTestCase {
     cpu.memory.registers.set(.overflow)
     cpu.BVC()
     XCTAssertEqual(cpu.memory.getprogramCounter(), 0xA1)
-
+    
   }
   
   func testBVS_branch() throws {
@@ -375,27 +375,77 @@ final class _6502_Opcodes: XCTestCase {
     
     let stackPtr = cpu.memory.stackPop16()
     XCTAssertEqual(stackPtr, 0xAAFF)
-
+    
   }
   
   func testLDA() throws {
+    let pc: UInt16 = 0x0022
+    cpu.memory.setProgramCounter(pc)
+    cpu.memory.writeMem(at: pc, value: 0x33)
     cpu.LDA()
+    XCTAssertEqual(cpu.memory.registers.A, 0x33)
+  }
+  
+  func testLDA_zero() throws {
+    let pc: UInt16 = 0xF1
+    cpu.memory.setProgramCounter(pc)
+    cpu.memory.writeMem(at: pc, value: 0x00)
+    cpu.LDA()
+    XCTAssertTrue(cpu.memory.registers.isSet(.zero))
+  }
+  
+  func testLDA_negative() throws {
+    let pc: UInt16 = 0xFB
+    cpu.memory.setProgramCounter(pc)
+    cpu.memory.writeMem(at: pc, value: 0b1000_0001)
+    cpu.LDA()
+    XCTAssertTrue(cpu.memory.registers.isSet(.negative))
   }
   
   func testLDX() throws {
+    let pc: UInt16 = 0x0022
+    cpu.memory.setProgramCounter(pc)
+    cpu.memory.writeMem(at: pc, value: 0x33)
     cpu.LDX()
+    XCTAssertEqual(cpu.memory.registers.X, 0x33)
   }
   
   func testLDY() throws {
+    let pc: UInt16 = 0x0022
+    cpu.memory.setProgramCounter(pc)
+    cpu.memory.writeMem(at: pc, value: 0x33)
     cpu.LDY()
+    XCTAssertEqual(cpu.memory.registers.Y, 0x33)
   }
   
-  func testLSR() throws {
-    cpu.LSR()
+  func testLSR_accumulator() throws {
+    let val: UInt8 =  0b1001_1110
+    let exp: UInt8 =  0b01001_111
+    
+    let pc: UInt16 = 0x23
+    cpu.memory.setProgramCounter(pc)
+    cpu.memory.registers.set(.A, to: val)
+    cpu.LSR_accumulator()
+    XCTAssertEqual(cpu.memory.registers.A, exp)
+    XCTAssertFalse(cpu.memory.registers.isSet(.carry))
   }
   
-  func testNOP() throws {
-    cpu.NOP()
+  func testLSR_accumulator_carry() throws {
+    let val: UInt8 =  0b1001_1111
+    let pc: UInt16 = 0x23
+    cpu.memory.setProgramCounter(pc)
+    cpu.memory.registers.set(.A, to: val)
+    cpu.LSR_accumulator()
+    XCTAssertTrue(cpu.memory.registers.isSet(.carry))
+  }
+  
+  func testLSR_accumulator_zero() throws {
+    let val: UInt8 =  0b000_0000
+    let pc: UInt16 = 0x23
+    cpu.memory.setProgramCounter(pc)
+    cpu.memory.registers.set(.A, to: val)
+    cpu.LSR_accumulator()
+    XCTAssertTrue(cpu.memory.registers.isSet(.zero))
   }
   
   func testORA() throws {
