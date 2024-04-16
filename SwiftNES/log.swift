@@ -18,7 +18,7 @@ func log<T: BinaryInteger>(_ thing: T..., r: Int = 2){
 
 func log<T: BinaryInteger>(_ message: String, _ thing: T..., r: Int = 16, fn: String = #function){
   #if DEBUG
-  log("\(fn): \(message), " + thing.map { String($0, radix: r) }.joined(separator: " ") )
+  log("\(fn): \(message) : " + thing.map { String($0, radix: r) }.joined(separator: " ") )
   #endif
 }
 

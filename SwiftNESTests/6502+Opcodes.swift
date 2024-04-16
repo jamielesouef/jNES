@@ -366,13 +366,16 @@ final class _6502_Opcodes: XCTestCase {
   
   func testJSR() throws {
     let pc:UInt16 = 0xAAFF
+    cpu.memory.writeMem16(at: pc, value: 0x01FF)
     cpu.memory.setProgramCounter(pc)
     XCTAssertEqual(cpu.memory.getprogramCounter(), pc)
-    cpu.memory.writeMem16(at: pc, value: 0x33FF)
     
     cpu.JSR()
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0x33FF)
-    XCTAssertEqual(cpu.memory.stackPop16(), pc - 1)
+    XCTAssertEqual(cpu.memory.getprogramCounter(), 0x01FF)
+    
+    let stackPtr = cpu.memory.stackPop16()
+    XCTAssertEqual(stackPtr, 0xAAFF)
+
   }
   
   func testLDA() throws {

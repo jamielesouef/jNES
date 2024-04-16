@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum AddressingMode {
+enum AddressingMode: String {
   case accumulator
   case immediate
   case zeroPage
@@ -71,7 +71,7 @@ extension MemoryInjectable where Self: AnyObject {
     let hi = readMem(at: address.addingReportingOverflow(1).partialValue)
     
     let ptr = UInt16(hi) << 8 | UInt16(lo)
-    log("readMem16 ptr", ptr, r: 16)
+    log("lo, hi, address", UInt16(lo), UInt16(hi), address, r: 16)
     return ptr
   }
   
@@ -79,7 +79,9 @@ extension MemoryInjectable where Self: AnyObject {
     let lo = UInt8(value & 0xFF)
     let hi = UInt8(value >> 8)
     self.writeMem(at: address, value: lo)
-    self.writeMem(at: address + 1 , value: hi)
+    self.writeMem(at: address.addingReportingOverflow(1).partialValue , value: hi)
+    
+    log("lo, hi, address", UInt16(lo), UInt16(hi), address)
   }
   
   func stackPush(_ value: UInt8) {
@@ -102,7 +104,7 @@ extension MemoryInjectable where Self: AnyObject {
     let hi = UInt8(value >> 8)
     let lo = UInt8(value & 0xFF)
     
-    log("stackPush16 lo hi, value", UInt16(lo), UInt16(hi), value ,r: 16)
+    log("lo hi, value", UInt16(lo), UInt16(hi), value ,r: 16)
 
     stackPush(hi)
     stackPush(lo)
