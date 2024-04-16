@@ -449,90 +449,114 @@ final class _6502_Opcodes: XCTestCase {
   }
   
   func testORA() throws {
+    let pc: UInt16 = 0x0022
+    let a: UInt8 = 0b1111_0000
+    let mem: UInt8 = 0b0000_1111
+    cpu.memory.registers.set(.A, to: a)
+    cpu.memory.setProgramCounter(pc)
+    
+    cpu.memory.writeMem(at: pc, value: mem)
     cpu.ORA()
+    XCTAssertEqual(cpu.memory.registers.A, 0xFF)
   }
   
   func testPHA() throws {
+    cpu.memory.registers.set(.A, to: 0x11)
     cpu.PHA()
+    XCTAssertEqual(cpu.memory.stackPop(), 0x11)
   }
   
   func testPHP() throws {
+    cpu.memory.registers.set(programStatus: 0x11)
+    cpu.PHP()
+    XCTAssertEqual(cpu.memory.stackPop(), 0x11)
     cpu.PHP()
   }
   
   func testPLA() throws {
+    cpu.memory.stackPush(0xC1)
     cpu.PLA()
+    XCTAssertEqual(cpu.memory.registers.A, 0xC1)
+  }
+  
+  func testPLA_zero() throws {
+    cpu.memory.stackPush(0x00)
+    cpu.PLA()
+    XCTAssertEqual(cpu.memory.registers.A, 0x00)
+    XCTAssertTrue(cpu.memory.registers.isSet(.zero))
   }
   
   func testPLP() throws {
+    cpu.memory.stackPush(0xC1)
     cpu.PLP()
+    XCTAssertEqual(cpu.memory.registers.p, 0xC1)
   }
   
   func testROL() throws {
-    cpu.ROL()
+   XCTAssertFalse(true)
   }
   
   func testROR() throws {
-    cpu.ROR()
+    XCTAssertFalse(true)
   }
   
   func testRTI() throws {
-    cpu.RTI()
+    XCTAssertFalse(true)
   }
   
   func testRTS() throws {
-    cpu.RTS()
+    XCTAssertFalse(true)
   }
   
   func testSBC() throws {
-    cpu.SBC()
+    XCTAssertFalse(true)
   }
   
   func testSEC() throws {
-    cpu.SEC()
+    XCTAssertFalse(true)
   }
   
   func testSED() throws {
-    cpu.SED()
+    XCTAssertFalse(true)
   }
   
   func testSEI() throws {
-    cpu.SEI()
+    XCTAssertFalse(true)
   }
   
   func testSTA() throws {
-    cpu.STA()
+    XCTAssertFalse(true)
   }
   
   func testSTX() throws {
-    cpu.STX()
+    XCTAssertFalse(true)
   }
   
   func testSTY() throws {
-    cpu.STY()
+    XCTAssertFalse(true)
   }
   
   func testTAX() throws {
-    cpu.TAX()
+    XCTAssertFalse(true)
   }
   
   func testTAY() throws {
-    cpu.TAY()
+    XCTAssertFalse(true)
   }
   
   func testTSX() throws {
-    cpu.TSX()
+    XCTAssertFalse(true)
   }
   
   func testTXA() throws {
-    cpu.TXA()
+    XCTAssertFalse(true)
   }
   
   func testTXS() throws {
-    cpu.TXS()
+    XCTAssertFalse(true)
   }
   
   func testTYA() throws {
-    cpu.TYA()
+    XCTAssertFalse(true)
   }
 }

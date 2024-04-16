@@ -407,7 +407,7 @@ extension CPU {
   
   func ORA() {
     let param: UInt8 = loadByteFromMemory()
-    let result = memory.registers.A ^ param
+    let result = memory.registers.A | param
     memory.registers.set(.A, to: result)
     setZeroAndNegativeFlag(result)
   }
@@ -421,7 +421,9 @@ extension CPU {
   }
   
   func PLA() {
-    memory.registers.set(.A, to: memory.stackPop())
+    let result = memory.stackPop()
+    setZeroFlag(result)
+    memory.registers.set(.A, to: result)
   }
   
   func PLP() {
