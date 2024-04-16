@@ -492,12 +492,104 @@ final class _6502_Opcodes: XCTestCase {
     XCTAssertEqual(cpu.memory.registers.p, 0xC1)
   }
   
-  func testROL() throws {
-   XCTAssertFalse(true)
+  func testROL_accumulator() throws {
+    let val: UInt8 =  0b1001_1110 // 158
+    let exp: UInt8 =  0b0011_1101 // 61
+    
+    cpu.memory.registers.set(.carry)
+    cpu.memory.registers.set(.A, to: val)
+    cpu.ROL_accumulator()
+    XCTAssertEqual(cpu.memory.registers.A, exp)
+    XCTAssertTrue(cpu.memory.registers.isSet(.carry))
   }
   
+  func testROL() throws {
+    let val: UInt8 =  0b1001_0000 // 144 0x90
+    let exp: UInt8 =  0b001_00001 // 33 0x21
+    let pc: UInt16 =  0x23 // 35 0x23
+    let ptr: UInt16 = 0xC1 // 193
+    
+    cpu.memory.registers.set(.carry)
+    cpu.memory.setProgramCounter(pc)
+    cpu.memory.writeMem(at: pc, value: 0xC1)
+    cpu.memory.writeMem(at: ptr, value: val)
+    cpu.ROL()
+    
+    let result = cpu.memory.readMem(at: ptr)
+    
+    XCTAssertEqual(result, exp)
+    XCTAssertTrue(cpu.memory.registers.isSet(.carry))
+  }
+  
+  func testROL_negative() throws {
+    let val: UInt8 =  0b0101_1110
+    let exp: UInt8 =  0b101_11100
+    let pc: UInt16 =  0x23
+    
+    cpu.memory.registers.set(.A, to: val)
+    cpu.ROL_accumulator()
+    XCTAssertEqual(cpu.memory.registers.A, exp)
+    XCTAssertTrue(cpu.memory.registers.isSet(.negative))
+  }
+  
+  func testROL_zero() throws {
+    let val: UInt8 =  0b1000_0000
+    let exp: UInt8 =  0b0
+    
+    let pc: UInt16 = 0x23
+    
+    cpu.memory.registers.set(.A, to: val)
+    cpu.ROL_accumulator()
+    XCTAssertEqual(cpu.memory.registers.A, exp)
+    XCTAssertTrue(cpu.memory.registers.isSet(.zero))
+    XCTAssertFalse(cpu.memory.registers.isSet(.negative))
+  }
+
   func testROR() throws {
-    XCTAssertFalse(true)
+    let val: UInt8 =  0b1001_1110 // 158 0x9E
+    let exp: UInt8 =  0b1100_1111 // 79 0x4F
+                      0b1100_1111
+          
+    let pc: UInt16 =  0x23 // 35 0x23
+    let ptr: UInt16 = 0xC1
+    
+    cpu.memory.registers.set(.carry)
+    cpu.memory.setProgramCounter(pc)
+    cpu.memory.writeMem(at: pc, value: 0xC1)
+    cpu.memory.writeMem(at: ptr, value: val)
+    cpu.ROR()
+    
+    let result = cpu.memory.readMem(at: ptr)
+    
+    XCTAssertEqual(result, exp)
+    XCTAssertFalse(cpu.memory.registers.isSet(.carry))
+  }
+  
+  func testRORL_negative() throws {
+    let val: UInt8 =  0b1000_0000 // 158 0x9E
+    let exp: UInt8 =  0b1100_0000 // 79 0x4F
+    let pc: UInt16 =  0x23
+    
+    cpu.memory.registers.set(.carry)
+    cpu.memory.setProgramCounter(pc)
+    cpu.memory.registers.set(.A, to: val)
+    cpu.ROR_accumulator()
+    XCTAssertEqual(cpu.memory.registers.A, exp)
+    XCTAssertTrue(cpu.memory.registers.isSet(.negative))
+  }
+  
+  func testROR_zero() throws {
+    let val: UInt8 =  0b0000_0000 // 158 0x9E
+    let exp: UInt8 =  0 // 79 0x4F
+    
+    let pc: UInt16 = 0x23
+    
+    cpu.memory.setProgramCounter(pc)
+    cpu.memory.registers.set(.A, to: val)
+    cpu.ROR_accumulator()
+    XCTAssertEqual(cpu.memory.registers.A, exp)
+    XCTAssertTrue(cpu.memory.registers.isSet(.zero))
+    XCTAssertFalse(cpu.memory.registers.isSet(.negative))
   }
   
   func testRTI() throws {

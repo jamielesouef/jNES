@@ -165,32 +165,41 @@ private extension CPU {
     return result
   }
   
-  func _ROL(param: UInt8) -> UInt8 {
-    let msb = param >> 7
-    let result = (param << 1) | msb
-    
-    setZeroAndNegativeFlag(param)
-    setCarryFlag(param)
-    
-    return result
-  }
-  
-  func _ROR(param: UInt8) -> UInt8 {
-    let previousCarry: UInt8 = memory.registers.isSet(.carry) ? 1 : 0
-    let lsb = param & 1
-    
-    let result = (param >> 1) | (previousCarry << 7)
-    
-    setZeroFlag(result)
-    setNegativeFlag(result)
-    setCarryFlag(lsb)
-    
-    return result
-  }
-  
   func _STA(value: UInt8) {
     let memoryAddress: UInt8 = loadByteFromMemory()
     memory.writeMem(at: MemoryAddress(memoryAddress), value: value)
+  }
+  
+  private func _ROL(param: UInt8) -> UInt8 {
+    // DON'T TOUCH THIS
+    let msb = param >> 7
+
+    let lsb: UInt8 = memory.registers.isSet(.carry) ? 1 : 0
+    
+    let result = (param << 1) | lsb
+    
+    log("result", result, r: 2)
+    setZeroAndNegativeFlag(result)
+    setCarryFlag(msb)
+    
+    log("param", param, r:10)
+    log("result", result, r:10)
+    return result
+  }
+  
+  private func _ROR(param: UInt8) -> UInt8 {
+    
+    let msb: UInt8 = memory.registers.isSet(.carry) ? 1 : 0
+    let lsb = param & 1
+    let result = (param >> 1) | (msb << 7)
+    
+    log("result", result, r: 2)
+    setZeroAndNegativeFlag(result)
+    setCarryFlag(lsb)
+    
+    log("param", param, r:10)
+    log("result", result, r:10)
+    return result
   }
   
 }
@@ -431,26 +440,31 @@ extension CPU {
   }
   
   func ROL() {
-    let memoryAddress: UInt8 = loadByteFromMemory()
-    let param = memory.readMem(at: MemoryAddress(memoryAddress))
-    memory.writeMem(at: MemoryAddress(memoryAddress), value: _ROL(param: param))
+    let ptr: UInt8 = loadByteFromMemory()
+    let address = MemoryAddress(ptr)
+    let param = memory.readMem(at: address)
+    let result = _ROL(param: param)
+    memory.writeMem(at: address, value: result)
+    log("address", address, r:10)
   }
+   
   
   func ROL_accumulator() {
-    memory.registers.set(.A, to: _ROL(param: memory.registers.A))
+    let result = _ROL(param: memory.registers.A)
+    memory.registers.set(.A, to: result)
   }
   
   func ROR() {
-    let memoryAddress: UInt8 = loadByteFromMemory()
-    var param = memory.readMem(at: MemoryAddress(memoryAddress))
-    
-    let result = _ROL(param: param)
-    
-    memory.writeMem(at: memory.getprogramCounter(), value: result)
+    let ptr: UInt8 = loadByteFromMemory()
+    let address = MemoryAddress(ptr)
+    let param = memory.readMem(at: address)
+    let result = _ROR(param: param)
+    memory.writeMem(at: address, value: result)
+    log("address", address, r:10)
   }
   
   func ROR_accumulator() {
-    let result = _ROL(param: memory.registers.A)
+    let result = _ROR(param: memory.registers.A)
     memory.registers.set(.A, to: result)
   }
   
