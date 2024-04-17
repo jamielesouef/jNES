@@ -48,6 +48,10 @@ final class CPU {
       instruction.fn()
     }
   }
+  
+  func receivedButtonPress(code: UInt8) {
+    log("button", code)
+  }
 }
 
 // MARK: Opcode functions helpers

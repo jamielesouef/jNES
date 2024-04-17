@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		700C02F32BCF678F00EB9DBE /* NES.swift in Sources */ = {isa = PBXBuildFile; fileRef = 700C02F22BCF678F00EB9DBE /* NES.swift */; };
+		700C02F52BCF6D9F00EB9DBE /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 700C02F42BCF6D9F00EB9DBE /* Controller.swift */; };
 		70C401032BC38E63002F325B /* SwiftNESApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401022BC38E63002F325B /* SwiftNESApp.swift */; };
 		70C401052BC38E63002F325B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401042BC38E63002F325B /* ContentView.swift */; };
 		70C401072BC38E63002F325B /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401062BC38E63002F325B /* Item.swift */; };
@@ -46,6 +48,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		700C02F22BCF678F00EB9DBE /* NES.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NES.swift; sourceTree = "<group>"; };
+		700C02F42BCF6D9F00EB9DBE /* Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		7056E7932BC4F08A00FF2D55 /* SwiftNES.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SwiftNES.xctestplan; sourceTree = "<group>"; };
 		70C400FF2BC38E63002F325B /* SwiftNES.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftNES.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		70C401022BC38E63002F325B /* SwiftNESApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNESApp.swift; sourceTree = "<group>"; };
@@ -171,6 +175,8 @@
 				E4D193ED2BC4ACBC00763090 /* Registers.swift */,
 				E4E24A942BC65CD80011D66F /* Memory.swift */,
 				E4E24A962BC6716A0011D66F /* Instructions.swift */,
+				700C02F22BCF678F00EB9DBE /* NES.swift */,
+				700C02F42BCF6D9F00EB9DBE /* Controller.swift */,
 			);
 			path = CPU;
 			sourceTree = "<group>";
@@ -307,6 +313,8 @@
 			files = (
 				E49A7F752BCA1A2500E88D1F /* log.swift in Sources */,
 				E4E24A952BC65CD80011D66F /* Memory.swift in Sources */,
+				700C02F52BCF6D9F00EB9DBE /* Controller.swift in Sources */,
+				700C02F32BCF678F00EB9DBE /* NES.swift in Sources */,
 				70C401052BC38E63002F325B /* ContentView.swift in Sources */,
 				E4E24A972BC6716A0011D66F /* Instructions.swift in Sources */,
 				E4D193EE2BC4ACBC00763090 /* Registers.swift in Sources */,
