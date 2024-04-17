@@ -47,7 +47,7 @@ class MockMemory: MemoryInjectable {
     self.programCounter = value
   }
   
-  func getprogramCounter() -> UInt16 {
+  func getProgramCounter() -> UInt16 {
     log("gc", self.programCounter)
     return self.programCounter
   }
@@ -73,7 +73,7 @@ class MockMemory: MemoryInjectable {
   }
   
   func getOpperandAddress(for mode: SwiftNES.AddressingMode) -> SwiftNES.MemoryAddress {
-    getprogramCounter()
+    getProgramCounter()
   }
   
   func writeBuffer(at address: UInt16, value: UInt8) {

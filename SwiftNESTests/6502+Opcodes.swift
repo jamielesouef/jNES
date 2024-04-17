@@ -101,27 +101,27 @@ final class _6502_Opcodes: XCTestCase {
   func testBCC_when_carry_set() throws {
     cpu.memory.registers.set(.carry)
     cpu.BCC()
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0x2A)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0x2A)
   }
   
   func testBCC_when_carry_cleared() throws {
     cpu.memory.registers.clear(.carry)
     cpu.BMI()
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0x00)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0x00)
   }
   
   func testBCS() throws {
     cpu.memory.registers.set(.A, to: 0b1010_0000)
     XCTAssertEqual(cpu.memory.readMem(at: 0x00), 0x15)
     cpu.BCS()
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0x2A)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0x2A)
   }
   
   func testBEQ() throws {
     cpu.memory.registers.set(.A, to: 0b1010_0000)
     XCTAssertEqual(cpu.memory.readMem(at: 0x00), 0x15)
     cpu.BEQ()
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0x00)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0x00)
   }
   
   func testBIT_zero_set() throws {
@@ -147,46 +147,46 @@ final class _6502_Opcodes: XCTestCase {
   func testBMI_negative_set() throws {
     cpu.memory.registers.set(.negative)
     cpu.BMI()
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0x2A)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0x2A)
   }
   
   func testBMI_negative_cleared() throws {
     cpu.memory.registers.clear(.negative)
     cpu.BMI()
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0x00)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0x00)
   }
   
   func testBNE_brance_when_zero_not_1() throws {
     cpu.memory.registers.set(.zero)
     cpu.BNE()
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0x00)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0x00)
   }
   
   func testBNE_zero_when_zero_not_0() throws {
     cpu.memory.registers.clear(.zero)
     cpu.BNE()
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0x2A)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0x2A)
   }
   
   func testBPL_when_not_equal_set() throws {
     cpu.memory.registers.clear(.zero)
     cpu.BPL()
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0x2A)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0x2A)
   }
   
   func testBPL_when_cleared() throws {
     cpu.memory.registers.clear(.zero)
     cpu.BPL()
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0x2A)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0x2A)
   }
   
   func testBRK() throws {
     cpu.memory.setProgramCounter(0x00A1)
     cpu.memory.writeMem16(at: 0xFFFE, value: 0x1C1C)
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0xA1)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0xA1)
     cpu.BRK()
     
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0x1C1C)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0x1C1C)
     
   }
   
@@ -194,14 +194,14 @@ final class _6502_Opcodes: XCTestCase {
     cpu.memory.setProgramCounter(0x00A1)
     cpu.memory.registers.clear(.overflow)
     cpu.BVC()
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0xA0)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0xA0)
   }
   
   func testBVC_dont_branch() throws {
     cpu.memory.setProgramCounter(0x00A1)
     cpu.memory.registers.set(.overflow)
     cpu.BVC()
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0xA1)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0xA1)
     
   }
   
@@ -209,14 +209,14 @@ final class _6502_Opcodes: XCTestCase {
     cpu.memory.setProgramCounter(0x00A1)
     cpu.memory.registers.set(.overflow)
     cpu.BVS()
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0xA0)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0xA0)
   }
   
   func testBVS_dont_branch() throws {
     cpu.memory.setProgramCounter(0x00A1)
     cpu.memory.registers.clear(.overflow)
     cpu.BVS()
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0xA1)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0xA1)
   }
   
   func testCLC() throws {
@@ -357,21 +357,21 @@ final class _6502_Opcodes: XCTestCase {
   }
   
   func testJMP() throws {
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0x0000)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0x0000)
     cpu.memory.writeMem(at: 0x00, value: 0x33)
     cpu.memory.writeMem(at: 0x01, value: 0xFF)
     cpu.JMP()
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0xFF33)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0xFF33)
   }
   
   func testJSR() throws {
     let pc:UInt16 = 0xAAFF
     cpu.memory.writeMem16(at: pc, value: 0x01FF)
     cpu.memory.setProgramCounter(pc)
-    XCTAssertEqual(cpu.memory.getprogramCounter(), pc)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), pc)
     
     cpu.JSR()
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0x01FF)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0x01FF)
     
     let stackPtr = cpu.memory.stackPop16()
     XCTAssertEqual(stackPtr, 0xAAFF)
@@ -599,11 +599,11 @@ final class _6502_Opcodes: XCTestCase {
     cpu.BRK()
     cpu.memory.registers.set(programStatus: 0b1100_1111)
     
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0xFFCC)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0xFFCC)
     XCTAssertEqual(cpu.memory.registers.p, 0b1100_1111)
     cpu.RTI()
     XCTAssertEqual(cpu.memory.registers.p, 0b1100_0101)
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0xc1)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0xc1)
   }
   
   func testRTS() throws {
@@ -613,11 +613,11 @@ final class _6502_Opcodes: XCTestCase {
     cpu.memory.setProgramCounter(pc)
     cpu.JSR()
     
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0x110B)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0x110B)
     
     cpu.RTS()
     
-    XCTAssertEqual(cpu.memory.getprogramCounter(), 0xC1C1)
+    XCTAssertEqual(cpu.memory.getProgramCounter(), 0xC1C1)
     
   }
   

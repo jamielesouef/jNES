@@ -40,12 +40,13 @@ protocol MemoryInjectable {
   func readBuffer(at address: UInt16) -> UInt8
   
   func setProgramCounter(_ value: UInt16)
-  func getprogramCounter() -> UInt16
+  func getProgramCounter() -> UInt16
   func incrementProgramCounter()
   
   func setStackPointer(_ value: UInt8)
   func getStackPointer() -> UInt8
   func readMemAtCounter() -> UInt8
+  func reset()
 }
 
 
@@ -58,7 +59,9 @@ extension MemoryInjectable where Self: AnyObject {
   
   func readMem(at address: MemoryAddress) -> UInt8 {
     let tructatedAddress = truncate(address: address)
-    return readBuffer(at: tructatedAddress)
+    let value = readBuffer(at: tructatedAddress)
+    log("address, tructatedAddress, value", address, tructatedAddress, UInt16(value))
+    return value
   }
   
   func writeMem(at address: MemoryAddress, value: UInt8) {
@@ -71,7 +74,7 @@ extension MemoryInjectable where Self: AnyObject {
     let hi = readMem(at: address.addingReportingOverflow(1).partialValue)
     
     let ptr = UInt16(hi) << 8 | UInt16(lo)
-    log("lo, hi, address", UInt16(lo), UInt16(hi), address, r: 16)
+    log("ptr, lo, hi, address", ptr, UInt16(lo), UInt16(hi), address, r: 16)
     return ptr
   }
   
@@ -108,8 +111,6 @@ extension MemoryInjectable where Self: AnyObject {
 
     stackPush(hi)
     stackPush(lo)
-    
-  
   }
   
   func stackPop16() -> UInt16 {
@@ -118,6 +119,12 @@ extension MemoryInjectable where Self: AnyObject {
     let value = hi << 8 | lo
     log("lo, hi, value", lo, hi, value)
     return value
+  }
+  
+  func reset() {
+    registers.reset()
+    setProgramCounter(readMem16(at: 0xFFFC))
+    log("pc", getProgramCounter())
   }
 }
 
@@ -146,39 +153,35 @@ final class Memory {
   }
   
   func getOpperandAddress(for mode: AddressingMode) -> MemoryAddress {
+    var address:  MemoryAddress!
+    
     switch mode {
-    case .accumulator: return 0x0000
-    case .immediate:  return pc
-    case .zeroPage:   return MemoryAddress(readMem(at: pc))
-    case .zeroPageX:  return getZeroPage(offsetBy: .X)
-    case .zeroPageY:  return getZeroPage(offsetBy: .Y)
-    case .absolute:   return readMem16(at: pc)
-    case .absoluteX: return getAbsolute(offsetBy: .X)
-    case .absoluteY: return getAbsolute(offsetBy: .Y)
-    case .indirectX: return indirectX()
-    case .indirectY: return indirectY()
+    case .accumulator: address = 0x0000
+    case .immediate:  address = pc
+    case .zeroPage:   address = MemoryAddress(readMem(at: pc))
+    case .zeroPageX:  address = getZeroPage(offsetBy: .X)
+    case .zeroPageY:  address = getZeroPage(offsetBy: .Y)
+    case .absolute:   address = readMem16(at: pc)
+    case .absoluteX: address = getAbsolute(offsetBy: .X)
+    case .absoluteY: address = getAbsolute(offsetBy: .Y)
+    case .indirectX: address = indirectX()
+    case .indirectY: address = indirectY()
     default: fatalError("Addressing mode: \(mode) not implemented")
     }
+    log("address \(mode.rawValue)")
+    log("address, pc", address, pc)
+    return address
   }
   
   func load(program: [UInt8]) {
-    let programPtr: MemoryAddress = 0x0600
-    
-    for (i, v) in program.enumerated() {
-      buffer[programPtr + UInt16(i)] = v
-    }
-    
-    writeMem16(at: 0xFFFC, value: programPtr)
-    pc = programPtr
-    reset()
+    buffer.insert(contentsOf: program, at: 0x0600)
+    writeMem16(at: 0xFFFC, value: 0x0600)
   }
   
   func reset() {
-    registers.set(.A, to: 0)
-    registers.set(.X, to: 0)
-    registers.set(.Y, to: 0)
-    registers.set(programStatus: 0)
     registers.reset()
+    setProgramCounter(readMem16(at: 0xFFFC))
+    log("pc", pc)
   }
   
   func readMemAtCounter() -> UInt8 {
@@ -205,13 +208,15 @@ extension Memory: MemoryInjectable {
   
   func setProgramCounter(_ value: UInt16) {
     pc = value
+    log("pc", pc)
   }
-  func getprogramCounter() -> UInt16 {
+  func getProgramCounter() -> UInt16 {
     return pc
   }
   
   func incrementProgramCounter() {
     pc += 1
+    log("pc", pc)
   }
   
 }

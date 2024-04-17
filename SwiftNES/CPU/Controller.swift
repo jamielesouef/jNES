@@ -7,18 +7,23 @@
 
 import Foundation
 
-final class Controller {
+
+protocol Controllable {
+  func didReceiveButtonUp(keyCode: UInt16)
+  func didReceiveButtonDown(keyCode: UInt16)
+}
+
+final class Controller: Controllable {
   
-    
   enum Button: UInt16 {
-    case up = 13
-    case down = 1
-    case left = 0
-    case righ = 2
-    case a = 40
-    case b = 37
-    case start = 5
-    case select = 4
+    case up = 0x0D
+    case down = 0x01
+    case left = 0x00
+    case righ = 0x02
+    case a = 0x28
+    case b = 0x25
+    case start = 0x05
+    case select = 0x04
   }
   
   private (set) var state: UInt8 = 0x00 {
@@ -27,13 +32,22 @@ final class Controller {
     }
   }
   
-  func didReceiveButtonUp(button: Button) {
-    setState(with: button, isPressed: false)
+  func didReceiveButtonUp(keyCode: UInt16) {
+    guard let validButton = getButton(for: keyCode) else { return }
+    setState(with: validButton, isPressed: false)
   }
   
-  func didReceiveButtonDown(button: Button) {
-    if isPressed(button) { return }
-    setState(with: button, isPressed: true)
+  func didReceiveButtonDown(keyCode: UInt16) {
+    guard let validButton = getButton(for: keyCode), 
+            !isPressed(validButton) else {
+      return
+    }
+    
+    setState(with: validButton, isPressed: true)
+  }
+  
+  private func getButton(for keyCode: UInt16) -> Button? {
+    Button(rawValue: keyCode)
   }
   
   private func isPressed(_ button: Button) -> Bool {

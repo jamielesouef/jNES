@@ -19,57 +19,68 @@ final class CPU {
   private var loop = true
   private var addressingMode: AddressingMode?
   
+  let callback: () -> UInt8
+  
   enum CPUError: Error {
     case invalidOpcode(String)
     case missingOpcode(String)
   }
   
-  init(memory: MemoryInjectable = Memory(), addressingMode: AddressingMode? = nil) {
+  init(memory: MemoryInjectable = Memory(), 
+       addressingMode: AddressingMode? = nil,
+        callback: @escaping () -> UInt8 = { 0x00 }
+  ) {
     self.memory = memory
     self.addressingMode = addressingMode
+    self.callback = callback
   }
   
   func load(program: [UInt8]) {
     memory.load(program: program)
   }
   
-  func run() {
-    run {
-      log("running")
-    }
+  func reset() {
+    memory.reset()
   }
   
-  private func run(callback: @escaping () -> Void) {
+  func run(callback:() -> UInt8) {
     while loop {
-      callback()
+      log("pc", memory.getProgramCounter())
+      let controllerState = callback()
+      handle(controllerState: controllerState)
       let opcode: UInt8 = memory.readMemAtCounter()
-      log(opcode, r: 16)
       memory.incrementProgramCounter()
       
       dispatch(opcode)
+
+      log("opcode", opcode, r: 16)
+      log("——————————")
     }
     
     func dispatch(_ opcode: UInt8) {
       let instruction = getInstructions(forOpcode: opcode)
       self.addressingMode = instruction.mode
+      log("")
+      log("start \(instruction.name)")
       instruction.fn()
+      log("end \(instruction.name)")
     }
-  }
-  
-  func receivedButtonPress(code: UInt16) {
-    log("button", code)
   }
 }
 
 // MARK: Opcode functions helpers
 private extension CPU {
+  
+  func handle(controllerState state: UInt8) {
+    memory.writeMem(at: 0xFF, value: state)
+  }
+  
   func unsafeGetAddresingMode() -> AddressingMode {
     guard let mode = self.addressingMode else {
       fatalError("Addressing mode not set")
     }
     
     self.addressingMode = nil
-    
     return mode
   }
   
@@ -112,7 +123,7 @@ private extension CPU {
   
   func branch(when condition: Bool) {
     if condition {
-      let offset: UInt8 = memory.readMem(at: memory.getprogramCounter())
+      let offset: UInt8 = memory.readMem(at: memory.getProgramCounter())
       let (singedValue, isSigned): (UInt8, Bool) = signedValue(from: offset)
       
       memory.setProgramCounter(
@@ -287,7 +298,7 @@ extension CPU {
   
   // Break
   func BRK() {
-    let pc = memory.getprogramCounter()
+    let pc = memory.getProgramCounter()
     let vector = memory.readMem16(at: 0xFFFE)
     
     memory.stackPush16(pc)
@@ -344,7 +355,7 @@ extension CPU {
   func DEC() {
     let param: UInt8 = loadByteFromMemory()
     let result = param - 1
-    let pc = memory.getprogramCounter() - 1
+    let pc = memory.getProgramCounter() - 1
     memory.writeMem(at: pc, value: result)
     setZeroAndNegativeFlag(result)
   }
@@ -375,7 +386,7 @@ extension CPU {
   func INC() {
     let param: UInt8 = loadByteFromMemory()
     let i = increment(param: param)
-    let pc = memory.getprogramCounter() - 1
+    let pc = memory.getProgramCounter() - 1
     memory.writeMem(at: pc, value: i)
   }
   
@@ -398,7 +409,7 @@ extension CPU {
   
   // Jump
   func JMP() {
-    let pc = memory.getprogramCounter()
+    let pc = memory.getProgramCounter()
     let ptr = memory.readMem16(at: pc)
     memory.setProgramCounter(ptr)
   }
@@ -406,12 +417,11 @@ extension CPU {
   
   // Jump to Subroutine
   func JSR() {
-    
-    let returnPoint = memory.getprogramCounter()
+    let returnPoint = memory.getProgramCounter()
     let newPtr: UInt16 = loadByteFromMemory()
     log("newPtr, returnPoint", newPtr, returnPoint)
     
-    memory.stackPush16(returnPoint)
+    memory.stackPush16(returnPoint + 2 - 1)
     memory.setProgramCounter(newPtr)
   }
   
