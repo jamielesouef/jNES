@@ -162,20 +162,23 @@ final class Memory {
   }
   
   func load(program: [UInt8]) {
-    let insertionPoint: MemoryAddress = 0x0000
+    let programPtr: MemoryAddress = 0x0600
     
     for (i, v) in program.enumerated() {
-      buffer[insertionPoint + UInt16(i)] = v
+      buffer[programPtr + UInt16(i)] = v
     }
     
-    writeMem16(at: 0xFFFC, value: insertionPoint)
-    pc = insertionPoint
+    writeMem16(at: 0xFFFC, value: programPtr)
+    pc = programPtr
     reset()
   }
   
   func reset() {
+    registers.set(.A, to: 0)
+    registers.set(.X, to: 0)
+    registers.set(.Y, to: 0)
+    registers.set(programStatus: 0)
     registers.reset()
-    
   }
   
   func readMemAtCounter() -> UInt8 {

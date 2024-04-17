@@ -12,12 +12,8 @@ struct NES {
   let controller: Controller
   
   init() {
-    let cpu = CPU()
-    self.controller = Controller { buttonPressed in
-      cpu.receivedButtonPress(code: buttonPressed)
-    }
-    
     self.cpu = CPU()
+    self.controller = Controller()
   }
 }
 

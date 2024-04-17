@@ -9,8 +9,7 @@ import Foundation
 
 final class Controller {
   
-  private let callback: (UInt16) -> Void
-  
+    
   enum Button: UInt16 {
     case up = 13
     case down = 1
@@ -22,11 +21,45 @@ final class Controller {
     case select = 4
   }
   
-  init(_ callback: @escaping (UInt16) -> Void) {
-    self.callback = callback
+  private (set) var state: UInt8 = 0x00 {
+    didSet {
+      log("state",state, r: 2)
+    }
   }
   
-  func didReceiveButtonPress(with button: Button) {
-    callback(button.rawValue)
+  func didReceiveButtonUp(button: Button) {
+    setState(with: button, isPressed: false)
+  }
+  
+  func didReceiveButtonDown(button: Button) {
+    if isPressed(button) { return }
+    setState(with: button, isPressed: true)
+  }
+  
+  private func isPressed(_ button: Button) -> Bool {
+    state & button.mask != 0
+  }
+  
+  private func setState(with button: Button, isPressed: Bool) {
+   if isPressed {
+     state |= button.mask
+   } else {
+     state &= ~button.mask
+   }
+  }
+}
+
+extension Controller.Button {
+  var mask: UInt8 {
+    switch self {
+    case .up: 1 << 0
+    case .down: 1 << 1
+    case .left: 1 << 2
+    case .righ: 1 << 3
+    case .a: 1 << 4
+    case .b: 1 << 5
+    case .start: 1 << 6
+    case .select: 1 << 7
+    }
   }
 }

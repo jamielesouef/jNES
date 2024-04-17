@@ -16,7 +16,7 @@ final class CPU {
   
   let memory: MemoryInjectable
   
-  private var loop = true //temport until flags
+  private var loop = true
   private var addressingMode: AddressingMode?
   
   enum CPUError: Error {
@@ -33,16 +33,23 @@ final class CPU {
     memory.load(program: program)
   }
   
-  func run() throws {
+  func run() {
+    run {
+      log("running")
+    }
+  }
+  
+  private func run(callback: @escaping () -> Void) {
     while loop {
+      callback()
       let opcode: UInt8 = memory.readMemAtCounter()
       log(opcode, r: 16)
       memory.incrementProgramCounter()
       
-      try dispatch(opcode)
+      dispatch(opcode)
     }
     
-    func dispatch(_ opcode: UInt8) throws {
+    func dispatch(_ opcode: UInt8) {
       let instruction = getInstructions(forOpcode: opcode)
       self.addressingMode = instruction.mode
       instruction.fn()

@@ -38,12 +38,17 @@ struct ContentView: View {
       Text("Select an item")
     }
     .onAppear {
-      NSEvent.addLocalMonitorForEvents(matching: [.keyDown]) { keyEvent in
+      NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .keyUp]) { keyEvent in
         guard let value = Controller.Button(rawValue: keyEvent.keyCode) else {
           return keyEvent
         }
         
-        nes.controller.didReceiveButtonPress(with: value)
+        switch keyEvent.type {
+        case .keyUp: nes.controller.didReceiveButtonUp(button: value)
+        case .keyDown: nes.controller.didReceiveButtonDown(button: value)
+        default: return nil
+          
+        }
         return nil
       }
     }
