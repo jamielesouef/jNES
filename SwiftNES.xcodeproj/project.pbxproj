@@ -17,7 +17,7 @@
 		70C401172BC38E64002F325B /* SwiftNESTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401162BC38E64002F325B /* SwiftNESTests.swift */; };
 		70C401212BC38E64002F325B /* SwiftNESUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401202BC38E64002F325B /* SwiftNESUITests.swift */; };
 		70C401232BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401222BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift */; };
-		70C401302BC38E72002F325B /* 6502.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C4012F2BC38E72002F325B /* 6502.swift */; };
+		70C401302BC38E72002F325B /* CPU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C4012F2BC38E72002F325B /* CPU.swift */; };
 		E45121D92BC4D5F700A34ECB /* 6502Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45121D82BC4D5F700A34ECB /* 6502Spec.swift */; };
 		E45121DB2BC4E01200A34ECB /* Array+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45121DA2BC4E01200A34ECB /* Array+extensions.swift */; };
 		E47639392BC76077004DA2B0 /* CPUMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47639382BC76077004DA2B0 /* CPUMock.swift */; };
@@ -63,7 +63,7 @@
 		70C4011C2BC38E64002F325B /* SwiftNESUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftNESUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		70C401202BC38E64002F325B /* SwiftNESUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNESUITests.swift; sourceTree = "<group>"; };
 		70C401222BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNESUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		70C4012F2BC38E72002F325B /* 6502.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = 6502.swift; sourceTree = "<group>"; };
+		70C4012F2BC38E72002F325B /* CPU.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPU.swift; sourceTree = "<group>"; };
 		E45121D82BC4D5F700A34ECB /* 6502Spec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = 6502Spec.swift; sourceTree = "<group>"; };
 		E45121DA2BC4E01200A34ECB /* Array+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+extensions.swift"; sourceTree = "<group>"; };
 		E47639382BC76077004DA2B0 /* CPUMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUMock.swift; sourceTree = "<group>"; };
@@ -171,7 +171,7 @@
 		E4D193EC2BC4ACB400763090 /* CPU */ = {
 			isa = PBXGroup;
 			children = (
-				70C4012F2BC38E72002F325B /* 6502.swift */,
+				70C4012F2BC38E72002F325B /* CPU.swift */,
 				E4D193ED2BC4ACBC00763090 /* Registers.swift */,
 				E4E24A942BC65CD80011D66F /* Memory.swift */,
 				E4E24A962BC6716A0011D66F /* Instructions.swift */,
@@ -319,7 +319,7 @@
 				E4E24A972BC6716A0011D66F /* Instructions.swift in Sources */,
 				E4D193EE2BC4ACBC00763090 /* Registers.swift in Sources */,
 				70C401072BC38E63002F325B /* Item.swift in Sources */,
-				70C401302BC38E72002F325B /* 6502.swift in Sources */,
+				70C401302BC38E72002F325B /* CPU.swift in Sources */,
 				70C401032BC38E63002F325B /* SwiftNESApp.swift in Sources */,
 				E45121DB2BC4E01200A34ECB /* Array+extensions.swift in Sources */,
 			);

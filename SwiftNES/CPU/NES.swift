@@ -16,6 +16,7 @@ struct NES {
     self.controller = Controller { buttonPressed in
       cpu.receivedButtonPress(code: buttonPressed)
     }
+    
     self.cpu = CPU()
   }
 }

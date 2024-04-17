@@ -9,15 +9,20 @@ import Foundation
 
 final class Controller {
   
-  private let callback: (UInt8) -> Void
+  private let callback: (UInt16) -> Void
   
-  enum Button: UInt8 {
-    case up, down, left, right
-    case a, b
-    case start, select
+  enum Button: UInt16 {
+    case up = 13
+    case down = 1
+    case left = 0
+    case righ = 2
+    case a = 40
+    case b = 37
+    case start = 5
+    case select = 4
   }
   
-  init(_ callback: @escaping (UInt8) -> Void) {
+  init(_ callback: @escaping (UInt16) -> Void) {
     self.callback = callback
   }
   

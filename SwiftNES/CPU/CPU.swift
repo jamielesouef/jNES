@@ -49,7 +49,7 @@ final class CPU {
     }
   }
   
-  func receivedButtonPress(code: UInt8) {
+  func receivedButtonPress(code: UInt16) {
     log("button", code)
   }
 }
