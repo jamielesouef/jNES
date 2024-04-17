@@ -35,6 +35,12 @@ struct ContentView: View {
         } detail: {
             Text("Select an item")
         }
+        .onAppear {
+          NSEvent.addLocalMonitorForEvents(matching: [.keyDown]) {
+            print("Key down: \($0.keyCode)")
+            return nil
+          }
+        }
     }
 
     private func addItem() {
