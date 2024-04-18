@@ -19,7 +19,7 @@ final class Controller: Controllable {
     case up = 0x0D
     case down = 0x01
     case left = 0x00
-    case righ = 0x02
+    case right = 0x02
     case a = 0x28
     case b = 0x25
     case start = 0x05
@@ -66,10 +66,10 @@ final class Controller: Controllable {
 extension Controller.Button {
   var mask: UInt8 {
     switch self {
-    case .up: 1 << 0
+    case .up: 1
     case .down: 1 << 1
     case .left: 1 << 2
-    case .righ: 1 << 3
+    case .right: 1 << 3
     case .a: 1 << 4
     case .b: 1 << 5
     case .start: 1 << 6

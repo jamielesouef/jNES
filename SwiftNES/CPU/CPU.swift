@@ -72,7 +72,26 @@ final class CPU {
 private extension CPU {
   
   func handle(controllerState state: UInt8) {
-    memory.writeMem(at: 0xFF, value: state)
+    
+    if state & Controller.Button.left.mask != 0 {
+      memory.writeMem(at: 0xFF, value: 0x61)
+      return
+    }
+    
+    if state & Controller.Button.right.mask != 0 {
+      memory.writeMem(at: 0xFF, value: 0x64)
+      return
+    }
+    
+    if state & Controller.Button.up.mask != 0 {
+      memory.writeMem(at: 0xFF, value: 0x77)
+      return
+    }
+    
+    if state & Controller.Button.down.mask != 0 {
+      memory.writeMem(at: 0xFF, value: 0x73)
+      return
+    }
   }
   
   func unsafeGetAddresingMode() -> AddressingMode {
@@ -128,32 +147,26 @@ private extension CPU {
   
   func branch(when condition: Bool) {
     if condition {
-      let offset: UInt8 = memory.readMem(at: memory.getProgramCounter())
+      log("condition", condition ? 1 : 0)
+      let pc = memory.getProgramCounter()
+      let offset: UInt8 = memory.readMem(at: pc)
       let (singedValue, isSigned): (UInt8, Bool) = signedValue(from: offset)
+      let addr = pc
+        .addingReportingOverflow(1).partialValue
+        .addingReportingOverflow(UInt16(offset)).partialValue
       
-      memory.setProgramCounter(
-        UInt16(
-          isSigned
-          ? offset.subtractingReportingOverflow(
-            singedValue
-          ).partialValue
-          : offset.addingReportingOverflow(
-            singedValue
-          ).partialValue
-        )
-      )
+      log("addr", addr)
+      memory.setProgramCounter(addr)
+    } else {
+      memory.incrementProgramCounter()
     }
   }
   
   func compare(against value: UInt8) {
     let param: UInt8 = loadByteFromMemory()
-    let subtractedResult = value.subtractingReportingOverflow(param).partialValue
-    
-    
-    setZeroFlag(subtractedResult)
-    setNegativeFlag(subtractedResult)
-    
-    setCarryFlag( value >= param ? 1 : 0)
+  
+    setCarryFlag(value <= param ? 1 : 0)
+    setZeroAndNegativeFlag(value.subtractingReportingOverflow(param).partialValue)
   }
   
   func increment(param: UInt8) -> UInt8 {

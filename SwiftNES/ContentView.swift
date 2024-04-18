@@ -38,7 +38,9 @@ struct ContentView: View {
       Text("Select an item")
     }
     .onAppear {
-      nes.powerOn()
+      DispatchQueue.global(qos: .userInteractive).async {
+        nes.powerOn()
+      }
       NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .keyUp]) { keyEvent in
         switch keyEvent.type {
         case .keyUp: nes.didReceiveButtonUp(keyCode: keyEvent.keyCode)

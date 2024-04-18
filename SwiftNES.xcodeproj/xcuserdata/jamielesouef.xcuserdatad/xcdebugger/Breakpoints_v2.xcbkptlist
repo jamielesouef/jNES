@@ -7,63 +7,17 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "5C339333-5816-4630-B0BC-03E58A6BE8EB"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SwiftNES/CPU/Memory.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "211"
-            endingLineNumber = "211"
-            landmarkName = "setProgramCounter(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "9901B4C0-4AB9-4CC1-95DF-3B61E88F7B84"
+            uuid = "F6CDE6B4-7C80-4B88-8DC2-E262D5A42F6C"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SwiftNES/CPU/CPU.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "104"
-            endingLineNumber = "104"
-            landmarkName = "loadByteFromMemory()"
+            startingLineNumber = "294"
+            endingLineNumber = "294"
+            landmarkName = "BEQ()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "9901B4C0-4AB9-4CC1-95DF-3B61E88F7B84 - 757c20e0fee6c27c"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "SwiftNES.CPU.loadByteFromMemory() -&gt; Swift.UInt16"
-                  moduleName = "SwiftNES"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jamielesouef/Developer/SwiftNES/SwiftNES/CPU/CPU.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "105"
-                  endingLineNumber = "105">
-               </Location>
-               <Location
-                  uuid = "9901B4C0-4AB9-4CC1-95DF-3B61E88F7B84 - 757c20e0fee6c223"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "SwiftNES.CPU.loadByteFromMemory() -&gt; Swift.UInt16"
-                  moduleName = "SwiftNES"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jamielesouef/Developer/SwiftNES/SwiftNES/CPU/CPU.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "104"
-                  endingLineNumber = "104">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
