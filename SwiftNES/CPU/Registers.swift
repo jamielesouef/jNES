@@ -34,7 +34,7 @@ class Registers {
     case negative
   }
   
-  enum Accumulator {
+  enum Accumulator: String {
     case A,X,Y
   }
   
@@ -67,6 +67,7 @@ class Registers {
   }
   
   func set(_ register: Accumulator, to param: UInt8) {
+    log("\(register.rawValue), to", param)
     switch register {
     case .A: self.A = param
     case .X: self.X = param

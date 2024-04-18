@@ -152,7 +152,7 @@ final class Memory {
     switch mode {
     case .accumulator: address = 0x0000
     case .immediate:  address = pc
-    case .zeroPage:   address = MemoryAddress(readMem(at: pc))
+    case .zeroPage:   address = MemoryAddress(pc)
     case .zeroPageX:  address = getZeroPage(offsetBy: .X)
     case .zeroPageY:  address = getZeroPage(offsetBy: .Y)
     case .absolute:   address = readMem16(at: pc)

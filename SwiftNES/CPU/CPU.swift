@@ -193,8 +193,9 @@ private extension CPU {
   }
   
   func _ST(value: UInt8) {
-    let memoryAddress: UInt8 = loadByteFromMemory()
-    memory.writeMem(at: MemoryAddress(memoryAddress), value: value)
+    let storeAddress: UInt8 = loadByteFromMemory()
+    log("storeAddress", storeAddress)
+    memory.writeMem(at: MemoryAddress(storeAddress), value: value)
   }
   
   private func _ROL(param: UInt8) -> UInt8 {
@@ -271,6 +272,7 @@ extension CPU {
     branch(when: memory.registers.isSet(.carry))
   }
   
+  // Branch if Carry Clear
   func BCS() {
     branch(when: !memory.registers.isSet(.carry))
   }
@@ -538,7 +540,7 @@ extension CPU {
   
   // Return from Subroutine
   func RTS() {
-    let returnAddress = memory.stackPop16()
+    let returnAddress = memory.stackPop16() + 1
     memory.setProgramCounter(returnAddress)
   }
   
