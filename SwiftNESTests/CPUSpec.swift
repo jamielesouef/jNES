@@ -8,7 +8,7 @@
 import XCTest
 @testable import SwiftNES
 
-final class _6502Spec: XCTestCase {
+final class CPUSpec: XCTestCase {
   
   var cpu: CPU!
   
@@ -18,6 +18,11 @@ final class _6502Spec: XCTestCase {
   
   override func tearDownWithError() throws {
     self.cpu = nil
+  }
+  
+  func testReadMem16() {
+    let result = cpu.memory.readMem16(at: 0x0602)
+    XCTAssertEqual(result, 0x0D94)
   }
   
   func testWriting16BitAddressTomMemoy() {

@@ -110,9 +110,14 @@ private extension CPU {
     }
     
     let addr = memory.getOpperandAddress(for: addressingMode)
+    
+    if addressingMode == .absolute {
+      return addr
+    }
+    
     let byte = memory.readMem16(at: addr)
+    log("byte addr, pc", byte, addr, memory.getProgramCounter())
     memory.incrementProgramCounter()
-    log("byte addr", byte, addr)
     return byte
   }
   
@@ -417,11 +422,11 @@ extension CPU {
   
   // Jump to Subroutine
   func JSR() {
-    let returnPoint = memory.getProgramCounter()
-    let newPtr: UInt16 = loadByteFromMemory()
-    log("newPtr, returnPoint", newPtr, returnPoint)
+    memory.stackPush16(memory.getProgramCounter() + 2 - 1)
     
-    memory.stackPush16(returnPoint + 2 - 1)
+    let newPtr: UInt16 = loadByteFromMemory()
+    log("newPtr", newPtr)
+    
     memory.setProgramCounter(newPtr)
   }
   

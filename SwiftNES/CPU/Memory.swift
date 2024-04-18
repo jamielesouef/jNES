@@ -52,26 +52,20 @@ protocol MemoryInjectable {
 
 extension MemoryInjectable where Self: AnyObject {
   
-  private func truncate(address: MemoryAddress) -> MemoryAddress {
-    let truncated = UInt8(truncatingIfNeeded: address)
-    return MemoryAddress(truncated)
-  }
-  
   func readMem(at address: MemoryAddress) -> UInt8 {
-    let tructatedAddress = truncate(address: address)
-    let value = readBuffer(at: tructatedAddress)
-    log("address, tructatedAddress, value", address, tructatedAddress, UInt16(value))
+    let value = readBuffer(at: address)
+    log("address, value", address, UInt16(value))
     return value
   }
   
   func writeMem(at address: MemoryAddress, value: UInt8) {
-    let tructatedAddress = truncate(address: address)
-    writeBuffer(at: tructatedAddress, value: value)
+    log("address, value", address, UInt16(value))
+    writeBuffer(at: address, value: value)
   }
   
   func readMem16(at address: MemoryAddress) -> MemoryAddress {
     let lo = readMem(at: address)
-    let hi = readMem(at: address.addingReportingOverflow(1).partialValue)
+    let hi = readMem(at: address + 1)
     
     let ptr = UInt16(hi) << 8 | UInt16(lo)
     log("ptr, lo, hi, address", ptr, UInt16(lo), UInt16(hi), address, r: 16)
@@ -82,9 +76,9 @@ extension MemoryInjectable where Self: AnyObject {
     let lo = UInt8(value & 0xFF)
     let hi = UInt8(value >> 8)
     self.writeMem(at: address, value: lo)
-    self.writeMem(at: address.addingReportingOverflow(1).partialValue , value: hi)
+    self.writeMem(at: address + 1, value: hi)
     
-    log("lo, hi, address", UInt16(lo), UInt16(hi), address)
+    log("value, lo, hi, address", value, UInt16(lo), UInt16(hi), address)
   }
   
   func stackPush(_ value: UInt8) {
@@ -95,22 +89,22 @@ extension MemoryInjectable where Self: AnyObject {
     
   }
   
+  func stackPush16(_ value: UInt16) {
+    let hi = UInt8(value >> 8)
+    let lo = UInt8(value & 0xFF)
+    
+    log("lo hi, value", UInt16(lo), UInt16(hi), value ,r: 16)
+    
+    stackPush(hi)
+    stackPush(lo)
+  }
+  
   func stackPop() -> UInt8 {
     let sp = getStackPointer().addingReportingOverflow(1).partialValue
     setStackPointer(sp)
     let value = readMem(at: 0x100 + UInt16(sp))
     log("sp, value", sp, value)
     return value
-  }
-  
-  func stackPush16(_ value: UInt16) {
-    let hi = UInt8(value >> 8)
-    let lo = UInt8(value & 0xFF)
-    
-    log("lo hi, value", UInt16(lo), UInt16(hi), value ,r: 16)
-
-    stackPush(hi)
-    stackPush(lo)
   }
   
   func stackPop16() -> UInt16 {
@@ -168,7 +162,7 @@ final class Memory {
     case .indirectY: address = indirectY()
     default: fatalError("Addressing mode: \(mode) not implemented")
     }
-    log("address \(mode.rawValue)")
+    log("address \(mode.rawValue)", 0)
     log("address, pc", address, pc)
     return address
   }
