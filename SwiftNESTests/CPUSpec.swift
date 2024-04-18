@@ -21,8 +21,11 @@ final class CPUSpec: XCTestCase {
   }
   
   func testReadMem16() {
-    let result = cpu.memory.readMem16(at: 0x0602)
-    XCTAssertEqual(result, 0x0D94)
+    let expected: UInt16 = 0xC102
+    let location: UInt16 = 0x0602
+    cpu.memory.writeMem16(at: location, value: expected)
+    let result = cpu.memory.readMem16(at: location)
+    XCTAssertEqual(result, expected)
   }
   
   func testWriting16BitAddressTomMemoy() {

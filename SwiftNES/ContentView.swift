@@ -35,12 +35,11 @@ struct ContentView: View {
         }
       }
     } detail: {
-      Text("Select an item")
+      Button(action: start) {
+        Text("Start")
+      }
     }
     .onAppear {
-      DispatchQueue.global(qos: .userInteractive).async {
-        nes.powerOn()
-      }
       NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .keyUp]) { keyEvent in
         switch keyEvent.type {
         case .keyUp: nes.didReceiveButtonUp(keyCode: keyEvent.keyCode)
@@ -52,7 +51,11 @@ struct ContentView: View {
       }
     }
   }
-  
+  private func start() {
+    DispatchQueue.global(qos: .userInteractive).async {
+      nes.powerOn()
+    }
+  }
   private func addItem() {
     withAnimation {
       let newItem = Item(timestamp: Date())
