@@ -54,13 +54,16 @@ extension MemoryInjectable where Self: AnyObject {
   
   func readMem(at address: MemoryAddress) -> UInt8 {
     let value = readBuffer(at: address)
-    log("address, value", address, UInt16(value))
+    
+    if address == 0xFF {
+        value
+    }
     return value
   }
   
   func writeMem(at address: MemoryAddress, value: UInt8) {
-    log("address, value", address, UInt16(value))
     writeBuffer(at: address, value: value)
+    log("address, value", address, UInt16(value))
   }
   
   func readMem16(at address: MemoryAddress) -> MemoryAddress {
@@ -68,22 +71,21 @@ extension MemoryInjectable where Self: AnyObject {
     let hi = readMem(at: address + 1)
     
     let ptr = UInt16(hi) << 8 | UInt16(lo)
-    log("ptr, lo, hi, address", ptr, UInt16(lo), UInt16(hi), address, r: 16)
     return ptr
   }
   
   func writeMem16(at address: UInt16, value: UInt16) {
     let lo = UInt8(value & 0xFF)
     let hi = UInt8(value >> 8)
+    
+    log("hi, lo", hi, lo)
     self.writeMem(at: address, value: lo)
     self.writeMem(at: address + 1, value: hi)
     
-    log("value, lo, hi, address", value, UInt16(lo), UInt16(hi), address)
   }
   
   func stackPush(_ value: UInt8) {
     let sp = getStackPointer()
-    log("sp, value", sp, value)
     writeMem(at: 0x0100 + UInt16(sp), value: value)
     setStackPointer(sp.subtractingReportingOverflow(1).partialValue)
     
@@ -103,7 +105,7 @@ extension MemoryInjectable where Self: AnyObject {
     let sp = getStackPointer().addingReportingOverflow(1).partialValue
     setStackPointer(sp)
     let value = readMem(at: 0x100 + UInt16(sp))
-    log("sp, value", sp, value)
+    log("value", value)
     return value
   }
   
@@ -118,7 +120,6 @@ extension MemoryInjectable where Self: AnyObject {
   func reset() {
     registers.reset()
     setProgramCounter(readMem16(at: 0xFFFC))
-    log("pc", getProgramCounter())
   }
 }
 
@@ -129,6 +130,8 @@ final class Memory {
   
   private var sp: UInt8 = 0xFF
   private var buffer: [UInt8] = .init(repeating: 0, count: 0xFFFF)
+  
+  var instructionsBuffer: [UInt16] = []
   
   enum AddressingIndex {
     case X
@@ -162,8 +165,6 @@ final class Memory {
     case .indirectY: address = indirectY()
     default: fatalError("Addressing mode: \(mode) not implemented")
     }
-    log("address \(mode.rawValue)", 0)
-    log("address, pc", address, pc)
     return address
   }
   
@@ -175,7 +176,6 @@ final class Memory {
   func reset() {
     registers.reset()
     setProgramCounter(readMem16(at: 0xFFFC))
-    log("pc", pc)
   }
   
   func readMemAtCounter() -> UInt8 {
@@ -202,21 +202,41 @@ extension Memory: MemoryInjectable {
   
   func setProgramCounter(_ value: UInt16) {
     pc = value
-    log("pc", pc)
+   
+    updateInstructionsBuffer()
   }
   func getProgramCounter() -> UInt16 {
     return pc
   }
   
   func incrementProgramCounter() {
-    pc += 1
-    log("pc", pc)
+    setProgramCounter(pc + 1)
   }
   
+  func _debug_getInstructionsBuffer() -> [String] {
+    instructionsBuffer.reversed().map {
+      let hex = String($0, radix: 16)
+      let op = _debug_compiledSnake[$0] ?? ""
+      
+      return "\(hex):\(op)"
+    }
+  }
 }
 
 private extension Memory {
-  
+  func updateInstructionsBuffer() {
+    
+    guard _debug_compiledSnake[pc] != nil else {
+      return
+    }
+    
+    if instructionsBuffer.count == 30 {
+      let _ = instructionsBuffer.popLast()
+    }
+    
+    instructionsBuffer.insert(pc, at: 0)
+        
+  }
   func getRegisterValue(for register: AddressingIndex) -> UInt8 {
     switch register {
     case .X: return registers.X

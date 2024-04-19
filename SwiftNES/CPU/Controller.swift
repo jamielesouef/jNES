@@ -26,11 +26,7 @@ final class Controller: Controllable {
     case select = 0x04
   }
   
-  private (set) var state: UInt8 = 0x00 {
-    didSet {
-      log("state",state, r: 2)
-    }
-  }
+  private (set) var state: UInt8 = 0x00
   
   func didReceiveButtonUp(keyCode: UInt16) {
     guard let validButton = getButton(for: keyCode) else { return }

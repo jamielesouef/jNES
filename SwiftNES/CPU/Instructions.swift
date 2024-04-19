@@ -274,7 +274,7 @@ extension CPU {
       0x9A: Instruction(name: "TXS", mode: .implied, cycles: 2, bytes: 1, fn: self.TXS),
       0x98: Instruction(name: "TY", mode: .implied, cycles: 2, bytes: 1, fn: self.TYA)
     ]
-    log("pc, opcode", memory.getProgramCounter(), UInt16(opcode))
+    
     guard let instruction = table[opcode] else {
       fatalError("Unknown opcode: \(opcode)")
     }

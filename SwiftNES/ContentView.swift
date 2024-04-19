@@ -12,7 +12,10 @@ struct ContentView: View {
   @Environment(\.modelContext) private var modelContext
   @Query private var items: [Item]
   
-  let nes = NES()
+  var nes = NES()
+  
+  @State private var screen: [[NES.Color]] = []
+  @State var screenPointer: Int = 0
   
   var body: some View {
     NavigationSplitView {
@@ -35,11 +38,33 @@ struct ContentView: View {
         }
       }
     } detail: {
+      
+      Grid(horizontalSpacing: 0, verticalSpacing: 0) {
+        if screen.count > 0 {
+          ForEach(0...screen.count-1, id: \.self) { i in
+            ForEach(screen[i], id: \.self) { color in
+              let c = color.rawValue
+              Text("\(c)").font(.custom("Courier", size: 5))
+            }
+          }
+        }
+      }
+      
+      
       Button(action: start) {
         Text("Start")
       }
+      
+      Button(action: stop) {
+        Text("Stop")
+      }
     }
     .onAppear {
+      nes.screenUpdater = { screen in
+        DispatchQueue.main.async {
+          // Update the screen
+        }
+      }
       NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .keyUp]) { keyEvent in
         switch keyEvent.type {
         case .keyUp: nes.didReceiveButtonUp(keyCode: keyEvent.keyCode)
@@ -51,9 +76,31 @@ struct ContentView: View {
       }
     }
   }
+  
+  private func buildScreen(from screen: [NES.Color]) {
+    
+    var index = 0
+    var b: [[NES.Color]] = []
+    
+    for i in 0x00...0x1f {
+      for j in 0x00...0x1f {
+        b[i][j] = screen[index]
+        index += 1
+      }
+    }
+    
+    self.screen = b
+  }
+  
   private func start() {
     DispatchQueue.global(qos: .userInteractive).async {
       nes.powerOn()
+    }
+  }
+  
+  func stop() {
+    DispatchQueue.global(qos: .userInteractive).async {
+      nes.powerOff()
     }
   }
   private func addItem() {

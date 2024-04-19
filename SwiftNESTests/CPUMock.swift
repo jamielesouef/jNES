@@ -53,7 +53,7 @@ class MockMemory: MemoryInjectable {
   }
   
   func incrementProgramCounter() {
-    self.programCounter += 1
+    setProgramCounter(programCounter + 1)
   }
   
   func readMemAtCounter() -> UInt8 {

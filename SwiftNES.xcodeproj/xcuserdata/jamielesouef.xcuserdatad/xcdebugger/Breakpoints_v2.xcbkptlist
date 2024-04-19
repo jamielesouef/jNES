@@ -7,15 +7,57 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "F6CDE6B4-7C80-4B88-8DC2-E262D5A42F6C"
+            uuid = "CAC354FF-7800-443B-B6DC-34593A3B210C"
+            shouldBeEnabled = "Yes"
+            condition = "memory.getProgramCounter() == 0x066B"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SwiftNES/CPU/CPU.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "52"
+            endingLineNumber = "52"
+            landmarkName = "run(callback:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F4E6ED00-7F22-4B3F-BD0C-F8D529A79B36"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SwiftNES/CPU/CPU.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "294"
-            endingLineNumber = "294"
+            startingLineNumber = "303"
+            endingLineNumber = "303"
+            landmarkName = "BNE()"
+            landmarkType = "7">
+            <Actions>
+               <BreakpointActionProxy
+                  ActionExtensionID = "Xcode.BreakpointAction.DebuggerCommand">
+                  <ActionContent
+                     consoleCommand = "po (memory as! Memory)._debug_getInstructionsBuffer()">
+                  </ActionContent>
+               </BreakpointActionProxy>
+            </Actions>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DF007C06-37F5-4C90-80A4-9ED4CC8F9EB8"
+            shouldBeEnabled = "Yes"
+            condition = "po (memory as! Memory)._debug_getInstructionsBuffer()"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SwiftNES/CPU/CPU.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "284"
+            endingLineNumber = "284"
             landmarkName = "BEQ()"
             landmarkType = "7">
          </BreakpointContent>
