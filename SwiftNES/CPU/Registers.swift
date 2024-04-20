@@ -43,7 +43,7 @@ class Registers {
   private (set) var Y: UInt8
   private (set) var p: UInt8 //NV-BDIZC
   
-  init(A: UInt8 = 0, X: UInt8 = 0, Y: UInt8 = 0, p: UInt8 = 0x20) {
+  init(A: UInt8 = 0, X: UInt8 = 0, Y: UInt8 = 0, p: UInt8 = 0xfd) {
     self.A = A
     self.X = X
     self.Y = Y
@@ -77,7 +77,7 @@ class Registers {
   func reset() {
     A = 0
     X = 0
-    p = 0
+    p = 0xfd
   }
 }
 

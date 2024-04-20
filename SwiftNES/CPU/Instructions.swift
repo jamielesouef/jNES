@@ -173,7 +173,7 @@ extension CPU {
       0xC8: Instruction(name: "INY", mode: .implied, cycles: 2, bytes: 1, fn: self.INY),
       
       0x4C: Instruction(name: "JMP", mode: .absolute, cycles: 3, bytes: 3, fn: self.JMP),
-      0x6C: Instruction(name: "JMP", mode: .indirect, cycles: 5, bytes: 3, fn: self.JMP),
+      0x6C: Instruction(name: "JMP", mode: .indirect, cycles: 5, bytes: 3, fn: self.JMP_indirect),
       
       0x20: Instruction(name: "JSR", mode: .absolute, cycles: 6, bytes: 3, fn: self.JSR),
       

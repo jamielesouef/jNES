@@ -50,6 +50,7 @@ final class CPU {
 
       let controllerState = callback()
       handle(controllerState: controllerState)
+      
       let opcode: UInt8 = memory.readMemAtCounter()
       memory.incrementProgramCounter()
       
@@ -106,11 +107,10 @@ private extension CPU {
     return mode
   }
   
-  func loadByteFromMemory() -> UInt8 {
+  func readByteAtCounter() -> UInt8 {
     let addressingMode = unsafeGetAddresingMode()
     
     if addressingMode == .accumulator {
-
       return memory.registers.A
     }
     
@@ -148,22 +148,27 @@ private extension CPU {
 
       let pc = memory.getProgramCounter()
       let offset: UInt8 = memory.readMem(at: pc)
+      
       let addr = pc
         .addingReportingOverflow(1).partialValue
         .addingReportingOverflow(UInt16(offset)).partialValue
       
 
       memory.setProgramCounter(addr)
+      log("Branch taken")
     } else {
       memory.incrementProgramCounter()
+      log("Branch not taken")
     }
   }
   
   func compare(against value: UInt8) {
-    let param: UInt8 = loadByteFromMemory()
+    let param: UInt8 = readByteAtCounter()
   
-    setCarryFlag(value <= param ? 1 : 0)
-    setZeroAndNegativeFlag(value.subtractingReportingOverflow(param).partialValue)
+    setCarryFlag(value <= param)
+    
+    let subResult = value.subtractingReportingOverflow(param).partialValue
+    setZeroAndNegativeFlag(subResult)
   }
   
   func increment(param: UInt8) -> UInt8 {
@@ -175,69 +180,25 @@ private extension CPU {
   }
   
   func loadFromMemory(into register: Registers.Accumulator) {
-    let param: UInt8 = loadByteFromMemory()
+    let param: UInt8 = readByteAtCounter()
     memory.registers.set(register, to: param)
     setZeroAndNegativeFlag(param)
     log("param, register \(register.rawValue)", param)
   }
   
-  func _ASL(param: UInt8) {
-    let bit7 = param & 0b1000_0000
-    let result = memory.registers.A << 1
-    
-    memory.registers.set(.A, to: result)
-    setZeroAndNegativeFlag(result)
-    setCarryFlag(bit7)
-  }
-  
-  func _LSR(param: UInt8) -> UInt8 {
-    let lsb = param & 1
-    let result = param >> 1
-    setZeroFlag(result)
-    setNegativeFlag(result)
-    setCarryFlag(lsb)
-    return result
-  }
   
   func _ST(value: UInt8) {
-    let storeAddress: UInt8 = loadByteFromMemory()
+    let storeAddress: UInt8 = readByteAtCounter()
     memory.writeMem(at: MemoryAddress(storeAddress), value: value)
     log("storeAddress, value", storeAddress, value)
   }
-  
-  private func _ROL(param: UInt8) -> UInt8 {
-    // DON'T TOUCH THIS
-    let msb = param >> 7
-    
-    let lsb: UInt8 = memory.registers.isSet(.carry) ? 1 : 0
-    
-    let result = (param << 1) | lsb
-    
-    setZeroAndNegativeFlag(result)
-    setCarryFlag(msb)
-    
-    return result
-  }
-  
-  private func _ROR(param: UInt8) -> UInt8 {
-    
-    let msb: UInt8 = memory.registers.isSet(.carry) ? 1 : 0
-    let lsb = param & 1
-    let result = (param >> 1) | (msb << 7)
-    
-    setZeroAndNegativeFlag(result)
-    setCarryFlag(lsb)
-    
-    return result
-  }
-  
 }
 
 // MARK: Opcode functions
 extension CPU {
   func ADC() {
     
-    let param: UInt8 = loadByteFromMemory()
+    let param: UInt8 = readByteAtCounter()
     
     let carry: UInt8 = memory.registers.isSet(.carry) ? 1 : 0
     let a = memory.registers.A
@@ -257,18 +218,34 @@ extension CPU {
   
   func AND() {
     //A,Z,N = A&M
-    let param: UInt8 = loadByteFromMemory()
+    let param: UInt8 = readByteAtCounter()
     let result = memory.registers.A & param
     memory.registers.set(.A, to: result)
     log("param, result", param, result)
   }
   
   func ASL() {
-    _ASL(param: loadByteFromMemory())
+    let address: UInt16 = loadByteFromMemory()
+    var data = memory.readMem(at: address)
+    
+    setCarryFlag(data >> 7 == 1)
+      
+    data = data << 1
+    
+    memory.writeMem(at: address, value: data)
+    
+    setZeroAndNegativeFlag(data)
   }
   
   func ASL_accumulator(){
-    _ASL(param: memory.registers.A)
+    let address: UInt16 = loadByteFromMemory()
+    var data = memory.registers.A
+    
+    setCarryFlag(data >> 7 == 1)
+      
+    data = data << 1
+    
+    memory.writeMem(at: address, value: data)
   }
   
   func BCC() {
@@ -285,7 +262,7 @@ extension CPU {
   }
   
   func BIT() {
-    let param: UInt8 = loadByteFromMemory()
+    let param: UInt8 = readByteAtCounter()
     let a = memory.registers.A
     
     let result = param & a
@@ -301,7 +278,6 @@ extension CPU {
   
   func BNE() {
     branch(when: !memory.registers.isSet(.zero))
-    log("zero flag", memory.registers.isSet(.zero) ? 1 : 0)
   }
   
   func BPL() {
@@ -351,6 +327,7 @@ extension CPU {
   
   // Compare Accumulator
   func CMP() {
+    log("CMP")
     compare(against: memory.registers.A)
   }
   
@@ -366,7 +343,7 @@ extension CPU {
   
   // Decrement Memory
   func DEC() {
-    let param: UInt8 = loadByteFromMemory()
+    let param: UInt8 = readByteAtCounter()
     let result = param - 1
     let pc = memory.getProgramCounter() - 1
     memory.writeMem(at: pc, value: result)
@@ -389,7 +366,7 @@ extension CPU {
   
   // Exclusive OR
   func EOR() {
-    let param: UInt8 = loadByteFromMemory()
+    let param: UInt8 = readByteAtCounter()
     let result = memory.registers.A ^ param
     memory.registers.set(.A, to: result)
     setZeroAndNegativeFlag(result)
@@ -397,7 +374,7 @@ extension CPU {
   
   // Increment Memory
   func INC() {
-    let param: UInt8 = loadByteFromMemory()
+    let param: UInt8 = readByteAtCounter()
     let i = increment(param: param)
     let pc = memory.getProgramCounter() - 1
     memory.writeMem(at: pc, value: i)
@@ -406,31 +383,55 @@ extension CPU {
   // Increment X Register
   func INX() {
     let i = increment(param: memory.registers.X)
+    log("i", i)
     memory.registers.set(.X, to: i)
   }
   
   // Increment Y Register
   func INY() {
     let i = increment(param: memory.registers.Y)
+    log("i", i)
     memory.registers.set(.Y, to: i)
   }
   
-  /*
-   NB:
-   An original 6502 has does not correctly fetch the target address if the indirect vector falls on a page boundary (e.g. $xxFF where xx is any value from $00 to $FF). In this case fetches the LSB from $xxFF as expected but takes the MSB from $xx00. This is fixed in some later chips like the 65SC02 so for compatibility always ensure the indirect vector is not at the end of the page.
-   */
-  
-  // Jump
   func JMP() {
     let pc = memory.getProgramCounter()
-    let ptr = memory.readMem16(at: pc)
+    let ptr: MemoryAddress = memory.readMem16(at: pc)
     memory.setProgramCounter(ptr)
+  }
+  
+  // Jump
+  func JMP_indirect() {
+    let pc = memory.getProgramCounter()
+    let ptr: MemoryAddress = memory.readMem16(at: pc)
+    
+    /*
+     NB:
+     An original 6502 has does not correctly fetch the target address if
+     the indirect vector falls on a page boundary (e.g. $xxFF where xx is
+     any value from $00 to $FF). In this case fetches the LSB from $xxFF
+     as expected but takes the MSB from $xx00. This is fixed in some
+     later chips like the 65SC02 so for compatibility always ensure the
+     indirect vector is not at the end of the page.
+     */
+    
+    var indrectPtr: MemoryAddress!
+    
+    if ptr & 0x00FF == 0x00FF {
+      let lo = memory.readMem(at: ptr)
+      let hi = memory.readMem(at: ptr & 0xFF00)
+      indrectPtr = UInt16(hi) << 8 | UInt16(lo)
+    } else {
+      indrectPtr = memory.readMem16(at: ptr)
+    }
+    
+    memory.setProgramCounter(indrectPtr)
   }
   
   
   // Jump to Subroutine
   func JSR() {
-    memory.stackPush16(memory.getProgramCounter() + 2 - 1)
+    memory.stackPush16(memory.getProgramCounter() - 1)
     
     let newPtr: UInt16 = loadByteFromMemory()
     
@@ -453,19 +454,30 @@ extension CPU {
     loadFromMemory(into: .Y)
   }
   
+  
   // Logical Shift Right
   func LSR() {
-    let ptr: UInt8 = loadByteFromMemory()
-    var mem = memory.readMem(at: MemoryAddress(ptr))
+    let ptr: UInt8 = readByteAtCounter()
+    var data = memory.readMem(at: MemoryAddress(ptr))
     
-    mem = _LSR(param: mem)
-    memory.writeMem(at: MemoryAddress(ptr), value: mem)
+    setCarryFlag(data & 1 == 1)
+    
+    data = data >> 1
+    
+    memory.writeMem(at: MemoryAddress(ptr), value: data)
+    setZeroAndNegativeFlag(data)
   }
   
   // Logical Shift Right Accumulator
   func LSR_accumulator() {
-    let mem = _LSR(param: memory.registers.A)
-    memory.registers.set(.A, to: mem)
+    let ptr: UInt8 = readByteAtCounter()
+    var data = memory.registers.A
+    
+    setCarryFlag(data & 1 == 1)
+    
+    data = data >> 1
+    
+    memory.writeMem(at: MemoryAddress(ptr), value: data)
   }
   
   // No Operation
@@ -475,7 +487,7 @@ extension CPU {
   
   // Logical Inclusive OR
   func ORA() {
-    let param: UInt8 = loadByteFromMemory()
+    let param: UInt8 = readByteAtCounter()
     let result = memory.registers.A | param
     memory.registers.set(.A, to: result)
     setZeroAndNegativeFlag(result)
@@ -505,32 +517,74 @@ extension CPU {
   
   // Rotate Left
   func ROL() {
-    let ptr: UInt8 = loadByteFromMemory()
+    let ptr: UInt8 = readByteAtCounter()
     let address = MemoryAddress(ptr)
-    let param = memory.readMem(at: address)
-    let result = _ROL(param: param)
-    memory.writeMem(at: address, value: result)
+    var data = memory.readMem(at: address)
+    
+    let hadCarry: Bool = memory.registers.isSet(.carry) ? true : false
+    
+    setCarryFlag(data >> 7 == 1)
+    
+    data = data << 1
+    
+    if hadCarry {
+      data = data | 1
+    }
+    
+    memory.writeMem(at: address, value: data)
+    setZeroAndNegativeFlag(data)
   }
   
   // Rotate Left Accumulator
   func ROL_accumulator() {
-    let result = _ROL(param: memory.registers.A)
-    memory.registers.set(.A, to: result)
+    var data = memory.registers.A
+    
+    let hadCarry: Bool = memory.registers.isSet(.carry) ? true : false
+    
+    setCarryFlag(data >> 7 == 1)
+    
+    data = data << 1
+    
+    if hadCarry {
+      data = data | 1
+    }
+    
+    memory.registers.set(.A, to: data)
   }
   
   // Rotate Right
   func ROR() {
-    let ptr: UInt8 = loadByteFromMemory()
+    let ptr: UInt8 = readByteAtCounter()
     let address = MemoryAddress(ptr)
-    let param = memory.readMem(at: address)
-    let result = _ROR(param: param)
-    memory.writeMem(at: address, value: result)
+    var data = memory.readMem(at: address)
+    
+    let currentCarryValue: Bool = memory.registers.isSet(.carry) ? true : false
+    
+    setCarryFlag(data & 1 == 1)
+    
+    if currentCarryValue {
+      data = data | 0b10000000
+    }
+    
+    memory.writeMem(at: address, value: data)
+    setNegativeFlag(data)
+    
   }
   
   // Rotate Right Accumulator
   func ROR_accumulator() {
-    let result = _ROR(param: memory.registers.A)
-    memory.registers.set(.A, to: result)
+    var data = memory.registers.A
+    
+    let currentCarryValue: Bool = memory.registers.isSet(.carry) ? true : false
+    
+    setCarryFlag(data & 1 == 1)
+    
+    if currentCarryValue {
+      data = data | 0b10000000
+    }
+    
+    memory.registers.set(.A, to: data)
+    
   }
   
   // Return from interrupt
@@ -639,14 +693,11 @@ extension CPU {
     memory.registers.set(.A, to: memory.registers.Y)
     setZeroAndNegativeFlag(memory.registers.Y)
   }
-}
-
-// Helpers
-
-private extension CPU {
   
-  func setCarryFlag(_ value: UInt8) {
-    if value != 0 {
+  //MARK: - Set flag Functions
+  
+  func setCarryFlag(_ set: Bool) {
+    if set {
       memory.registers.set(.carry)
     } else {
       memory.registers.clear(.carry)
@@ -675,7 +726,8 @@ private extension CPU {
   }
   
   func setNegativeFlag(_ value: UInt8) {
-    if value & (1 << 7) != 0 {
+    log("value", value)
+    if value >> 7 == 1 {
       memory.registers.set(.negative)
     } else {
       memory.registers.clear(.negative)

@@ -230,13 +230,14 @@ private extension Memory {
       return
     }
     
-    if instructionsBuffer.count == 30 {
+    if instructionsBuffer.count == 100 {
       let _ = instructionsBuffer.popLast()
     }
     
     instructionsBuffer.insert(pc, at: 0)
         
   }
+  
   func getRegisterValue(for register: AddressingIndex) -> UInt8 {
     switch register {
     case .X: return registers.X
@@ -247,10 +248,10 @@ private extension Memory {
   // MARK: - Addressing mode
   
   func getZeroPage(offsetBy register: AddressingIndex) -> MemoryAddress {
-    let operand: Operand = readMem(at: pc)
-    let registerValue: ZeroMemoryAddress = getRegisterValue(for: register)
+    let base: Operand = readMem(at: pc)
+    let value: ZeroMemoryAddress = getRegisterValue(for: register)
     
-    return MemoryAddress(operand.addingReportingOverflow(registerValue).partialValue)
+    return MemoryAddress(base.addingReportingOverflow(value).partialValue)
   }
   
   func getAbsolute(offsetBy register: AddressingIndex) -> MemoryAddress {

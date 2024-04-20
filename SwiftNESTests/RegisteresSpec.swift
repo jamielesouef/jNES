@@ -20,36 +20,76 @@ final class RegisteresSpec: XCTestCase {
   override func setUpWithError() throws {
     registers = Registers()
   }
-  
-  func testBreakFlagIsSetOnInit() throws {
-    XCTAssertEqual(registers.p, 1 << 5)
+
+  func testSettingCarry() throws {
+    registers.reset()
+    XCTAssertTrue(registers.isSet(.carry))
+    registers.set(.carry)
+    XCTAssertTrue(registers.isSet(.carry))
+    registers.clear(.carry)
+    XCTAssertFalse(registers.isSet(.carry))
   }
   
-  func testFlags() throws {
-    Registers.StatusFlag.all.forEach { flag in
-      XCTAssertEqual(registers.p, statusInitValue)
-      registers.set(flag)
-      XCTAssertTrue(registers.p & flag.mask != 0)
-      registers.clear(flag)
-      XCTAssertEqual(registers.p, statusInitValue)
-    }
+  func testSettingInterupt() throws {
+    registers.reset()
+    XCTAssertTrue(registers.isSet(.interrupt))
+    registers.set(.interrupt)
+    XCTAssertTrue(registers.isSet(.interrupt))
+    registers.clear(.interrupt)
+    XCTAssertFalse(registers.isSet(.interrupt))
+  }
+  
+  func testSettingDecimal() throws {
+    registers.reset()
+    XCTAssertTrue(registers.isSet(.decimal))
+    registers.set(.decimal)
+    XCTAssertTrue(registers.isSet(.decimal))
+    registers.clear(.decimal)
+    XCTAssertFalse(registers.isSet(.decimal))
+  }
+  
+  func testSettingBreak() throws {
+    registers.reset()
+    XCTAssertTrue(registers.isSet(.brk))
+    registers.set(.brk)
+    XCTAssertTrue(registers.isSet(.brk))
+    registers.clear(.brk)
+    XCTAssertFalse(registers.isSet(.brk))
+  }
+  
+  func testSettingOverflow() throws {
+    registers.reset()
+    XCTAssertTrue(registers.isSet(.overflow))
+    registers.set(.overflow)
+    XCTAssertTrue(registers.isSet(.overflow))
+    registers.clear(.overflow)
+    XCTAssertFalse(registers.isSet(.overflow))
+  }
+  
+  func testSettingNegative() throws {
+    registers.reset()
+    XCTAssertTrue(registers.isSet(.negative))
+    registers.set(.negative)
+    XCTAssertTrue(registers.isSet(.negative))
+    registers.clear(.negative)
+    XCTAssertFalse(registers.isSet(.negative))
   }
   
   func testSetMultipleFlags() throws {
-    let expected: UInt8 = 0xA3
-    XCTAssertEqual(registers.p, statusInitValue)
+    let expected: UInt8 = 0b1111_1101
+    XCTAssertEqual(registers.p, expected)
     registers.set(.carry)
     registers.set(.zero)
     registers.set(.negative)
     //0110_0011
-    XCTAssertEqual(registers.p, expected)
+    XCTAssertEqual(registers.p, 0xFF)
     
     registers.clear(.carry)
-    XCTAssertEqual(registers.p, 0xA2)
+    XCTAssertEqual(registers.p, 0b1111_1110)
     registers.clear(.zero)
-    XCTAssertEqual(registers.p, 0xA0)
+    XCTAssertEqual(registers.p, 0b1111_1100)
     registers.clear(.negative)
-    XCTAssertEqual(registers.p, statusInitValue)
+    XCTAssertEqual(registers.p, 0b0111_1100)
   }
   
   func testFlagsIsSet() {
