@@ -25,7 +25,7 @@ enum AddressingMode: String {
 
 protocol MemoryInjectable {
   var registers: Registers { get}
-  func getOpperandAddress(for mode: AddressingMode) -> MemoryAddress
+  func getAddress(for mode: AddressingMode) -> MemoryAddress
   func load(program: [UInt8])
   func readMem(at address: MemoryAddress) -> UInt8
   func readMem16(at address: MemoryAddress) -> MemoryAddress
@@ -41,7 +41,6 @@ protocol MemoryInjectable {
   
   func setProgramCounter(_ value: UInt16)
   func getProgramCounter() -> UInt16
-  func incrementProgramCounter()
   
   func setStackPointer(_ value: UInt8)
   func getStackPointer() -> UInt8
@@ -149,7 +148,7 @@ final class Memory {
     self.buffer = buffer
   }
   
-  func getOpperandAddress(for mode: AddressingMode) -> MemoryAddress {
+  func getAddress(for mode: AddressingMode) -> MemoryAddress {
     var address:  MemoryAddress!
     
     switch mode {
@@ -207,10 +206,6 @@ extension Memory: MemoryInjectable {
   }
   func getProgramCounter() -> UInt16 {
     return pc
-  }
-  
-  func incrementProgramCounter() {
-    setProgramCounter(pc + 1)
   }
   
   func _debug_getInstructionsBuffer() -> [String] {

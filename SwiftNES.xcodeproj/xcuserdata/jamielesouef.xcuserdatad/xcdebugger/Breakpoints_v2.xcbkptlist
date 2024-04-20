@@ -14,8 +14,8 @@
             filePath = "SwiftNES/CPU/CPU.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "261"
-            endingLineNumber = "261"
+            startingLineNumber = "218"
+            endingLineNumber = "218"
             landmarkName = "BEQ()"
             landmarkType = "7">
             <Actions>
@@ -26,6 +26,36 @@
                   </ActionContent>
                </BreakpointActionProxy>
             </Actions>
+            <Locations>
+               <Location
+                  uuid = "0972A7BD-DBEE-459D-9F00-0E8314434A9A - 6d01f11ffb29215e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "SwiftNES.CPU.BCS() -&gt; ()"
+                  moduleName = "SwiftNES"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jamielesouef/Developer/SwiftNES/SwiftNES/CPU/CPU.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "218"
+                  endingLineNumber = "218">
+               </Location>
+               <Location
+                  uuid = "0972A7BD-DBEE-459D-9F00-0E8314434A9A - fdaa59e93339235e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "SwiftNES.CPU.BEQ() -&gt; ()"
+                  moduleName = "SwiftNES"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jamielesouef/Developer/SwiftNES/SwiftNES/CPU/CPU.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "218"
+                  endingLineNumber = "218">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -39,25 +69,9 @@
             filePath = "SwiftNES/CPU/CPU.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "55"
-            endingLineNumber = "55"
+            startingLineNumber = "50"
+            endingLineNumber = "50"
             landmarkName = "run(callback:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "ECA7C991-1247-4AF6-AC15-9ED0A2944A87"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SwiftNES/CPU/CPU.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "435"
-            endingLineNumber = "435"
-            landmarkName = "JSR()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

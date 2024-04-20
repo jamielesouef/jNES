@@ -52,10 +52,6 @@ class MockMemory: MemoryInjectable {
     return self.programCounter
   }
   
-  func incrementProgramCounter() {
-    setProgramCounter(programCounter + 1)
-  }
-  
   func readMemAtCounter() -> UInt8 {
     return self.buffer[Int(self.programCounter)]
   }
@@ -72,7 +68,7 @@ class MockMemory: MemoryInjectable {
     self.registers = MockRegisters(A: 0x33, X: 0x10, Y: 0xFF, p: 0x00)
   }
   
-  func getOpperandAddress(for mode: SwiftNES.AddressingMode) -> SwiftNES.MemoryAddress {
+  func getAddress(for mode: SwiftNES.AddressingMode) -> SwiftNES.MemoryAddress {
     getProgramCounter()
   }
   
@@ -107,6 +103,6 @@ extension CPU {
     buffer.insert(contentsOf: programMock, at: 0x8000)
     
     let memory = MockMemory(buffer: buffer, stackPointer: 0xFF)
-    return CPU(memory: memory, addressingMode: .immediate)
+    return CPU(memory: memory)
   }
 }
