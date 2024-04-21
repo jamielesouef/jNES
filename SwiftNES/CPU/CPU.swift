@@ -77,25 +77,25 @@ private extension CPU {
   
   func handle(controllerState state: UInt8) {
     
-//    if state & Controller.Button.left.mask != 0 {
-//      memory.writeMem(at: 0xFF, value: 0x61)
-//      return
-//    }
-//    
-//    if state & Controller.Button.right.mask != 0 {
-//      memory.writeMem(at: 0xFF, value: 0x64)
-//      return
-//    }
-//    
-//    if state & Controller.Button.up.mask != 0 {
-//      memory.writeMem(at: 0xFF, value: 0x77)
-//      return
-//    }
-//    
-//    if state & Controller.Button.down.mask != 0 {
-//      memory.writeMem(at: 0xFF, value: 0x73)
-//      return
-//    }
+    if state & Controller.Button.left.mask != 0 {
+      memory.writeMem(at: 0xFF, value: 0x61)
+      return
+    }
+    
+    if state & Controller.Button.right.mask != 0 {
+      memory.writeMem(at: 0xFF, value: 0x64)
+      return
+    }
+    
+    if state & Controller.Button.up.mask != 0 {
+      memory.writeMem(at: 0xFF, value: 0x77)
+      return
+    }
+    
+    if state & Controller.Button.down.mask != 0 {
+      memory.writeMem(at: 0xFF, value: 0x73)
+      return
+    }
   }
   
   func signedValue(from byte: UInt8) -> (UInt8, Bool) {
@@ -136,52 +136,55 @@ private extension CPU {
     return result
   }
   
-//  func loadFromMemory(into register: Registers.Accumulator) {
-//    let addr = memory.getAddress(for: mode)
-//    let data = memory.readMem(at: addr)
-//    memory.registers.set(register, to: param)
-//    setZeroAndNegativeFlag(param)
-//    log("param, register \(register.rawValue)", param)
-//  }
-//  
-  
-//  func _ST(value: UInt8, mode: AddressingMode) {
-//    let addr = memory.getAddress(for: mode)
-//    let storeAddress: UInt8 = memory.readMem(at: addr)
-//    memory.writeMem(at: MemoryAddress(storeAddress), value: value)
-//    log("storeAddress, value", storeAddress, value)
-//  }
+  func setRegisterA(_ value: UInt8) {
+    memory.registers.set(.A, to: value)
+    setZeroAndNegativeFlag(value)
+  }
 }
 
 // MARK: Opcode functions
 extension CPU {
+  
+  func addToRegisterA(value: UInt8) {
+   
+  }
+  
   func ADC(mode: AddressingMode) {
     
     let addr = memory.getAddress(for: mode)
-    let param: UInt8 = memory.readMem(at: addr)
+    let data: UInt8 = memory.readMem(at: addr)
     
-    let carry: UInt8 = memory.registers.isSet(.carry) ? 1 : 0
-    let a = memory.registers.A
-    let result = a.addingReportingOverflow(param + carry)
-    
-    if result.overflow {
+    let sum = UInt16(memory.registers.A)
+      .addingReportingOverflow(UInt16(data)).partialValue
+      .addingReportingOverflow(memory.registers.isSet(.carry) ? 1 : 0).partialValue
+        
+    if  sum > 0xFF {
       memory.registers.set(.carry)
     } else {
       memory.registers.clear(.carry)
     }
+
+    let truncatedResult = UInt8(truncatingIfNeeded: sum)
+
+    if ((data ^ truncatedResult) & (truncatedResult ^ memory.registers.A) & 0x80) != 0 {
+      memory.registers.set(.overflow)
+    } else {
+      memory.registers.clear(.overflow)
+    }
+
+    setRegisterA(truncatedResult)
     
-    memory.registers.set(.A, to: result.partialValue)
-    
-    setZeroAndNegativeFlag(memory.registers.A)
-    log("param, result", param, result.partialValue)
+    log("param, result", data, truncatedResult)
   }
   
   func AND(mode: AddressingMode) {
     //A,Z,N = A&M
     let addr = memory.getAddress(for: mode)
     let param: UInt8 = memory.readMem(at: addr)
-    let result = memory.registers.A & param
-    memory.registers.set(.A, to: result)
+    let result = param & memory.registers.A
+    
+    setRegisterA(result)
+    
     log("param, result", param, result)
   }
   
@@ -315,7 +318,7 @@ extension CPU {
   
   // Decrement X Register
   func DEX() {
-    let param = memory.registers.X - 1
+    let param = memory.registers.X.subtractingReportingOverflow(1).partialValue
     memory.registers.set(.X, to: param)
     setZeroAndNegativeFlag(param)
   }
@@ -332,8 +335,8 @@ extension CPU {
     let addr = memory.getAddress(for: mode)
     let data = memory.readMem(at: addr)
     let result = memory.registers.A ^ data
-    memory.registers.set(.A, to: result)
-    setZeroAndNegativeFlag(result)
+    
+    setRegisterA(result)
   }
   
   // Increment Memory
@@ -396,7 +399,7 @@ extension CPU {
   
   // Jump to Subroutine
   func JSR() {
-    memory.stackPush16(memory.getProgramCounter() + 2 - 1)
+    memory.stackPush16(memory.getProgramCounter() + 1)
     let addr = memory.readMem16(at: memory.getProgramCounter())
     memory.setProgramCounter(addr)
   }
@@ -405,7 +408,8 @@ extension CPU {
   func LDA(mode: AddressingMode) {
     let addr = memory.getAddress(for: mode)
     let data = memory.readMem(at: addr)
-    memory.registers.set(.A, to: data)
+    
+    setRegisterA(data)
     
   }
   
@@ -414,6 +418,7 @@ extension CPU {
     let addr = memory.getAddress(for: mode)
     let data = memory.readMem(at: addr)
     memory.registers.set(.X, to: data)
+    setZeroAndNegativeFlag(data)
   }
   
   // Load Y Register
@@ -421,6 +426,7 @@ extension CPU {
     let addr = memory.getAddress(for: mode)
     let data = memory.readMem(at: addr)
     memory.registers.set(.Y, to: data)
+    setZeroAndNegativeFlag(data)
   }
   
   
@@ -446,7 +452,7 @@ extension CPU {
     
     data = data >> 1
     
-    memory.registers.set(.A, to: data)
+    setRegisterA(data)
   }
   
   // No Operation
@@ -460,8 +466,7 @@ extension CPU {
     let data = memory.readMem(at: addr)
     let result = memory.registers.A | data
 
-    memory.registers.set(.A, to: result)
-    setZeroAndNegativeFlag(result)
+    setRegisterA(result)
   }
   
   // Push Accumulator
@@ -477,8 +482,7 @@ extension CPU {
   // Pull Accumulator
   func PLA() {
     let result = memory.stackPop()
-    setZeroFlag(result)
-    memory.registers.set(.A, to: result)
+    setRegisterA(result)
   }
   
   // Pull Processor Status
@@ -519,7 +523,7 @@ extension CPU {
       data = data | 1
     }
     
-    memory.registers.set(.A, to: data)
+    setRegisterA(data)
   }
   
   // Rotate Right
@@ -552,7 +556,7 @@ extension CPU {
       data = data | 0b10000000
     }
     
-    memory.registers.set(.A, to: data)
+    setRegisterA(data)
     
   }
   
@@ -594,8 +598,7 @@ extension CPU {
       memory.registers.clear(.overflow)
     }
     
-    memory.registers.set(.A, to: result.partialValue)
-    setZeroAndNegativeFlag(result.partialValue)
+    setRegisterA(result.partialValue)
   }
   
   // Set Carry Flag
@@ -652,8 +655,7 @@ extension CPU {
   
   //Transfer X to Accumulator
   func TXA() {
-    memory.registers.set(.A, to: memory.registers.X)
-    setZeroAndNegativeFlag(memory.registers.A)
+    setRegisterA(memory.registers.X)
   }
   
   // Transfer X to Stack Pointer
@@ -664,8 +666,7 @@ extension CPU {
   
   //Transfer Y to Accumulator
   func TYA() {
-    memory.registers.set(.A, to: memory.registers.Y)
-    setZeroAndNegativeFlag(memory.registers.Y)
+    setRegisterA(memory.registers.Y)
   }
   
   //MARK: - Set flag Functions

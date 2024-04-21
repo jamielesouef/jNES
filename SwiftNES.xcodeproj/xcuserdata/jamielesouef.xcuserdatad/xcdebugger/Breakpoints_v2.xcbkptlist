@@ -7,56 +7,32 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "78289496-5AF1-4DBE-B54D-9CD9AFE22789"
+            uuid = "9F2DF836-EEBC-456B-B25E-0AFB275CBD05"
             shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "Yes"
-            filePath = "SwiftNES/CPU/CPU.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "408"
-            endingLineNumber = "408"
-            landmarkName = "LDA(mode:)"
-            landmarkType = "7">
-            <Actions>
-               <BreakpointActionProxy
-                  ActionExtensionID = "Xcode.BreakpointAction.DebuggerCommand">
-                  <ActionContent
-                     consoleCommand = "po mode.rawValue">
-                  </ActionContent>
-               </BreakpointActionProxy>
-            </Actions>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "7900D511-1DFB-4562-86BD-C31C59EA0670"
-            shouldBeEnabled = "Yes"
-            condition = "opcode == 0x00c3"
+            condition = "value == 0"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SwiftNES/CPU/Instructions.swift"
+            filePath = "SwiftNES/CPU/Memory.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "177"
-            endingLineNumber = "177"
-            landmarkName = "getInstructions(forOpcode:)"
+            startingLineNumber = "231"
+            endingLineNumber = "231"
+            landmarkName = "setProgramCounter(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "BFED3A41-2734-46FA-A358-E3CEA08E1F7C"
+            uuid = "0E48C67E-F0F4-4C9A-955C-5F1985F1CE6F"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SwiftNES/CPU/CPU.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "48"
-            endingLineNumber = "48"
+            startingLineNumber = "47"
+            endingLineNumber = "47"
             landmarkName = "run(callback:)"
             landmarkType = "7">
          </BreakpointContent>

@@ -208,7 +208,7 @@ extension CPU {
       0xD0: Instruction(name: "BNE", cycles: 2, bytes: 2, fn: self.BNE),
       
       0x10: Instruction(name: "BPL", cycles: 2, bytes: 2, fn: self.BPL),
-      0x00: Instruction(name: "BRK", cycles: 7, bytes: 1, fn: self.BRK),
+      0x00: Instruction(name: "BRK", cycles: 7, bytes: 1, fn: {}), //self.BRK),
       0x50: Instruction(name: "BVC", cycles: 2, bytes: 2, fn: self.BVC),
       0x70: Instruction(name: "BVS", cycles: 2, bytes: 2, fn: self.BVS),
       0x18: Instruction(name: "CLC", cycles: 2, bytes: 1, fn: self.CLC),
