@@ -17,6 +17,7 @@ final class CPU {
   let memory: MemoryInjectable
   
   private var loop = true
+  private var programCounterAtOppcodeRun: MemoryAddress = 0x00
   
   let callback: () -> UInt8
   
@@ -38,30 +39,36 @@ final class CPU {
   
   func reset() {
     memory.reset()
-    
-    memory.writeMem(at: 0xFF, value: 0x61)
   }
   
   func run(callback:() -> UInt8) {
     while loop {
-
+      
       let controllerState = callback()
       let opcode: UInt8 = memory.readMemAtCounter()
       let instruction = getInstructions(forOpcode: opcode)
+      let newProgramCounter = memory.getProgramCounter() + 1
+      
+      memory.setProgramCounter(newProgramCounter)
+      programCounterAtOppcodeRun = newProgramCounter
       
       handle(controllerState: controllerState)
-      memory.setProgramCounter(memory.getProgramCounter() + 1)
       
-
+      log("instruction \(instruction.name) \(String(opcode, radix: 16))")
       instruction.fn()
       
-      let pc = memory.getProgramCounter() + (UInt16(instruction.bytes) - 1)
-      memory.setProgramCounter(pc)
+      // if the opperation does not change the program counter
+      // we need to increment it by the number of bytes in the instruction
+      let pc = memory.getProgramCounter()
+      if programCounterAtOppcodeRun == pc {
+        memory.setProgramCounter(pc + UInt16(instruction.bytes) - 1)
+      }
     }
   }
   
   func stop() {
     loop = false
+    reset()
   }
 }
 
@@ -70,27 +77,25 @@ private extension CPU {
   
   func handle(controllerState state: UInt8) {
     
-    memory.writeMem(at: 0xFF, value: 0x61)
-    
-    if state & Controller.Button.left.mask != 0 {
-      memory.writeMem(at: 0xFF, value: 0x61)
-      return
-    }
-    
-    if state & Controller.Button.right.mask != 0 {
-      memory.writeMem(at: 0xFF, value: 0x64)
-      return
-    }
-    
-    if state & Controller.Button.up.mask != 0 {
-      memory.writeMem(at: 0xFF, value: 0x77)
-      return
-    }
-    
-    if state & Controller.Button.down.mask != 0 {
-      memory.writeMem(at: 0xFF, value: 0x73)
-      return
-    }
+//    if state & Controller.Button.left.mask != 0 {
+//      memory.writeMem(at: 0xFF, value: 0x61)
+//      return
+//    }
+//    
+//    if state & Controller.Button.right.mask != 0 {
+//      memory.writeMem(at: 0xFF, value: 0x64)
+//      return
+//    }
+//    
+//    if state & Controller.Button.up.mask != 0 {
+//      memory.writeMem(at: 0xFF, value: 0x77)
+//      return
+//    }
+//    
+//    if state & Controller.Button.down.mask != 0 {
+//      memory.writeMem(at: 0xFF, value: 0x73)
+//      return
+//    }
   }
   
   func signedValue(from byte: UInt8) -> (UInt8, Bool) {
@@ -105,9 +110,8 @@ private extension CPU {
       let offset: UInt8 = memory.readMem(at: pc)
       
       let addr = pc
-        .addingReportingOverflow(1).partialValue
-        .addingReportingOverflow(UInt16(offset)).partialValue
-      
+        .addingReportingOverflow(UInt16(offset) + 1).partialValue
+        
 
       memory.setProgramCounter(addr)
       log("Branch taken")
@@ -141,12 +145,12 @@ private extension CPU {
 //  }
 //  
   
-  func _ST(value: UInt8, mode: AddressingMode) {
-    let addr = memory.getAddress(for: mode)
-    let storeAddress: UInt8 = memory.readMem(at: addr)
-    memory.writeMem(at: MemoryAddress(storeAddress), value: value)
-    log("storeAddress, value", storeAddress, value)
-  }
+//  func _ST(value: UInt8, mode: AddressingMode) {
+//    let addr = memory.getAddress(for: mode)
+//    let storeAddress: UInt8 = memory.readMem(at: addr)
+//    memory.writeMem(at: MemoryAddress(storeAddress), value: value)
+//    log("storeAddress, value", storeAddress, value)
+//  }
 }
 
 // MARK: Opcode functions
@@ -392,7 +396,7 @@ extension CPU {
   
   // Jump to Subroutine
   func JSR() {
-    memory.stackPush16(memory.getProgramCounter() - 1)
+    memory.stackPush16(memory.getProgramCounter() + 2 - 1)
     let addr = memory.readMem16(at: memory.getProgramCounter())
     memory.setProgramCounter(addr)
   }
@@ -563,6 +567,7 @@ extension CPU {
   
   // Return from Subroutine
   func RTS() {
+
     let returnAddress = memory.stackPop16() + 1
     memory.setProgramCounter(returnAddress)
   }
@@ -611,17 +616,20 @@ extension CPU {
   
   // Store Accumulator
   func STA(mode: AddressingMode) {
-    _ST(value: memory.registers.A, mode: mode)
+    let address = memory.getAddress(for: mode)
+    memory.writeMem(at: address, value: memory.registers.A)
   }
   
   // Store X Register
   func STX(mode: AddressingMode) {
-    _ST(value: memory.registers.X, mode: mode)
+    let address = memory.getAddress(for: mode)
+    memory.writeMem(at: address, value: memory.registers.X)
   }
   
   // Store Y Register
   func STY(mode: AddressingMode) {
-    _ST(value: memory.registers.Y, mode: mode)
+    let address = memory.getAddress(for: mode)
+    memory.writeMem(at: address, value: memory.registers.Y)
   }
   
   // Transfer Accumulator to X

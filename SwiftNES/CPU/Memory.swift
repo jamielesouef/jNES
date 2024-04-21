@@ -53,10 +53,7 @@ extension MemoryInjectable where Self: AnyObject {
   
   func readMem(at address: MemoryAddress) -> UInt8 {
     let value = readBuffer(at: address)
-    
-    if address == 0xFF {
-        value
-    }
+    log("address, value", address, UInt16(value), r: 16)
     return value
   }
   
@@ -82,12 +79,24 @@ extension MemoryInjectable where Self: AnyObject {
     self.writeMem(at: address + 1, value: hi)
     
   }
+  /*
+  fn stack_pop(&mut self) -> u8 {
+         self.stack_pointer = self.stack_pointer.wrapping_add(1);
+         self.mem_read((STACK as u16) + self.stack_pointer as u16)
+     }
+
+     fn stack_push(&mut self, data: u8) {
+         self.mem_write((STACK as u16) + self.stack_pointer as u16, data);
+         self.stack_pointer = self.stack_pointer.wrapping_sub(1)
+     }
+   */
   
   func stackPush(_ value: UInt8) {
     let sp = getStackPointer()
-    writeMem(at: 0x0100 + UInt16(sp), value: value)
+    let stackAddress = 0x0100 | UInt16(sp)
+    writeMem(at: stackAddress, value: value)
     setStackPointer(sp.subtractingReportingOverflow(1).partialValue)
-    
+    log("stackAddress, value", stackAddress, UInt16(value))
   }
   
   func stackPush16(_ value: UInt16) {
@@ -149,22 +158,40 @@ final class Memory {
   }
   
   func getAddress(for mode: AddressingMode) -> MemoryAddress {
-    var address:  MemoryAddress!
     
+    log("addressingMode \(mode.rawValue)")
     switch mode {
-    case .accumulator: address = 0x0000
-    case .immediate:  address = pc
-    case .zeroPage:   address = MemoryAddress(pc)
-    case .zeroPageX:  address = getZeroPage(offsetBy: .X)
-    case .zeroPageY:  address = getZeroPage(offsetBy: .Y)
-    case .absolute:   address = readMem16(at: pc)
-    case .absoluteX: address = getAbsolute(offsetBy: .X)
-    case .absoluteY: address = getAbsolute(offsetBy: .Y)
-    case .indirectX: address = indirectX()
-    case .indirectY: address = indirectY()
+    case .accumulator:
+      return 0x0000
+    case .absolute:
+      return readMem16(at: pc)
+    case .immediate:
+      return pc
+    case .zeroPage:
+      return UInt16(readMem(at: pc))
+    case .zeroPageX:
+      let data: UInt8 = readMem(at: pc)
+      let addr = data.addingReportingOverflow(registers.X).partialValue
+      return UInt16(addr)
+    case .zeroPageY:
+      let data: UInt8 = readMem(at: pc)
+      let addr = data.addingReportingOverflow(registers.Y).partialValue
+      return UInt16(addr)
+    case .absoluteX:
+      let data = readMem16(at: pc)
+      let addr = data.addingReportingOverflow(UInt16(registers.X)).partialValue
+      return addr
+    case .absoluteY:
+      let data = readMem16(at: pc)
+      let addr = data.addingReportingOverflow(UInt16(registers.Y)).partialValue
+      return addr
+    case .indirectX: 
+      return indirectX()
+    case .indirectY:
+      return indirectY()
     default: fatalError("Addressing mode: \(mode) not implemented")
     }
-    return address
+    
   }
   
   func load(program: [UInt8]) {
@@ -192,6 +219,7 @@ extension Memory: MemoryInjectable {
   }
   
   func setStackPointer(_ value: UInt8) {
+    log("sp", sp)
     sp = value
   }
   
@@ -200,8 +228,9 @@ extension Memory: MemoryInjectable {
   }
   
   func setProgramCounter(_ value: UInt16) {
+    log("value", value)
     pc = value
-   
+    
     updateInstructionsBuffer()
   }
   func getProgramCounter() -> UInt16 {
@@ -230,44 +259,25 @@ private extension Memory {
     }
     
     instructionsBuffer.insert(pc, at: 0)
-        
-  }
-  
-  func getRegisterValue(for register: AddressingIndex) -> UInt8 {
-    switch register {
-    case .X: return registers.X
-    case .Y: return registers.Y
-    }
+    
   }
   
   // MARK: - Addressing mode
   
-  func getZeroPage(offsetBy register: AddressingIndex) -> MemoryAddress {
-    let base: Operand = readMem(at: pc)
-    let value: ZeroMemoryAddress = getRegisterValue(for: register)
-    
-    return MemoryAddress(base.addingReportingOverflow(value).partialValue)
-  }
-  
-  func getAbsolute(offsetBy register: AddressingIndex) -> MemoryAddress {
-    let address: MemoryAddress = readMem16(at: pc)
-    let offsetValue: MemoryAddress = MemoryAddress(getRegisterValue(for: register))
-    
-    return MemoryAddress(address.addingReportingOverflow(offsetValue).partialValue)
-  }
-  
   func indirectX() -> MemoryAddress {
-    let base: ZeroMemoryAddress = readMem(at: pc)
-    let pointer: ZeroMemoryAddress = base.addingReportingOverflow(registers.X).partialValue
-    let lo: UInt8 = readMem(at: MemoryAddress(pointer))
-    let hi: UInt8 = readMem(at: MemoryAddress(pointer.addingReportingOverflow(1).partialValue))
-    let ptr = UInt16(hi) << 8 | UInt16(lo)
+    let storedAddress: UInt8 = readMem(at: pc)
+    let addr = storedAddress.addingReportingOverflow(registers.X).partialValue
+    
+    let lo = UInt16(readMem(at: MemoryAddress(addr)))
+    let hi = UInt16(readMem(at: MemoryAddress(addr.addingReportingOverflow(1).partialValue)))
+    let ptr = (hi << 8) | lo
     return ptr
   }
   
   func indirectY() -> MemoryAddress {
-    let lo = readMem(at: pc)
-    let hi = readMem(at: pc + 1)
+    let storedAddress = UInt16(readMem(at: pc))
+    let lo: UInt8 = readMem(at: storedAddress)
+    let hi: UInt8 = readMem(at: storedAddress.addingReportingOverflow(1).partialValue)
     let pointer = UInt16(hi) << 8 | UInt16(lo)
     return pointer.addingReportingOverflow(UInt16(registers.Y)).partialValue
   }
