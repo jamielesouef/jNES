@@ -18,6 +18,7 @@
 		70C401212BC38E64002F325B /* SwiftNESUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401202BC38E64002F325B /* SwiftNESUITests.swift */; };
 		70C401232BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C401222BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift */; };
 		70C401302BC38E72002F325B /* CPU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C4012F2BC38E72002F325B /* CPU.swift */; };
+		E4029BCF2BD63C8F00960A13 /* MemoryInjectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4029BCE2BD63C8F00960A13 /* MemoryInjectable.swift */; };
 		E40545AD2BD24D9000689D15 /* rom.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40545AC2BD24D9000689D15 /* rom.swift */; };
 		E45121D92BC4D5F700A34ECB /* CPUSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45121D82BC4D5F700A34ECB /* CPUSpec.swift */; };
 		E45121DB2BC4E01200A34ECB /* Array+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45121DA2BC4E01200A34ECB /* Array+extensions.swift */; };
@@ -65,6 +66,7 @@
 		70C401202BC38E64002F325B /* SwiftNESUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNESUITests.swift; sourceTree = "<group>"; };
 		70C401222BC38E64002F325B /* SwiftNESUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNESUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		70C4012F2BC38E72002F325B /* CPU.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPU.swift; sourceTree = "<group>"; };
+		E4029BCE2BD63C8F00960A13 /* MemoryInjectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryInjectable.swift; sourceTree = "<group>"; };
 		E40545AC2BD24D9000689D15 /* rom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = rom.swift; sourceTree = "<group>"; };
 		E45121D82BC4D5F700A34ECB /* CPUSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUSpec.swift; sourceTree = "<group>"; };
 		E45121DA2BC4E01200A34ECB /* Array+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+extensions.swift"; sourceTree = "<group>"; };
@@ -180,6 +182,7 @@
 				700C02F22BCF678F00EB9DBE /* NES.swift */,
 				700C02F42BCF6D9F00EB9DBE /* Controller.swift */,
 				E40545AC2BD24D9000689D15 /* rom.swift */,
+				E4029BCE2BD63C8F00960A13 /* MemoryInjectable.swift */,
 			);
 			path = CPU;
 			sourceTree = "<group>";
@@ -316,6 +319,7 @@
 			files = (
 				E49A7F752BCA1A2500E88D1F /* log.swift in Sources */,
 				E4E24A952BC65CD80011D66F /* Memory.swift in Sources */,
+				E4029BCF2BD63C8F00960A13 /* MemoryInjectable.swift in Sources */,
 				700C02F52BCF6D9F00EB9DBE /* Controller.swift in Sources */,
 				700C02F32BCF678F00EB9DBE /* NES.swift in Sources */,
 				70C401052BC38E63002F325B /* ContentView.swift in Sources */,

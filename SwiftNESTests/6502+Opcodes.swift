@@ -82,19 +82,19 @@ final class _6502_Opcodes: XCTestCase {
   
   func testASL_accumulator_negative_is_set() throws {
     cpu.memory.registers.set(.A, to: 0b0100_0000)
-    cpu.ASL_accumulator()
+    cpu.ASL(mode: .accumulator)
     XCTAssertTrue(cpu.memory.registers.isSet(.negative))
   }
   
   func testASL_accumulator_negative_is_not_set() throws {
     cpu.memory.registers.set(.A, to: 0b0010_0000)
-      cpu.ASL_accumulator()
+    cpu.ASL(mode: .accumulator)
     XCTAssertFalse(cpu.memory.registers.isSet(.negative))
   }
   
   func testASL_accumulator_carry_is_set() throws {
     cpu.memory.registers.set(.A, to: 0b1010_0000)
-        cpu.ASL_accumulator()
+    cpu.ASL(mode: .accumulator)
     XCTAssertTrue(cpu.memory.registers.isSet(.carry))
   }
   
@@ -383,7 +383,7 @@ final class _6502_Opcodes: XCTestCase {
     XCTAssertEqual(cpu.memory.getProgramCounter(), 0x0000)
     cpu.memory.writeMem(at: 0x00, value: 0x33)
     cpu.memory.writeMem(at: 0x01, value: 0xFF)
-    cpu.JMP()
+    cpu.JMP(mode: .absolute)
     XCTAssertEqual(cpu.memory.getProgramCounter(), 0xFF33)
   }
   
@@ -448,7 +448,7 @@ final class _6502_Opcodes: XCTestCase {
     let pc: UInt16 = 0x23
     cpu.memory.setProgramCounter(pc)
     cpu.memory.registers.set(.A, to: val)
-    cpu.LSR_accumulator()
+    cpu.LSR(mode: .accumulator)
     XCTAssertEqual(cpu.memory.registers.A, exp)
     XCTAssertFalse(cpu.memory.registers.isSet(.carry))
   }
@@ -458,7 +458,7 @@ final class _6502_Opcodes: XCTestCase {
     let pc: UInt16 = 0x23
     cpu.memory.setProgramCounter(pc)
     cpu.memory.registers.set(.A, to: val)
-    cpu.LSR_accumulator()
+    cpu.LSR(mode: .accumulator)
     XCTAssertTrue(cpu.memory.registers.isSet(.carry))
   }
   
@@ -467,7 +467,7 @@ final class _6502_Opcodes: XCTestCase {
     let pc: UInt16 = 0x23
     cpu.memory.setProgramCounter(pc)
     cpu.memory.registers.set(.A, to: val)
-    cpu.LSR_accumulator()
+    cpu.LSR(mode: .accumulator)
     XCTAssertTrue(cpu.memory.registers.isSet(.zero))
   }
   
@@ -521,7 +521,7 @@ final class _6502_Opcodes: XCTestCase {
     
     cpu.memory.registers.set(.carry)
     cpu.memory.registers.set(.A, to: val)
-    cpu.ROL_accumulator()
+    cpu.ROL(mode: .accumulator)
     XCTAssertEqual(cpu.memory.registers.A, exp)
     XCTAssertTrue(cpu.memory.registers.isSet(.carry))
   }
@@ -550,7 +550,7 @@ final class _6502_Opcodes: XCTestCase {
     let pc: UInt16 =  0x23
     
     cpu.memory.registers.set(.A, to: val)
-    cpu.ROL_accumulator()
+    cpu.ROL(mode: .accumulator)
     XCTAssertEqual(cpu.memory.registers.A, exp)
     XCTAssertTrue(cpu.memory.registers.isSet(.negative))
   }
@@ -562,7 +562,7 @@ final class _6502_Opcodes: XCTestCase {
     let pc: UInt16 = 0x23
     
     cpu.memory.registers.set(.A, to: val)
-    cpu.ROL_accumulator()
+    cpu.ROL(mode: .accumulator)
     XCTAssertEqual(cpu.memory.registers.A, exp)
     XCTAssertTrue(cpu.memory.registers.isSet(.zero))
     XCTAssertFalse(cpu.memory.registers.isSet(.negative))
@@ -596,7 +596,7 @@ final class _6502_Opcodes: XCTestCase {
     cpu.memory.registers.set(.carry)
     cpu.memory.setProgramCounter(pc)
     cpu.memory.registers.set(.A, to: val)
-    cpu.ROR_accumulator()
+    cpu.ROR(mode: .accumulator)
     XCTAssertEqual(cpu.memory.registers.A, exp)
     XCTAssertTrue(cpu.memory.registers.isSet(.negative))
   }
@@ -609,7 +609,7 @@ final class _6502_Opcodes: XCTestCase {
     
     cpu.memory.setProgramCounter(pc)
     cpu.memory.registers.set(.A, to: val)
-    cpu.ROR_accumulator()
+    cpu.ROR(mode: .accumulator)
     XCTAssertEqual(cpu.memory.registers.A, exp)
     XCTAssertTrue(cpu.memory.registers.isSet(.zero))
     XCTAssertFalse(cpu.memory.registers.isSet(.negative))
