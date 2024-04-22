@@ -79,18 +79,7 @@ extension MemoryInjectable where Self: AnyObject {
     self.writeMem(at: address + 1, value: hi)
     
   }
-  /*
-  fn stack_pop(&mut self) -> u8 {
-         self.stack_pointer = self.stack_pointer.wrapping_add(1);
-         self.mem_read((STACK as u16) + self.stack_pointer as u16)
-     }
 
-     fn stack_push(&mut self, data: u8) {
-         self.mem_write((STACK as u16) + self.stack_pointer as u16, data);
-         self.stack_pointer = self.stack_pointer.wrapping_sub(1)
-     }
-   */
-  
   func stackPush(_ value: UInt8) {
     let sp = getStackPointer()
     let stackAddress = 0x0100 | UInt16(sp)

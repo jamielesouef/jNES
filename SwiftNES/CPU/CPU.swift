@@ -44,7 +44,6 @@ final class CPU {
   func run(callback:() -> UInt8) {
     while loop {
       
-      let controllerState = callback()
       let opcode: UInt8 = memory.readMemAtCounter()
       let instruction = getInstructions(forOpcode: opcode)
       let newProgramCounter = memory.getProgramCounter() + 1
@@ -52,16 +51,18 @@ final class CPU {
       memory.setProgramCounter(newProgramCounter)
       programCounterAtOppcodeRun = newProgramCounter
       
-      handle(controllerState: controllerState)
       
       log("instruction \(instruction.name) \(String(opcode, radix: 16))")
       instruction.fn()
       
+      let controllerState = callback()
+      handle(controllerState: controllerState)
+
       // if the opperation does not change the program counter
       // we need to increment it by the number of bytes in the instruction
-      let pc = memory.getProgramCounter()
-      if programCounterAtOppcodeRun == pc {
-        memory.setProgramCounter(pc + UInt16(instruction.bytes) - 1)
+      let postOpcodePC = memory.getProgramCounter()
+      if programCounterAtOppcodeRun == postOpcodePC {
+        memory.setProgramCounter(postOpcodePC + UInt16(instruction.bytes) - 1)
       }
     }
   }
@@ -105,15 +106,19 @@ private extension CPU {
   
   func branch(when condition: Bool) {
     if condition {
-
       let pc = memory.getProgramCounter()
-      let offset: UInt8 = memory.readMem(at: pc)
-      
-      let addr = pc
-        .addingReportingOverflow(UInt16(offset) + 1).partialValue
-        
+      let offset = UInt16(memory.readMem(at: pc))
 
-      memory.setProgramCounter(addr)
+      
+      let jumpAddr = pc &+ (offset ^ 0x80) &- 0x80
+      
+//      let jumpAddr = pc
+//        .addingReportingOverflow(1).partialValue
+//        .addingReportingOverflow(UInt16(offset)).partialValue
+////        
+
+      memory.setProgramCounter(jumpAddr)
+    
       log("Branch taken")
     }
   }
@@ -127,15 +132,7 @@ private extension CPU {
     let subResult = value.subtractingReportingOverflow(data).partialValue
     setZeroAndNegativeFlag(subResult)
   }
-  
-  func increment(param: UInt8) -> UInt8 {
-    let result = param.addingReportingOverflow(1).partialValue
     
-    setZeroAndNegativeFlag(result)
-    
-    return result
-  }
-  
   func setRegisterA(_ value: UInt8) {
     memory.registers.set(.A, to: value)
     setZeroAndNegativeFlag(value)
@@ -158,13 +155,8 @@ extension CPU {
       .addingReportingOverflow(UInt16(data)).partialValue
       .addingReportingOverflow(memory.registers.isSet(.carry) ? 1 : 0).partialValue
         
-    if  sum > 0xFF {
-      memory.registers.set(.carry)
-    } else {
-      memory.registers.clear(.carry)
-    }
-
-    let truncatedResult = UInt8(truncatingIfNeeded: sum)
+    
+    setCarryFlag((sum & 0xFF) == 0)
 
     if ((data ^ truncatedResult) & (truncatedResult ^ memory.registers.A) & 0x80) != 0 {
       memory.registers.set(.overflow)
@@ -172,9 +164,9 @@ extension CPU {
       memory.registers.clear(.overflow)
     }
 
-    setRegisterA(truncatedResult)
+    setRegisterA(UInt8(sum & 0xFF))
     
-    log("param, result", data, truncatedResult)
+    log("param, sum", UInt16(data), sum)
   }
   
   func AND(mode: AddressingMode) {
@@ -318,9 +310,12 @@ extension CPU {
   
   // Decrement X Register
   func DEX() {
-    let param = memory.registers.X.subtractingReportingOverflow(1).partialValue
+    let result = memory.registers.X.subtractingReportingOverflow(1)
+    let param = result.partialValue
     memory.registers.set(.X, to: param)
     setZeroAndNegativeFlag(param)
+    setZeroFlag(param)
+    
   }
   
   // Decrement Y Register
@@ -342,22 +337,23 @@ extension CPU {
   // Increment Memory
   func INC(mode: AddressingMode) {
     let addr = memory.getAddress(for: mode)
-    let data = memory.readMem(at: addr)
-    let i = increment(param: data)
-    let pc = memory.getProgramCounter() - 1
-    memory.writeMem(at: pc, value: i)
+    let data = memory.readMem(at: addr).addingReportingOverflow(1).partialValue
+    
+    setZeroAndNegativeFlag(data)
+    memory.writeMem(at: addr, value: data)
   }
   
   // Increment X Register
   func INX() {
-    let i = increment(param: memory.registers.X)
-    log("i", i)
+    let i = memory.registers.X.addingReportingOverflow(1).partialValue
+    setZeroAndNegativeFlag(i)
     memory.registers.set(.X, to: i)
   }
   
   // Increment Y Register
   func INY() {
-    let i = increment(param: memory.registers.Y)
+    let i = memory.registers.Y.addingReportingOverflow(1).partialValue
+    setZeroAndNegativeFlag(i)
     log("i", i)
     memory.registers.set(.Y, to: i)
   }
@@ -701,7 +697,7 @@ extension CPU {
   }
   
   func setNegativeFlag(_ value: UInt8) {
-    log("value", value)
+    log("value", value >> 7)
     if value >> 7 == 1 {
       memory.registers.set(.negative)
     } else {
@@ -709,5 +705,3 @@ extension CPU {
     }
   }
 }
-
-
