@@ -77,24 +77,24 @@ final class CPUSpec: XCTestCase {
   func testSettingNegativeFlag() {
     cpu.reset()
     cpu.setNegativeFlag(0b1000_0000)
-    XCTAssertTrue(cpu.memory.registers.isSet(.negative))
-    cpu.memory.registers.clear(.negative)
-    XCTAssertFalse(cpu.memory.registers.isSet(.negative))
+    XCTAssertTrue(cpu.registers.isSet(.negative))
+    cpu.registers.clear(.negative)
+    XCTAssertFalse(cpu.registers.isSet(.negative))
     
     cpu.reset()
     cpu.setNegativeFlag(0b0100_0000)
-    XCTAssertFalse(cpu.memory.registers.isSet(.negative))
+    XCTAssertFalse(cpu.registers.isSet(.negative))
   }
   
   func testSettingZeroFlag() {
     cpu.reset()
     cpu.setZeroFlag(0b0000_0000)
-    XCTAssertTrue(cpu.memory.registers.isSet(.zero))
-    cpu.memory.registers.clear(.zero)
-    XCTAssertFalse(cpu.memory.registers.isSet(.zero))
+    XCTAssertTrue(cpu.registers.isSet(.zero))
+    cpu.registers.clear(.zero)
+    XCTAssertFalse(cpu.registers.isSet(.zero))
     
     cpu.reset()
     cpu.setZeroFlag(0b0000_0001)
-    XCTAssertFalse(cpu.memory.registers.isSet(.zero))
+    XCTAssertFalse(cpu.registers.isSet(.zero))
   }
 }

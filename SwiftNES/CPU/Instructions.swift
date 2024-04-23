@@ -336,7 +336,6 @@ extension CPU {
     
     guard let instruction = table[opcode] else {
       let code = String(opcode, radix: 16)
-      log(memory.getProgramCounter())
       fatalError("Unknown opcode: \(code)")
     }
     
