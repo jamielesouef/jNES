@@ -25,7 +25,7 @@ enum AddressingMode: String {
 
 final class Memory {
   
-  var pc: MemoryAddress = 0x0000
+  var pc: UInt16 = 0x0000
   let registers: Registers
   
   private var sp: UInt8 = 0xFF
@@ -49,12 +49,12 @@ final class Memory {
     self.buffer = buffer
   }
   
-  func getAddress(for mode: AddressingMode) -> MemoryAddress {
+  func getAddress(for mode: AddressingMode) -> UInt16 {
     
     log("addressingMode \(mode.rawValue)")
     switch mode {
     case .accumulator:
-      return 0x0000
+      return UInt16(registers.A)
     case .absolute:
       return readMem16(at: pc)
     case .immediate:
@@ -122,15 +122,13 @@ extension Memory: MemoryInjectable {
   func setProgramCounter(_ value: UInt16) {
     log("value", value)
     pc = value
-    
-    updateInstructionsBuffer()
   }
   
   func getProgramCounter() -> UInt16 {
     return pc
   }
   
-  func _debug_getInstructionsBuffer() -> [String] {
+  func __debug_getInstructionsBuffer() -> [String] {
     instructionsBuffer.reversed().map {
       let hex = String($0, radix: 16)
       let op = _debug_compiledSnake[$0] ?? ""
@@ -138,17 +136,14 @@ extension Memory: MemoryInjectable {
       return "\(hex):\(op)"
     }
   }
-}
-
-private extension Memory {
-  func updateInstructionsBuffer() {
+  
+  func __debug_updateInstructionsBuffer() {
     
-    guard _debug_compiledSnake[pc] != nil else {
-      "NO OP at pc \(pc)"
+    guard _debug_compiledSnake.keys.contains(pc) else {
       return
     }
     
-    if instructionsBuffer.count == 100 {
+    if instructionsBuffer.count == 1000 {
       let _ = instructionsBuffer.popLast()
     }
     
@@ -156,19 +151,24 @@ private extension Memory {
     
   }
   
+}
+
+private extension Memory {
+
+  
   // MARK: - Addressing mode
   
-  func indirectX() -> MemoryAddress {
+  func indirectX() -> UInt16 {
     let storedAddress: UInt8 = readMem(at: pc)
     let addr = storedAddress.addingReportingOverflow(registers.X).partialValue
     
-    let lo = UInt16(readMem(at: MemoryAddress(addr)))
-    let hi = UInt16(readMem(at: MemoryAddress(addr.addingReportingOverflow(1).partialValue)))
+    let lo = UInt16(readMem(at: UInt16(addr)))
+    let hi = UInt16(readMem(at: UInt16(addr.addingReportingOverflow(1).partialValue)))
     let ptr = (hi << 8) | lo
     return ptr
   }
   
-  func indirectY() -> MemoryAddress {
+  func indirectY() -> UInt16 {
     let storedAddress = UInt16(readMem(at: pc))
     let lo: UInt8 = readMem(at: storedAddress)
     let hi: UInt8 = readMem(at: storedAddress.addingReportingOverflow(1).partialValue)

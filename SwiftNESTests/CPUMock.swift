@@ -68,7 +68,7 @@ class MockMemory: MemoryInjectable {
     self.registers = MockRegisters(A: 0x33, X: 0x10, Y: 0xFF, p: 0x00)
   }
   
-  func getAddress(for mode: SwiftNES.AddressingMode) -> SwiftNES.MemoryAddress {
+  func getAddress(for mode: SwiftNES.AddressingMode) -> UInt16 {
     getProgramCounter()
   }
   

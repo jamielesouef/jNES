@@ -7,17 +7,17 @@
 
 import Foundation
 
-typealias Operand = UInt8
-typealias Oppecode = UInt8
-typealias MemoryAddress = UInt16
-typealias ZeroMemoryAddress = UInt8
-
 final class CPU {
   
   let memory: MemoryInjectable
   
   private var loop = true
-  private var programCounterAtOppcodeRun: MemoryAddress = 0x00
+  private var programCounterAtOppcodeRun: UInt16 = 0x00
+  
+  private let A: UInt8 = 0
+  private let X: UInt8 = 0
+  private let Y: UInt8 = 0
+  private let PC: UInt16 = 0x00
   
   let callback: () -> UInt8
   
@@ -45,11 +45,16 @@ final class CPU {
     while loop {
       
       let opcode: UInt8 = memory.readMemAtCounter()
+
       let instruction = getInstructions(forOpcode: opcode)
+
+      (memory as! Memory).__debug_updateInstructionsBuffer()
+
       let newProgramCounter = memory.getProgramCounter() + 1
       
       memory.setProgramCounter(newProgramCounter)
       programCounterAtOppcodeRun = newProgramCounter
+      
       
       log("instruction \(instruction.name) \(String(opcode, radix: 16))")
       instruction.fn()
@@ -105,16 +110,23 @@ private extension CPU {
   
   func branch(when condition: Bool) {
     if condition {
-      let pc = memory.getProgramCounter()
-      let data = UInt16(memory.readMem(at: pc))
-      let offset = pc + 1
       
-      let destAddress = offset &+ (data ^ 0x80) &- 0x80
-
-
-      memory.setProgramCounter(UInt16(destAddress))
-    
-      log("Branch taken")
+      let pc = memory.getProgramCounter()
+      let data = memory.readMem(at: pc)
+      let signedOffset = Int8(bitPattern: data)
+      
+      var targetAddress: UInt16
+      
+      if signedOffset >= 0 {
+        targetAddress = pc &+ UInt16(signedOffset) + 1
+      } else {
+        targetAddress = pc &- UInt16(abs(signedOffset)) - 1
+      }
+      
+      memory.setProgramCounter(targetAddress)
+      log("signedOffset", Int(signedOffset))
+      log("pc, data, targetAddress", UInt16(data), pc, targetAddress)
+  
     }
   }
   
@@ -124,12 +136,14 @@ private extension CPU {
   
   func compare(against value: Int, mode: AddressingMode) {
     let addr = memory.getAddress(for: mode)
-    let data = value - Int(memory.readMem(at: addr))
+    let data = Int(memory.readMem(at: addr))
+    
+    let result = value - data
   
-    setNegativeFlag(data  >> 7 == 1)
+    setNegativeFlag(result >> 7 == 1)
+    setZeroFlag(result == 0)
     
     setCarryFlag(value >= data)
-    setZeroFlag(data == 0)
     
   }
     
@@ -154,7 +168,7 @@ extension CPU {
     
     let result = UInt16(memory.registers.A) + data + (memory.registers.isSet(.carry) ? 1 : 0)
         
-    setCarryFlag((result & 0xFF) == 0)
+    setZeroFlag((result & 0xFF) == 0)
 
     if ((data ^ result) & (result ^ UInt16(memory.registers.A)) & 0x80) != 0 {
       memory.registers.set(.overflow)
@@ -163,7 +177,7 @@ extension CPU {
     }
 
     setRegisterA(UInt8(result & 0xFF))
-    
+    setCarryFlag(result > 0xFF)
     log("param, result", UInt16(data), result)
   }
   
@@ -189,6 +203,7 @@ extension CPU {
       data = memory.readMem(at: addr)
     }
     
+    setCarryFlag(data >> 7 == 1)
       
     data = (data << 1) & 0xFE
     
@@ -198,7 +213,6 @@ extension CPU {
       memory.writeMem(at: addr, value: data)
     }
     
-    setCarryFlag(data >> 7 == 1)
     setZeroFlag(data == 0)
     setNegativeFlag(data >> 7 == 1)
     
@@ -210,7 +224,7 @@ extension CPU {
   
   // Branch if Carry Clear
   func BCS() {
-    branch(when: memory.registers.isSet(.carry))
+    branch(when: !memory.registers.isSet(.carry))
   }
   
   // Branch if Equal
@@ -234,6 +248,7 @@ extension CPU {
   }
   
   
+  // Branch if negative
   func BMI() {
     branch(when: memory.registers.isSet(.negative))
   }
@@ -312,7 +327,7 @@ extension CPU {
     
     
     setNegativeFlag((data >> 7) & 0x1 == 1)
-    setZeroFlag((data & 0xFF) == 1)
+    setZeroFlag(data == 0)
     
     memory.writeMem(at: addr, value: UInt8(data & 0xFF))
     
@@ -325,7 +340,7 @@ extension CPU {
     memory.registers.set(.X, to: UInt8(data & 0xFF))
     
     setNegativeFlag((data >> 7) & 0x1 == 1)
-    setZeroFlag((data & 0xFF) == 1)
+    setZeroFlag(data == 0)
     
   }
   
@@ -336,7 +351,7 @@ extension CPU {
     memory.registers.set(.Y, to: UInt8(data & 0xFF))
     
     setNegativeFlag((data >> 7) & 0x1 == 1)
-    setZeroFlag((data & 0xFF) == 1)
+    setZeroFlag(data == 0)
   }
   
   // Exclusive OR
@@ -383,13 +398,13 @@ extension CPU {
     switch mode {
     case .absolute:
       let pc = memory.getProgramCounter()
-      let ptr: MemoryAddress = memory.readMem16(at: pc)
+      let ptr: UInt16 = memory.readMem16(at: pc)
       memory.setProgramCounter(ptr)
       
     case .indirect:
       
       let pc = memory.getProgramCounter()
-      let ptr: MemoryAddress = memory.readMem16(at: pc)
+      let ptr: UInt16 = memory.readMem16(at: pc)
       
       /*
        NB:
@@ -401,7 +416,7 @@ extension CPU {
        indirect vector is not at the end of the page.
        */
       
-      var indrectPtr: MemoryAddress!
+      var indrectPtr: UInt16!
       
       if ptr & 0x00FF == 0x00FF {
         let lo = memory.readMem(at: ptr)
@@ -464,9 +479,9 @@ extension CPU {
       data = memory.readMem(at: addr)
     }
     
-    setCarryFlag(data & 1 == 1)
+    setCarryFlag((data & 0x1) == 1)
     
-    data = data >> 1
+    data = (data >> 1) & 0x7F
     
     setNegativeFlag(false)
     setZeroFlag(data)
@@ -515,43 +530,60 @@ extension CPU {
     memory.registers.set(programStatus: memory.stackPop())
   }
   
-  // Rotate Left
-  func ROL(mode: AddressingMode) {
-    var data: UInt8!
+  
+  private func ROL_accumulator() {
     
-    if mode == .accumulator {
-      data = memory.registers.A
-    } else {
-      let addr = memory.getAddress(for: mode)
-      data = memory.readMem(at: addr)
-    }
+    var data = memory.registers.A
+    
+    let carry = (data >> 7) & 0x1
+    setCarryFlag(carry == 1)
+    
+    data = data << 1
+    data = data | (memory.registers.isSet(.carry) ? 1 : 0)
+    
+    
+    setZeroFlag(data == 0)
+    setNegativeFlag(data >> 7 == 1)
+    
+    
+    memory.registers.set(.A, to: data)
+  }
+  
+  // Rotate Left
+  private func ROL_memory(mode: AddressingMode) {
+    let addr = memory.getAddress(for: mode)
+    var data = memory.readMem(at: addr)
+    
+    let carry = (data >> 7) & 0x1
+    setCarryFlag(carry == 1)
     
     data = data << 1
     data = data | (memory.registers.isSet(.carry) ? 1 : 0)
     
     setCarryFlag(data)
-    setZeroFlag(data)
-    setNegativeFlag(data)
+    setZeroFlag(data == 0)
+    setNegativeFlag(data >> 7 == 1)
     
+    memory.writeMem(at: addr, value: data)
+  }
+    
+  
+  // Rotate Left
+  func ROL(mode: AddressingMode) {
     if mode == .accumulator {
-      memory.registers.set(.A, to: data)
-    } else {
-      let addr = memory.getAddress(for: mode)
-      memory.writeMem(at: addr, value: data)
+      ROL_accumulator()
+      return
     }
+    
+    ROL_memory(mode: mode)
   }
   
   // Rotate Right
-  func ROR(mode: AddressingMode) {
+  
+  private func ROR_accumulator() {
     
-    var data: UInt8!
-    if mode == .accumulator {
-      data = memory.registers.A
-    } else {
-      let addr = memory.getAddress(for: mode)
-      data = memory.readMem(at: addr)
-    }
     
+    var data = memory.registers.A
     
     data = (data >> 1) & 0x7F
     data = data | (memory.registers.isSet(.carry) ? 0x80:0)
@@ -560,13 +592,31 @@ extension CPU {
     setNegativeFlag(data)
     setCarryFlag(data)
     
+    memory.registers.set(.A, to: data)
+  }
+  
+  private func ROR_memory(mode: AddressingMode) {
+    
+    let addr = memory.getAddress(for: mode)
+    var data = memory.readMem(at: addr)
+    
+    data = (data >> 1) & 0x7F
+    data = data | (memory.registers.isSet(.carry) ? 0x80:0)
+    
+    setZeroFlag(data)
+    setNegativeFlag(data)
+    setCarryFlag(data)
+    
+    memory.writeMem(at: addr, value: data)
+  }
+  
+  func ROR(mode: AddressingMode) {
     if mode == .accumulator {
-      memory.registers.set(.A, to: data)
-    } else {
-      let addr = memory.getAddress(for: mode)
-      memory.writeMem(at: addr, value: data)
+      ROR_accumulator()
+      return
     }
     
+    ROR_memory(mode: mode)
   }
   
   

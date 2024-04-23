@@ -9,11 +9,11 @@ import Foundation
 
 protocol MemoryInjectable {
   var registers: Registers { get}
-  func getAddress(for mode: AddressingMode) -> MemoryAddress
+  func getAddress(for mode: AddressingMode) -> UInt16
   func load(program: [UInt8])
-  func readMem(at address: MemoryAddress) -> UInt8
-  func readMem16(at address: MemoryAddress) -> MemoryAddress
-  func writeMem(at address: MemoryAddress, value: UInt8)
+  func readMem(at address: UInt16) -> UInt8
+  func readMem16(at address: UInt16) -> UInt16
+  func writeMem(at address: UInt16, value: UInt8)
   func writeMem16(at address: UInt16, value: UInt16)
   func stackPush(_ value: UInt8)
   func stackPop() -> UInt8
@@ -35,18 +35,18 @@ protocol MemoryInjectable {
 
 extension MemoryInjectable where Self: AnyObject {
   
-  func readMem(at address: MemoryAddress) -> UInt8 {
+  func readMem(at address: UInt16) -> UInt8 {
     let value = readBuffer(at: address)
     log("address, value", address, UInt16(value), r: 16)
     return value
   }
   
-  func writeMem(at address: MemoryAddress, value: UInt8) {
+  func writeMem(at address: UInt16, value: UInt8) {
     writeBuffer(at: address, value: value)
     log("address, value", address, UInt16(value))
   }
   
-  func readMem16(at address: MemoryAddress) -> MemoryAddress {
+  func readMem16(at address: UInt16) -> UInt16 {
     let lo = readMem(at: address)
     let hi = readMem(at: address + 1)
     
