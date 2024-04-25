@@ -28,6 +28,8 @@
 		E42A9ED22BD9EE3B00858AFC /* CPUMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9ECC2BD9EE3B00858AFC /* CPUMock.swift */; };
 		E42A9ED32BD9EE3B00858AFC /* RegisteresSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9ECD2BD9EE3B00858AFC /* RegisteresSpec.swift */; };
 		E4E57D612BD9EECB00A2E1A9 /* EmulatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E57D602BD9EECB00A2E1A9 /* EmulatorView.swift */; };
+		E4E57D632BD9F04F00A2E1A9 /* ScreenViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E57D622BD9F04F00A2E1A9 /* ScreenViewViewModel.swift */; };
+		E4E57D652BD9F0C500A2E1A9 /* DPadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E57D642BD9F0C500A2E1A9 /* DPadView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +66,8 @@
 		E42A9ECC2BD9EE3B00858AFC /* CPUMock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPUMock.swift; sourceTree = "<group>"; };
 		E42A9ECD2BD9EE3B00858AFC /* RegisteresSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisteresSpec.swift; sourceTree = "<group>"; };
 		E4E57D602BD9EECB00A2E1A9 /* EmulatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatorView.swift; sourceTree = "<group>"; };
+		E4E57D622BD9F04F00A2E1A9 /* ScreenViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenViewViewModel.swift; sourceTree = "<group>"; };
+		E4E57D642BD9F0C500A2E1A9 /* DPadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DPadView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +119,8 @@
 				E42A9E862BD9ED8200858AFC /* Assets.xcassets */,
 				E42A9E882BD9ED8200858AFC /* Preview Content */,
 				E4E57D602BD9EECB00A2E1A9 /* EmulatorView.swift */,
+				E4E57D642BD9F0C500A2E1A9 /* DPadView.swift */,
+				E4E57D622BD9F04F00A2E1A9 /* ScreenViewViewModel.swift */,
 			);
 			path = jNES;
 			sourceTree = "<group>";
@@ -267,6 +273,7 @@
 				E42A9EB42BD9EDB100858AFC /* NES.swift in Sources */,
 				E42A9EC52BD9EDDD00858AFC /* PixelBufferView.swift in Sources */,
 				E42A9EC62BD9EDDD00858AFC /* ScreenView.swift in Sources */,
+				E4E57D652BD9F0C500A2E1A9 /* DPadView.swift in Sources */,
 				E42A9EBA2BD9EDB100858AFC /* rom.swift in Sources */,
 				E42A9EB62BD9EDB100858AFC /* Memory.swift in Sources */,
 				E42A9EB92BD9EDB100858AFC /* CPU.swift in Sources */,
@@ -274,6 +281,7 @@
 				E42A9EB82BD9EDB100858AFC /* Registers.swift in Sources */,
 				E42A9EB72BD9EDB100858AFC /* Instructions.swift in Sources */,
 				E42A9EB52BD9EDB100858AFC /* Controller.swift in Sources */,
+				E4E57D632BD9F04F00A2E1A9 /* ScreenViewViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
