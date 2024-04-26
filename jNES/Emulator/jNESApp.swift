@@ -9,9 +9,10 @@ import SwiftUI
 
 @main
 struct jNESApp: App {
-    var body: some Scene {
-        WindowGroup {
-            EmulatorView()
-        }
+  var body: some Scene {
+    WindowGroup {
+      EmulatorView()
+        
     }
+  }
 }

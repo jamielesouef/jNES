@@ -60,32 +60,34 @@ final class CPU {
     setProgramCounter(memory.readMem16(at: 0xFFFC))
   }
   
-  func run(callback:() -> UInt8) {
-    while loop {
-      
-      let opcode: UInt8 = memory.readMem(at: PC)
-      
-      let instruction = getInstructions(forOpcode: opcode)
-      
-      __debug_updateInstructionsBuffer()
-      
-      let newProgramCounter = PC + 1
-      
-      setProgramCounter(newProgramCounter)
-      programCounterAtOppcodeRun = newProgramCounter
-      
-      
-      log("instruction \(instruction.name) \(String(opcode, radix: 16))")
-      instruction.fn()
-      
-      let controllerState = callback()
-      handle(controllerState: controllerState)
-      
-      // if the opperation does not change the program counter
-      // we need to increment it by the number of bytes in the instruction
-      let postOpcodePC = PC
-      if programCounterAtOppcodeRun == postOpcodePC {
-        setProgramCounter(postOpcodePC + UInt16(instruction.bytes) - 1)
+  func run(callback: @escaping () -> UInt8) {
+    DispatchQueue.global().async { [weak self] in
+      guard let self else { return }
+      while loop {
+        
+        let opcode: UInt8 = memory.readMem(at: PC)
+        
+        let instruction = getInstructions(forOpcode: opcode)
+        
+        __debug_updateInstructionsBuffer()
+        
+        let newProgramCounter = PC + 1
+        
+        setProgramCounter(newProgramCounter)
+        programCounterAtOppcodeRun = newProgramCounter
+        
+        
+        instruction.fn()
+        
+        let controllerState = callback()
+        handle(controllerState: controllerState)
+        
+        // if the opperation does not change the program counter
+        // we need to increment it by the number of bytes in the instruction
+        let postOpcodePC = PC
+        if programCounterAtOppcodeRun == postOpcodePC {
+          setProgramCounter(postOpcodePC + UInt16(instruction.bytes) - 1)
+        }
       }
     }
   }
@@ -96,7 +98,6 @@ final class CPU {
   }
   
   func setProgramCounter(_ value: UInt16) {
-    log("value", value)
     PC = value
   }
   
@@ -106,7 +107,6 @@ final class CPU {
   
   func getOperand(for mode: AddressingMode) -> UInt16 {
     
-    log("addressingMode \(mode.rawValue)")
     switch mode {
     case .accumulator:
       return UInt16(registers.A)
@@ -186,7 +186,7 @@ private extension CPU {
   // MARK: - Addressing mode
   
   func handle(controllerState state: UInt8) {
-    print("state", state)
+    
     if state & ControllerButton.left.mask != 0 {
       memory.writeMem(at: 0xFF, value: 0x61)
       return
@@ -229,8 +229,6 @@ private extension CPU {
       }
       
       setProgramCounter(targetAddress)
-      log("signedOffset", Int(signedOffset))
-      log("pc, data, targetAddress", UInt16(data), pc, targetAddress)
       
     }
   }
@@ -281,7 +279,6 @@ extension CPU {
     
     setCarryFlag(result > 0xFF)
     setNegativeFlag((result >> 7) & 0x1 == 1)
-    log("param, result", UInt16(data), result)
   }
   
   func AND(mode: AddressingMode) {
@@ -292,7 +289,6 @@ extension CPU {
     
     setRegisterA(result)
     
-    log("data, result", data, result)
   }
   
   private func ASL_Logic(_ data: inout UInt8) {
@@ -378,7 +374,6 @@ extension CPU {
     setOverflowFlag(result)
     setZeroFlag(result)
     
-    log("data, a, result", data, a, result)
   }
   
   
@@ -420,7 +415,6 @@ extension CPU {
   // Clear Carry Flag
   func CLC() {
     setCarryFlag(false)
-    log("carry flag", registers.isSet(.carry) ? 1 : 0)
   }
   
   // Clear Decimal Mode
@@ -440,7 +434,6 @@ extension CPU {
   
   // Compare Accumulator
   func CMP(mode: AddressingMode) {
-    log("CMP")
     compare(against: registers.A, mode: mode)
   }
   

@@ -45,10 +45,12 @@ final class Controller: Controllable {
   
   func didReceiveButtonUp(button: ControllerButton) {
     setState(with: button, isPressed: false)
+    print("Button up: \(button)")
   }
   
   func didReceiveButtonDown(button: ControllerButton) {
     setState(with: button, isPressed: true)
+    print("Button down: \(button)")
   }
   
   private func getButton(for keyCode: UInt16) -> ControllerButton? {

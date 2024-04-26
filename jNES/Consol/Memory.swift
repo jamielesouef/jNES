@@ -28,13 +28,11 @@ final class Memory {
   
   func readMem(at address: UInt16) -> UInt8 {
     let value = readBuffer(at: address)
-    log("address, value", address, UInt16(value), r: 16)
     return value
   }
   
   func writeMem(at address: UInt16, value: UInt8) {
     writeBuffer(at: address, value: value)
-    log("address, value", address, UInt16(value))
   }
   
   func readMem16(at address: UInt16) -> UInt16 {
@@ -49,7 +47,6 @@ final class Memory {
     let lo = UInt8(value & 0xFF)
     let hi = UInt8(value >> 8)
     
-    log("hi, lo", hi, lo)
     self.writeMem(at: address, value: lo)
     self.writeMem(at: address + 1, value: hi)
     
@@ -60,14 +57,12 @@ final class Memory {
     let stackAddress = 0x0100 | UInt16(sp)
     writeMem(at: stackAddress, value: value)
     setStackPointer(sp.subtractingReportingOverflow(1).partialValue)
-    log("stackAddress, value", stackAddress, UInt16(value))
   }
   
   func stackPush16(_ value: UInt16) {
     let hi = UInt8(value >> 8)
     let lo = UInt8(value & 0xFF)
     
-    log("lo hi, value", UInt16(lo), UInt16(hi), value ,r: 16)
     
     stackPush(hi)
     stackPush(lo)
@@ -77,7 +72,6 @@ final class Memory {
     let sp = getStackPointer().addingReportingOverflow(1).partialValue
     setStackPointer(sp)
     let value = readMem(at: 0x100 + UInt16(sp))
-    log("value", value)
     return value
   }
   
@@ -85,7 +79,6 @@ final class Memory {
     let lo = UInt16(stackPop())
     let hi = UInt16(stackPop())
     let value = hi << 8 | lo
-    log("lo, hi, value", lo, hi, value)
     return value
   }
   
@@ -102,7 +95,6 @@ final class Memory {
   }
   
   func setStackPointer(_ value: UInt8) {
-    log("sp", sp)
     sp = value
   }
   
