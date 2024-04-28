@@ -7,6 +7,32 @@
 
 import Foundation
 
+fileprivate let NES_TAG: [UInt8] = [0x4E, 0x45, 0x53, 0x1A]
+
+
+struct Rom {
+  let prgRom: [UInt8]
+  let chrRom: [UInt8]
+  
+  init(cartrage: [UInt8]) {
+    if Array(cartrage[0..<4]) != NES_TAG {
+      fatalError("Invalid NES file")
+    }
+    
+    // get mapper
+    let mapper = (cartrage[7] & 0b1111_0000) | (cartrage[6] >> 4);
+    
+    // check if the file is in iNES format
+    if cartrage[7] & 0x0C != 0 {
+      fatalError("Only iNES format is supported")
+    }
+    
+    // get four screen mode
+    let fourScreenMode = cartrage[6] & 0x08 != 0
+    
+    
+  }
+}
 
 let _debug_compiledSnake: [UInt16: String] = [
   0x0600: "JSR $0606 INIT",
@@ -174,3 +200,4 @@ let _debug_compiledSnake: [UInt16: String] = [
   0x732: "BNE $072F",
   0x0734: "RTS",
   ]
+

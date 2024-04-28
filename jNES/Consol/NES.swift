@@ -72,7 +72,7 @@ struct NesScreenPixelBufferAdapter: ScreenPixelBufferAdapter {
 
 
 final class NES {
-  let memory: Memory
+  let bus: Bus
   let cpu: CPU
   let controller: Controller
   
@@ -89,8 +89,8 @@ final class NES {
   }
   
   init() {
-    self.memory = Memory()
-    self.cpu = CPU(memory: memory)
+    self.bus = Bus()
+    self.cpu = CPU(bus: bus)
     self.controller = Controller()
   }
   
@@ -103,7 +103,7 @@ final class NES {
     cpu.reset()
     cpu.run {
       let r = UInt8.random(in: 0...255)
-      self.memory.writeMem(at: 0xFE, value: r)
+      self.bus.writeMem(at: 0xFE, value: r)
       self.udpateScreenIfRequired()
       return self.controller.state
       
@@ -132,17 +132,16 @@ private extension NES {
   }
   
   func udpateScreenIfRequired() {
-    var screenBuffer: [Color] = .init(repeating: .black, count: 32 * 3 * 32)
-    for i in 0x0200..<0x0600 {
-      let byte = cpu.memory.readMem(at: UInt16(i))
+    var screenBuffer: [Color] = .init(repeating: .black, count: 32 * 32)
+    for i in 0x0200...0x05FF {
+      let byte = cpu.readMem(at: UInt16(i))
       let color = color(from: byte)
-      screenBuffer[i] = color
+      screenBuffer[i - 0x0200] = color
     }
     
     if screenBuffer != screen {
       screen = screenBuffer
       updateScreen?(NesScreenPixelBufferAdapter(screen))
-      print("updating")
     }
   }
 }

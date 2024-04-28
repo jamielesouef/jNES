@@ -7,10 +7,10 @@
 
 import Foundation
 
-final class Memory {
+final class Bus {
   
   private var sp: UInt8 = 0xFF
-  private var buffer: [UInt8] = .init(repeating: 0, count: 0xFFFF)
+  private var cpu_vram: [UInt8] = .init(repeating: 0, count: 0xFFFF)
   
   init(
     buffer: [UInt8] = .init(
@@ -18,11 +18,11 @@ final class Memory {
       count: 0xFFFF
     )
   ) {
-    self.buffer = buffer
+    self.cpu_vram = buffer
   }
   
   func load(program: [UInt8]) {
-    buffer.insert(contentsOf: program, at: 0x0600)
+    cpu_vram.insert(contentsOf: program, at: 0x0600)
     writeMem16(at: 0xFFFC, value: 0x0600)
   }
   
@@ -87,11 +87,11 @@ final class Memory {
   }
   
   func writeBuffer(at address: UInt16, value: UInt8) {
-    buffer[address] = value
+    cpu_vram[address] = value
   }
   
   func readBuffer(at address: UInt16) -> UInt8 {
-    return buffer[address]
+    return cpu_vram[address]
   }
   
   func setStackPointer(_ value: UInt8) {

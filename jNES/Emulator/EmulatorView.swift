@@ -50,7 +50,7 @@ struct EmulatorView: View {
     VStack {
       
       ImageView(pixelData: viewModel.pixelData)
-        .frame(width: 320, height: 320)
+        .frame(width: 256, height: 240)
       Spacer()
       DPadView(
         onUp: viewModel.nes.controller.didReceiveButtonUp,

@@ -21,8 +21,8 @@ extension CPU {
     
     
     let registers =  Registers(A: 0x33, X: 0x10, Y: 0xFF, p: 0x00)
-    let mem = Memory(buffer: buffer)
-    let cpu = CPU(memory: mem, registers: registers)
+    let mem = Bus(buffer: buffer)
+    let cpu = CPU(bus: mem, registers: registers)
     cpu.load(program: game_code)
     return cpu
   }
