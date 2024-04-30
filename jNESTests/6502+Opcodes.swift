@@ -378,7 +378,7 @@ final class _6502_Opcodes: XCTestCase {
   }
   
   func testJSR() throws {
-    let pc:UInt16 = 0xAAFF
+    let pc:UInt16 = 0x0800
     cpu.writeMem16(at: pc, value: 0x01FF)
     cpu.setProgramCounter(pc)
     XCTAssertEqual(cpu.getProgramCounter(), pc)
@@ -387,8 +387,7 @@ final class _6502_Opcodes: XCTestCase {
     XCTAssertEqual(cpu.getProgramCounter(), 0x01FF)
     
     let stackPtr = cpu.stackPop16()
-    XCTAssertEqual(stackPtr, 0xAB00)
-    
+    XCTAssertEqual(stackPtr, 0x801)
   }
   
   func testLDA() throws {
@@ -586,7 +585,7 @@ final class _6502_Opcodes: XCTestCase {
   
   func testRTS() throws {
     
-    let pc: UInt16 = 0xC1C1
+    let pc: UInt16 = 0x0800
     cpu.writeMem16(at: pc, value: 0x110B)
     cpu.setProgramCounter(pc)
     cpu.JSR()
@@ -595,7 +594,7 @@ final class _6502_Opcodes: XCTestCase {
     
     cpu.RTS()
     
-    XCTAssertEqual(cpu.getProgramCounter(), 0xC1C3)
+    XCTAssertEqual(cpu.getProgramCounter(), 0x802)
     
   }
   

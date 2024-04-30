@@ -12,7 +12,7 @@ import Combine
 class ContentViewModel: ObservableObject {
   @Published var pixelData: [[PixelData]]
   
-  let nes = NES()
+  let nes = try! NES()
   private var cancellables: Set<AnyCancellable> = []
   
   init() {

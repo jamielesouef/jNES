@@ -11,14 +11,11 @@ final class Bus {
   
   private var sp: UInt8 = 0xFF
   private var cpu_vram: [UInt8] = .init(repeating: 0, count: 0xFFFF)
+  private var rom: Rom
   
-  init(
-    buffer: [UInt8] = .init(
-      repeating: 0,
-      count: 0xFFFF
-    )
-  ) {
+  init(buffer: [UInt8] = .init(repeating: 0, count: 0xFFFF), rom: Rom ) {
     self.cpu_vram = buffer
+    self.rom = rom
   }
   
   func load(program: [UInt8]) {
@@ -27,12 +24,10 @@ final class Bus {
   }
   
   func readMem(at address: UInt16) -> UInt8 {
-    let value = readBuffer(at: address)
-    return value
-  }
-  
-  func writeMem(at address: UInt16, value: UInt8) {
-    writeBuffer(at: address, value: value)
+    return switch address {
+    case 0x8000...0xFFFF: readProgramRom(at: address)
+    default: cpu_vram[address]
+    }
   }
   
   func readMem16(at address: UInt16) -> UInt16 {
@@ -41,6 +36,13 @@ final class Bus {
     
     let ptr = UInt16(hi) << 8 | UInt16(lo)
     return ptr
+  }
+  
+  func writeMem(at address: UInt16, value: UInt8) {
+    switch address {
+    case 0x8000...0xFFFF: fatalError("Cannot write to ROM")
+    default: cpu_vram[address] = value
+    }
   }
   
   func writeMem16(at address: UInt16, value: UInt16) {
@@ -56,20 +58,19 @@ final class Bus {
     let sp = getStackPointer()
     let stackAddress = 0x0100 | UInt16(sp)
     writeMem(at: stackAddress, value: value)
-    setStackPointer(sp.subtractingReportingOverflow(1).partialValue)
+    setStackPointer(sp - 1)
   }
   
   func stackPush16(_ value: UInt16) {
     let hi = UInt8(value >> 8)
     let lo = UInt8(value & 0xFF)
     
-    
     stackPush(hi)
     stackPush(lo)
   }
   
   func stackPop() -> UInt8 {
-    let sp = getStackPointer().addingReportingOverflow(1).partialValue
+    let sp = getStackPointer() + 1
     setStackPointer(sp)
     let value = readMem(at: 0x100 + UInt16(sp))
     return value
@@ -83,15 +84,7 @@ final class Bus {
   }
   
   func reset() {
-   
-  }
-  
-  func writeBuffer(at address: UInt16, value: UInt8) {
-    cpu_vram[address] = value
-  }
-  
-  func readBuffer(at address: UInt16) -> UInt8 {
-    return cpu_vram[address]
+    sp = 0xFF
   }
   
   func setStackPointer(_ value: UInt8) {
@@ -100,5 +93,17 @@ final class Bus {
   
   func getStackPointer() -> UInt8 {
     return sp
+  }
+}
+
+private extension Bus {
+  func readProgramRom(at address: UInt16) -> UInt8 {
+    var addr = address - 0x8000
+    
+    if rom.prgRom.count == 0x4000 && addr >= 0x4000 {
+      addr = addr & 0x4000
+    }
+    
+    return rom.prgRom[addr]
   }
 }

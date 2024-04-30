@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		7006EF7C2BDF3C0900AF8681 /* RomSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7006EF7B2BDF3C0900AF8681 /* RomSpec.swift */; };
+		70EEA63A2BE0AC54004A337C /* snake.nes in Resources */ = {isa = PBXBuildFile; fileRef = E4E0EBEE2BDB8F6F00105134 /* snake.nes */; };
+		70EEA63B2BE0AC54004A337C /* snake.nes in Resources */ = {isa = PBXBuildFile; fileRef = E4E0EBEE2BDB8F6F00105134 /* snake.nes */; };
 		E40749DE2BDB3EFA006DF2EB /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40749DD2BDB3EFA006DF2EB /* ImageView.swift */; };
 		E42A9E832BD9ED8100858AFC /* jNESApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9E822BD9ED8100858AFC /* jNESApp.swift */; };
 		E42A9E872BD9ED8200858AFC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E42A9E862BD9ED8200858AFC /* Assets.xcassets */; };
@@ -259,6 +261,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E42A9E8A2BD9ED8200858AFC /* Preview Assets.xcassets in Resources */,
+				70EEA63A2BE0AC54004A337C /* snake.nes in Resources */,
 				E42A9E872BD9ED8200858AFC /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -267,6 +270,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				70EEA63B2BE0AC54004A337C /* snake.nes in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

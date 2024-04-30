@@ -77,7 +77,7 @@ class Registers {
   func reset() {
     A = 0
     X = 0
-    p = 0xfd
+    p = 0
   }
 }
 

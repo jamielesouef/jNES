@@ -42,7 +42,7 @@ final class CPU {
     case indirect
   }
   
-  init(bus: Bus = Bus(),
+  init(bus: Bus,
        registers: Registers = Registers(),
        callback: @escaping () -> UInt8 = { 0x00 }
   ) {
@@ -51,12 +51,9 @@ final class CPU {
     self.callback = callback
   }
   
-  func load(program: [UInt8]) {
-    bus.load(program: program)
-  }
-  
   func reset() {
     bus.reset()
+    registers.reset()
     setProgramCounter(readMem16(at: 0xFFFC))
   }
   
@@ -75,7 +72,6 @@ final class CPU {
         
         setProgramCounter(newProgramCounter)
         programCounterAtOppcodeRun = newProgramCounter
-        
         
         instruction.fn()
         
@@ -142,11 +138,11 @@ final class CPU {
   
   
   func readMem(at address: UInt16) -> UInt8 {
-    bus.readBuffer(at: address)
+    bus.readMem(at: address)
   }
   
   func writeMem(at address: UInt16, value: UInt8) {
-    bus.writeBuffer(at: address, value: value)
+    bus.writeMem(at: address, value: value)
   }
   
   func readMem16(at address: UInt16) -> UInt16 {

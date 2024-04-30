@@ -30,7 +30,7 @@ final class CPUSpec: XCTestCase {
   
   func testWriting16BitAddressTomMemoy() {
     
-    let address : UInt16 = 0x8000
+    let address : UInt16 = 0x4000
     let value: UInt16 = 0xA9AA
     cpu.writeMem16(at: address, value: value)
     
@@ -54,24 +54,24 @@ final class CPUSpec: XCTestCase {
   
   func testWriteToMemoeryWith8BitAddress() {
     
-    cpu.writeMem(at: 0x8000, value: 0xA9)
-    cpu.writeMem(at: 0x8001, value: 0x05)
-    cpu.writeMem(at: 0x8002, value: 0x00)
+    cpu.writeMem(at: 0x4000, value: 0xA9)
+    cpu.writeMem(at: 0x4001, value: 0x05)
+    cpu.writeMem(at: 0x4002, value: 0x00)
     
-    XCTAssertEqual(cpu.readMem(at: 0x8000), 0xA9)
-    XCTAssertEqual(cpu.readMem(at: 0x8001), 0x05)
-    XCTAssertEqual(cpu.readMem(at: 0x8002), 0x00)
+    XCTAssertEqual(cpu.readMem(at: 0x4000), 0xA9)
+    XCTAssertEqual(cpu.readMem(at: 0x4001), 0x05)
+    XCTAssertEqual(cpu.readMem(at: 0x4002), 0x00)
   }
   
   func testWriteToMemoeryWith16BitAddress() {
     
-    cpu.writeMem16(at: 0x8000, value: 0xA9AA)
-    cpu.writeMem16(at: 0x8002, value: 0x0501)
-    cpu.writeMem16(at: 0x8004, value: 0x0024)
+    cpu.writeMem16(at: 0x4000, value: 0xA9AA)
+    cpu.writeMem16(at: 0x4002, value: 0x0501)
+    cpu.writeMem16(at: 0x4004, value: 0x0024)
     
-    XCTAssertEqual(cpu.readMem16(at: 0x8000), 0xA9AA)
-    XCTAssertEqual(cpu.readMem16(at: 0x8002), 0x0501)
-    XCTAssertEqual(cpu.readMem16(at: 0x8004), 0x0024)
+    XCTAssertEqual(cpu.readMem16(at: 0x4000), 0xA9AA)
+    XCTAssertEqual(cpu.readMem16(at: 0x4002), 0x0501)
+    XCTAssertEqual(cpu.readMem16(at: 0x4004), 0x0024)
   }
   
   func testSettingNegativeFlag() {

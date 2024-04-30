@@ -88,8 +88,14 @@ final class NES {
     case cyan
   }
   
-  init() {
-    self.bus = Bus()
+  init() throws {
+    
+    let file = Bundle.main.url(forResource: "snake", withExtension: "nes")!
+    let data = try Data(contentsOf: file)
+    
+    let rom = try Rom(data: [UInt8](data))
+    
+    self.bus = Bus(rom: rom)
     self.cpu = CPU(bus: bus)
     self.controller = Controller()
   }
@@ -99,7 +105,6 @@ final class NES {
   var updateScreen: ((ScreenPixelBufferAdapter) -> Void)?
   
   func powerOn() {
-    cpu.load(program: game_code)
     cpu.reset()
     cpu.run {
       let r = UInt8.random(in: 0...255)
