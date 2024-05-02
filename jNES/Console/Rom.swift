@@ -113,7 +113,7 @@ struct Rom {
   }
 }
 
-let _debug_compiledSnake: [UInt16: String] = [
+let __debug_compiledSnake: [UInt16: String] = [
   0x0600: "JSR $0606 INIT",
   0x0603: "JSR $0638 LOOP",
   0x0606: "JSR $060D initSnake",

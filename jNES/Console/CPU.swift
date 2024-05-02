@@ -180,7 +180,7 @@ final class CPU {
   func __debug_getInstructionsBuffer() -> [String] {
     __instructionsBuffer.reversed().map {
       let hex = String($0, radix: 16)
-      let op = _debug_compiledSnake[$0] ?? ""
+      let op = __debug_compiledSnake[$0] ?? ""
       
       return "\(hex):\(op)"
     }
@@ -188,7 +188,7 @@ final class CPU {
   
   private func __debug_updateInstructionsBuffer() {
     
-    guard _debug_compiledSnake.keys.contains(PC) else {
+    guard __debug_compiledSnake.keys.contains(PC) else {
       return
     }
     
@@ -864,6 +864,101 @@ extension CPU {
   //Transfer Y to Accumulator
   func TYA() {
     setRegisterA(registers.Y)
+  }
+  
+  //MARK: - Illegal Opcodes
+  
+  func AAC(mode: AddressingMode) {
+    fatalError("Illegal Opcode AAC")
+    
+  }
+  
+  func AAX(mode: AddressingMode) {
+    fatalError("Illegal Opcode AAX")
+  }
+  
+  func ARR(mode: AddressingMode) {
+    fatalError("Illegal Opcode ASR")
+  }
+  
+  func ASR(mode: AddressingMode) {
+    fatalError("Illegal Opcode ASR")
+  }
+  
+  func ATX(mode: AddressingMode) {
+    fatalError("Illegal Opcode ATX")
+  }
+  
+  func AXA(mode: AddressingMode) {
+    fatalError("Illegal Opcode AXA")
+  }
+  
+  func AXS(mode: AddressingMode) {
+    fatalError("Illegal Opcode AXS")
+  }
+  
+  func DCP(mode: AddressingMode) {
+    fatalError("Illegal Opcode DCP")
+  }
+  
+  func DOP(mode: AddressingMode) {
+    fatalError("Illegal Opcode DOP")
+  }
+  
+  func ISC(mode: AddressingMode) {
+    fatalError("Illegal Opcode ISC")
+  }
+  
+  func KIL() {
+    fatalError("Illegal Opcode KIL")
+  }
+  
+  func LAR(mode: AddressingMode) {
+    fatalError("Illegal Opcode LAR")
+  }
+  
+  func LAX(mode: AddressingMode) {
+    fatalError("Illegal Opcode LAX")
+  }
+  
+  func RLA(mode: AddressingMode) {
+    fatalError("Illegal Opcode RLA")
+  }
+  
+  func RLN(mode: AddressingMode) {
+    fatalError("Illegal Opcode RLN")
+  }
+  
+  func RRA(mode: AddressingMode) {
+    fatalError("Illegal Opcode RRA")
+  }
+  
+  func SLO(mode: AddressingMode) {
+    fatalError("Illegal Opcode SLO")
+  }
+  
+  func SRE(mode: AddressingMode) {
+    fatalError("Illegal Opcode SRE")
+  }
+  
+  func SXA(mode: AddressingMode) {
+    fatalError("Illegal Opcode SXA")
+  }
+  
+  func SYA(mode: AddressingMode) {
+    fatalError("Illegal Opcode SYA")
+  }
+  
+  func TOP(mode: AddressingMode) {
+    fatalError("Illegal Opcode TOP")
+  }
+  
+  func XAA(mode: AddressingMode) {
+    fatalError("Illegal Opcode XAA")
+  }
+  
+  func XAS(mode: AddressingMode) {
+    fatalError("Illegal Opcode XAS")
   }
   
   //MARK: - Set flag Functions

@@ -114,7 +114,7 @@
 			isa = PBXGroup;
 			children = (
 				E4A20B982BDB29950070509A /* Emulator */,
-				E42A9EAC2BD9EDA500858AFC /* Consol */,
+				E42A9EAC2BD9EDA500858AFC /* Console */,
 				E42A9E862BD9ED8200858AFC /* Assets.xcassets */,
 				E42A9E882BD9ED8200858AFC /* Preview Content */,
 			);
@@ -150,7 +150,7 @@
 			path = jNESUITests;
 			sourceTree = "<group>";
 		};
-		E42A9EAC2BD9EDA500858AFC /* Consol */ = {
+		E42A9EAC2BD9EDA500858AFC /* Console */ = {
 			isa = PBXGroup;
 			children = (
 				E4E0EBEE2BDB8F6F00105134 /* snake.nes */,
@@ -162,7 +162,7 @@
 				E42A9EB12BD9EDB100858AFC /* Registers.swift */,
 				E42A9EB32BD9EDB100858AFC /* Rom.swift */,
 			);
-			path = Consol;
+			path = Console;
 			sourceTree = "<group>";
 		};
 		E4A20B982BDB29950070509A /* Emulator */ = {
