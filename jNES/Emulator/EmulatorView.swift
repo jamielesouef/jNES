@@ -49,7 +49,8 @@ struct EmulatorView: View {
   var body: some View {
     VStack {
       
-      ImageView(pixelData: viewModel.pixelData)
+      //ImageView(pixelData: viewModel.pixelData)
+      ImageView()
         .frame(width: 256, height: 240)
       Spacer()
       DPadView(

@@ -23,7 +23,7 @@ final class RegisteresSpec: XCTestCase {
 
   func testSettingCarry() throws {
     registers.reset()
-    XCTAssertTrue(registers.isSet(.carry))
+    XCTAssertFalse(registers.isSet(.carry))
     registers.set(.carry)
     XCTAssertTrue(registers.isSet(.carry))
     registers.clear(.carry)
@@ -32,7 +32,7 @@ final class RegisteresSpec: XCTestCase {
   
   func testSettingInterupt() throws {
     registers.reset()
-    XCTAssertTrue(registers.isSet(.interrupt))
+    XCTAssertFalse(registers.isSet(.interrupt))
     registers.set(.interrupt)
     XCTAssertTrue(registers.isSet(.interrupt))
     registers.clear(.interrupt)
@@ -41,7 +41,7 @@ final class RegisteresSpec: XCTestCase {
   
   func testSettingDecimal() throws {
     registers.reset()
-    XCTAssertTrue(registers.isSet(.decimal))
+    XCTAssertFalse(registers.isSet(.decimal))
     registers.set(.decimal)
     XCTAssertTrue(registers.isSet(.decimal))
     registers.clear(.decimal)
@@ -50,7 +50,7 @@ final class RegisteresSpec: XCTestCase {
   
   func testSettingBreak() throws {
     registers.reset()
-    XCTAssertTrue(registers.isSet(.brk))
+    XCTAssertFalse(registers.isSet(.brk))
     registers.set(.brk)
     XCTAssertTrue(registers.isSet(.brk))
     registers.clear(.brk)
@@ -59,7 +59,7 @@ final class RegisteresSpec: XCTestCase {
   
   func testSettingOverflow() throws {
     registers.reset()
-    XCTAssertTrue(registers.isSet(.overflow))
+    XCTAssertFalse(registers.isSet(.overflow))
     registers.set(.overflow)
     XCTAssertTrue(registers.isSet(.overflow))
     registers.clear(.overflow)
@@ -68,7 +68,7 @@ final class RegisteresSpec: XCTestCase {
   
   func testSettingNegative() throws {
     registers.reset()
-    XCTAssertTrue(registers.isSet(.negative))
+    XCTAssertFalse(registers.isSet(.negative))
     registers.set(.negative)
     XCTAssertTrue(registers.isSet(.negative))
     registers.clear(.negative)

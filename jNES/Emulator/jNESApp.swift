@@ -11,8 +11,8 @@ import SwiftUI
 struct jNESApp: App {
   var body: some Scene {
     WindowGroup {
-      EmulatorView()
-        
+//      EmulatorView()
+        EmptyView()
     }
   }
 }

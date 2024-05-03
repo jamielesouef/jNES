@@ -29,6 +29,9 @@
 		E42A9ED12BD9EE3B00858AFC /* ProgramMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9ECB2BD9EE3B00858AFC /* ProgramMock.swift */; };
 		E42A9ED22BD9EE3B00858AFC /* CPUMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9ECC2BD9EE3B00858AFC /* CPUMock.swift */; };
 		E42A9ED32BD9EE3B00858AFC /* RegisteresSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9ECD2BD9EE3B00858AFC /* RegisteresSpec.swift */; };
+		E45964362BE4892E00481956 /* CPUState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45964352BE4892E00481956 /* CPUState.swift */; };
+		E45964382BE48AD200481956 /* nestest_no_clock.log in Resources */ = {isa = PBXBuildFile; fileRef = E45964372BE48AD200481956 /* nestest_no_clock.log */; };
+		E459643A2BE48ADC00481956 /* nestest.log in Resources */ = {isa = PBXBuildFile; fileRef = E45964392BE48ADC00481956 /* nestest.log */; };
 		E4A20B902BDB26F60070509A /* PixelData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A20B8F2BDB26F60070509A /* PixelData.swift */; };
 		E4E57D612BD9EECB00A2E1A9 /* EmulatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E57D602BD9EECB00A2E1A9 /* EmulatorView.swift */; };
 		E4E57D652BD9F0C500A2E1A9 /* DPadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E57D642BD9F0C500A2E1A9 /* DPadView.swift */; };
@@ -67,6 +70,10 @@
 		E42A9ECB2BD9EE3B00858AFC /* ProgramMock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgramMock.swift; sourceTree = "<group>"; };
 		E42A9ECC2BD9EE3B00858AFC /* CPUMock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPUMock.swift; sourceTree = "<group>"; };
 		E42A9ECD2BD9EE3B00858AFC /* RegisteresSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisteresSpec.swift; sourceTree = "<group>"; };
+		E45964342BE481DE00481956 /* nestest.nes */ = {isa = PBXFileReference; lastKnownFileType = file; path = nestest.nes; sourceTree = "<group>"; };
+		E45964352BE4892E00481956 /* CPUState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUState.swift; sourceTree = "<group>"; };
+		E45964372BE48AD200481956 /* nestest_no_clock.log */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nestest_no_clock.log; sourceTree = "<group>"; };
+		E45964392BE48ADC00481956 /* nestest.log */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nestest.log; sourceTree = "<group>"; };
 		E4A20B8F2BDB26F60070509A /* PixelData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelData.swift; sourceTree = "<group>"; };
 		E4E0EBEE2BDB8F6F00105134 /* snake.nes */ = {isa = PBXFileReference; lastKnownFileType = file; path = snake.nes; sourceTree = "<group>"; };
 		E4E57D602BD9EECB00A2E1A9 /* EmulatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatorView.swift; sourceTree = "<group>"; };
@@ -132,6 +139,9 @@
 		E42A9E922BD9ED8200858AFC /* jNESTests */ = {
 			isa = PBXGroup;
 			children = (
+				E45964342BE481DE00481956 /* nestest.nes */,
+				E45964372BE48AD200481956 /* nestest_no_clock.log */,
+				E45964392BE48ADC00481956 /* nestest.log */,
 				E42A9ECA2BD9EE3B00858AFC /* 6502+Opcodes.swift */,
 				E42A9ECC2BD9EE3B00858AFC /* CPUMock.swift */,
 				E42A9EC92BD9EE3B00858AFC /* CPUSpec.swift */,
@@ -139,6 +149,7 @@
 				E42A9ECD2BD9EE3B00858AFC /* RegisteresSpec.swift */,
 				E42A9E932BD9ED8200858AFC /* jNESTests.swift */,
 				7006EF7B2BDF3C0900AF8681 /* RomSpec.swift */,
+				E45964352BE4892E00481956 /* CPUState.swift */,
 			);
 			path = jNESTests;
 			sourceTree = "<group>";
@@ -271,6 +282,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				70EEA63B2BE0AC54004A337C /* snake.nes in Resources */,
+				E45964382BE48AD200481956 /* nestest_no_clock.log in Resources */,
+				E459643A2BE48ADC00481956 /* nestest.log in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -304,6 +317,7 @@
 			files = (
 				7006EF7C2BDF3C0900AF8681 /* RomSpec.swift in Sources */,
 				E42A9E942BD9ED8200858AFC /* jNESTests.swift in Sources */,
+				E45964362BE4892E00481956 /* CPUState.swift in Sources */,
 				E42A9ED22BD9EE3B00858AFC /* CPUMock.swift in Sources */,
 				E42A9ECF2BD9EE3B00858AFC /* CPUSpec.swift in Sources */,
 				E42A9ED32BD9EE3B00858AFC /* RegisteresSpec.swift in Sources */,
@@ -465,7 +479,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = mobi.jamie.jNES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -498,7 +512,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = mobi.jamie.jNES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -521,7 +535,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = mobi.jamie.jNESTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -545,7 +559,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = mobi.jamie.jNESTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
