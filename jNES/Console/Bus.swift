@@ -46,10 +46,10 @@ final class Bus {
     self.rom = rom
   }
   
-  func load(program: [UInt8]) {
-    cpu_vram.insert(contentsOf: program, at: 0x0600)
-    writeMem16(at: 0xFFFC, value: 0x0600)
-  }
+//  func load(program: [UInt8]) {
+//    cpu_vram.insert(contentsOf: program, at: 0x0600)
+//    writeMem16(at: 0xFFFC, value: 0x0600)
+//  }
   
   func readMem(at address: UInt16) -> UInt8 {
     return switch address {
@@ -127,9 +127,8 @@ final class Bus {
 private extension Bus {
   func readProgramRom(at address: UInt16) -> UInt8 {
     var addr = address - 0x8000
-    
     if rom.prgRom.count == 0x4000 && addr >= 0x4000 {
-      addr = addr & 0x4000
+      addr = (addr % 0x4000)
     }
     
     return rom.prgRom[addr]

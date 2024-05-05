@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		7006EF7C2BDF3C0900AF8681 /* RomSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7006EF7B2BDF3C0900AF8681 /* RomSpec.swift */; };
-		70EEA63A2BE0AC54004A337C /* snake.nes in Resources */ = {isa = PBXBuildFile; fileRef = E4E0EBEE2BDB8F6F00105134 /* snake.nes */; };
-		70EEA63B2BE0AC54004A337C /* snake.nes in Resources */ = {isa = PBXBuildFile; fileRef = E4E0EBEE2BDB8F6F00105134 /* snake.nes */; };
 		E40749DE2BDB3EFA006DF2EB /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40749DD2BDB3EFA006DF2EB /* ImageView.swift */; };
 		E42A9E832BD9ED8100858AFC /* jNESApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9E822BD9ED8100858AFC /* jNESApp.swift */; };
 		E42A9E872BD9ED8200858AFC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E42A9E862BD9ED8200858AFC /* Assets.xcassets */; };
@@ -18,7 +16,7 @@
 		E42A9EB42BD9EDB100858AFC /* NES.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9EAD2BD9EDB100858AFC /* NES.swift */; };
 		E42A9EB52BD9EDB100858AFC /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9EAE2BD9EDB100858AFC /* Controller.swift */; };
 		E42A9EB62BD9EDB100858AFC /* Bus.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9EAF2BD9EDB100858AFC /* Bus.swift */; };
-		E42A9EB72BD9EDB100858AFC /* Instructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9EB02BD9EDB100858AFC /* Instructions.swift */; };
+		E42A9EB72BD9EDB100858AFC /* InstructionsTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9EB02BD9EDB100858AFC /* InstructionsTable.swift */; };
 		E42A9EB82BD9EDB100858AFC /* Registers.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9EB12BD9EDB100858AFC /* Registers.swift */; };
 		E42A9EB92BD9EDB100858AFC /* CPU.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9EB22BD9EDB100858AFC /* CPU.swift */; };
 		E42A9EBA2BD9EDB100858AFC /* Rom.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9EB32BD9EDB100858AFC /* Rom.swift */; };
@@ -29,9 +27,13 @@
 		E42A9ED12BD9EE3B00858AFC /* ProgramMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9ECB2BD9EE3B00858AFC /* ProgramMock.swift */; };
 		E42A9ED22BD9EE3B00858AFC /* CPUMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9ECC2BD9EE3B00858AFC /* CPUMock.swift */; };
 		E42A9ED32BD9EE3B00858AFC /* RegisteresSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9ECD2BD9EE3B00858AFC /* RegisteresSpec.swift */; };
-		E45964362BE4892E00481956 /* CPUState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45964352BE4892E00481956 /* CPUState.swift */; };
 		E45964382BE48AD200481956 /* nestest_no_clock.log in Resources */ = {isa = PBXBuildFile; fileRef = E45964372BE48AD200481956 /* nestest_no_clock.log */; };
 		E459643A2BE48ADC00481956 /* nestest.log in Resources */ = {isa = PBXBuildFile; fileRef = E45964392BE48ADC00481956 /* nestest.log */; };
+		E459643C2BE48D4A00481956 /* CPU+Instructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E459643B2BE48D4A00481956 /* CPU+Instructions.swift */; };
+		E459643E2BE48FA700481956 /* NesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E459643D2BE48FA700481956 /* NesTest.swift */; };
+		E4810D962BE4BC8D008CFA93 /* nestest.nes in Resources */ = {isa = PBXBuildFile; fileRef = E45964342BE481DE00481956 /* nestest.nes */; };
+		E4810D972BE4BC8E008CFA93 /* nestest.nes in Resources */ = {isa = PBXBuildFile; fileRef = E45964342BE481DE00481956 /* nestest.nes */; };
+		E4810D982BE4BDEF008CFA93 /* CPUState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45964352BE4892E00481956 /* CPUState.swift */; };
 		E4A20B902BDB26F60070509A /* PixelData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A20B8F2BDB26F60070509A /* PixelData.swift */; };
 		E4E57D612BD9EECB00A2E1A9 /* EmulatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E57D602BD9EECB00A2E1A9 /* EmulatorView.swift */; };
 		E4E57D652BD9F0C500A2E1A9 /* DPadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E57D642BD9F0C500A2E1A9 /* DPadView.swift */; };
@@ -59,7 +61,7 @@
 		E42A9EAD2BD9EDB100858AFC /* NES.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NES.swift; sourceTree = "<group>"; };
 		E42A9EAE2BD9EDB100858AFC /* Controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		E42A9EAF2BD9EDB100858AFC /* Bus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bus.swift; sourceTree = "<group>"; };
-		E42A9EB02BD9EDB100858AFC /* Instructions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Instructions.swift; sourceTree = "<group>"; };
+		E42A9EB02BD9EDB100858AFC /* InstructionsTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstructionsTable.swift; sourceTree = "<group>"; };
 		E42A9EB12BD9EDB100858AFC /* Registers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Registers.swift; sourceTree = "<group>"; };
 		E42A9EB22BD9EDB100858AFC /* CPU.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CPU.swift; sourceTree = "<group>"; };
 		E42A9EB32BD9EDB100858AFC /* Rom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Rom.swift; sourceTree = "<group>"; };
@@ -74,8 +76,9 @@
 		E45964352BE4892E00481956 /* CPUState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUState.swift; sourceTree = "<group>"; };
 		E45964372BE48AD200481956 /* nestest_no_clock.log */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nestest_no_clock.log; sourceTree = "<group>"; };
 		E45964392BE48ADC00481956 /* nestest.log */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nestest.log; sourceTree = "<group>"; };
+		E459643B2BE48D4A00481956 /* CPU+Instructions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPU+Instructions.swift"; sourceTree = "<group>"; };
+		E459643D2BE48FA700481956 /* NesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NesTest.swift; sourceTree = "<group>"; };
 		E4A20B8F2BDB26F60070509A /* PixelData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelData.swift; sourceTree = "<group>"; };
-		E4E0EBEE2BDB8F6F00105134 /* snake.nes */ = {isa = PBXFileReference; lastKnownFileType = file; path = snake.nes; sourceTree = "<group>"; };
 		E4E57D602BD9EECB00A2E1A9 /* EmulatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatorView.swift; sourceTree = "<group>"; };
 		E4E57D642BD9F0C500A2E1A9 /* DPadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DPadView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -139,9 +142,7 @@
 		E42A9E922BD9ED8200858AFC /* jNESTests */ = {
 			isa = PBXGroup;
 			children = (
-				E45964342BE481DE00481956 /* nestest.nes */,
-				E45964372BE48AD200481956 /* nestest_no_clock.log */,
-				E45964392BE48ADC00481956 /* nestest.log */,
+				E4810D992BE4C7D0008CFA93 /* NesTest */,
 				E42A9ECA2BD9EE3B00858AFC /* 6502+Opcodes.swift */,
 				E42A9ECC2BD9EE3B00858AFC /* CPUMock.swift */,
 				E42A9EC92BD9EE3B00858AFC /* CPUSpec.swift */,
@@ -149,7 +150,6 @@
 				E42A9ECD2BD9EE3B00858AFC /* RegisteresSpec.swift */,
 				E42A9E932BD9ED8200858AFC /* jNESTests.swift */,
 				7006EF7B2BDF3C0900AF8681 /* RomSpec.swift */,
-				E45964352BE4892E00481956 /* CPUState.swift */,
 			);
 			path = jNESTests;
 			sourceTree = "<group>";
@@ -164,16 +164,28 @@
 		E42A9EAC2BD9EDA500858AFC /* Console */ = {
 			isa = PBXGroup;
 			children = (
-				E4E0EBEE2BDB8F6F00105134 /* snake.nes */,
+				E45964352BE4892E00481956 /* CPUState.swift */,
 				E42A9EAE2BD9EDB100858AFC /* Controller.swift */,
 				E42A9EB22BD9EDB100858AFC /* CPU.swift */,
-				E42A9EB02BD9EDB100858AFC /* Instructions.swift */,
+				E459643B2BE48D4A00481956 /* CPU+Instructions.swift */,
+				E42A9EB02BD9EDB100858AFC /* InstructionsTable.swift */,
 				E42A9EAF2BD9EDB100858AFC /* Bus.swift */,
 				E42A9EAD2BD9EDB100858AFC /* NES.swift */,
 				E42A9EB12BD9EDB100858AFC /* Registers.swift */,
 				E42A9EB32BD9EDB100858AFC /* Rom.swift */,
 			);
 			path = Console;
+			sourceTree = "<group>";
+		};
+		E4810D992BE4C7D0008CFA93 /* NesTest */ = {
+			isa = PBXGroup;
+			children = (
+				E45964342BE481DE00481956 /* nestest.nes */,
+				E45964372BE48AD200481956 /* nestest_no_clock.log */,
+				E45964392BE48ADC00481956 /* nestest.log */,
+				E459643D2BE48FA700481956 /* NesTest.swift */,
+			);
+			path = NesTest;
 			sourceTree = "<group>";
 		};
 		E4A20B982BDB29950070509A /* Emulator */ = {
@@ -272,8 +284,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				E42A9E8A2BD9ED8200858AFC /* Preview Assets.xcassets in Resources */,
-				70EEA63A2BE0AC54004A337C /* snake.nes in Resources */,
 				E42A9E872BD9ED8200858AFC /* Assets.xcassets in Resources */,
+				E4810D962BE4BC8D008CFA93 /* nestest.nes in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,9 +293,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				70EEA63B2BE0AC54004A337C /* snake.nes in Resources */,
 				E45964382BE48AD200481956 /* nestest_no_clock.log in Resources */,
 				E459643A2BE48ADC00481956 /* nestest.log in Resources */,
+				E4810D972BE4BC8E008CFA93 /* nestest.nes in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,16 +308,18 @@
 			files = (
 				E4E57D612BD9EECB00A2E1A9 /* EmulatorView.swift in Sources */,
 				E42A9EC32BD9EDDD00858AFC /* log.swift in Sources */,
+				E4810D982BE4BDEF008CFA93 /* CPUState.swift in Sources */,
 				E42A9E832BD9ED8100858AFC /* jNESApp.swift in Sources */,
 				E4A20B902BDB26F60070509A /* PixelData.swift in Sources */,
 				E42A9EB42BD9EDB100858AFC /* NES.swift in Sources */,
 				E4E57D652BD9F0C500A2E1A9 /* DPadView.swift in Sources */,
 				E42A9EBA2BD9EDB100858AFC /* Rom.swift in Sources */,
+				E459643C2BE48D4A00481956 /* CPU+Instructions.swift in Sources */,
 				E42A9EB62BD9EDB100858AFC /* Bus.swift in Sources */,
 				E42A9EB92BD9EDB100858AFC /* CPU.swift in Sources */,
 				E42A9EC82BD9EDDD00858AFC /* Array+extensions.swift in Sources */,
 				E42A9EB82BD9EDB100858AFC /* Registers.swift in Sources */,
-				E42A9EB72BD9EDB100858AFC /* Instructions.swift in Sources */,
+				E42A9EB72BD9EDB100858AFC /* InstructionsTable.swift in Sources */,
 				E40749DE2BDB3EFA006DF2EB /* ImageView.swift in Sources */,
 				E42A9EB52BD9EDB100858AFC /* Controller.swift in Sources */,
 			);
@@ -317,12 +331,12 @@
 			files = (
 				7006EF7C2BDF3C0900AF8681 /* RomSpec.swift in Sources */,
 				E42A9E942BD9ED8200858AFC /* jNESTests.swift in Sources */,
-				E45964362BE4892E00481956 /* CPUState.swift in Sources */,
 				E42A9ED22BD9EE3B00858AFC /* CPUMock.swift in Sources */,
 				E42A9ECF2BD9EE3B00858AFC /* CPUSpec.swift in Sources */,
 				E42A9ED32BD9EE3B00858AFC /* RegisteresSpec.swift in Sources */,
 				E42A9ED12BD9EE3B00858AFC /* ProgramMock.swift in Sources */,
 				E42A9ED02BD9EE3B00858AFC /* 6502+Opcodes.swift in Sources */,
+				E459643E2BE48FA700481956 /* NesTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

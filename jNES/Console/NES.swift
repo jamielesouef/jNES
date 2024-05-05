@@ -67,7 +67,7 @@ final class NES {
   
   init() throws {
     
-    let file = Bundle.main.url(forResource: "snake", withExtension: "nes")!
+    let file = Bundle.main.url(forResource: "nestest", withExtension: "nes")!
     let data = try Data(contentsOf: file)
     
     let rom = try Rom(data: [UInt8](data))
@@ -83,17 +83,18 @@ final class NES {
   
   func powerOn() {
     cpu.reset()
-    cpu.run {
-      let r = UInt8.random(in: 0...255)
-      self.bus.writeMem(at: 0xFE, value: r)
+    cpu.setProgramCounter(0xC000)
+    cpu.run { _ in
       self.udpateScreenIfRequired()
-      return self.controller.state
-      
     }
   }
   
   func powerOff() {
     cpu.stop()
+  }
+  
+  func reset() {
+    cpu.reset()
   }
 }
 

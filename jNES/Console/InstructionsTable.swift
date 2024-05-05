@@ -11,9 +11,10 @@ struct Instruction {
 }
 
 extension CPU {
-  func getInstructions(forOpcode opcode: UInt8) ->Instruction {
+  func getInstructions(for opcode: UInt8) ->Instruction {
     
     let table: [UInt8: Instruction] = [
+      0x00: Instruction(address: 0x00, name: "BRK", cycles: 7, bytes: 1, fn: { self.BRK() }),
       0x61: Instruction(address: 0x61, name: "ADC", cycles: 6, bytes: 2, fn: { self.ADC(mode: .indirectX) }),
       0x65: Instruction(address: 0x65, name: "ADC", cycles: 3, bytes: 2, fn: { self.ADC(mode: .zeroPage) }),
       0x69: Instruction(address: 0x69, name: "ADC", cycles: 2, bytes: 2, fn: { self.ADC(mode: .immediate) }),
@@ -278,5 +279,3 @@ extension CPU {
     return instruction
   }
 }
-
-struct Foo: 
