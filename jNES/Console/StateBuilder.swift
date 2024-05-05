@@ -75,7 +75,7 @@ final class StateBuilder {
         value
       )
     case .zeroPage: String(format: "$%02X = %02X", addr, value)
-    case .relative, .implied: String(format: "$%04X", (cpu.PC + 2).addingReportingOverflow(UInt16(rAddress)).partialValue)
+    case .none: String(format: "$%04X", (cpu.PC + 2).addingReportingOverflow(UInt16(rAddress)).partialValue)
     default: fatalError("Unexpected addressing mode \(instruction.mode) \(instruction.name)")
     }
     
@@ -89,12 +89,11 @@ final class StateBuilder {
     var arg: String = ""
     
     switch instruction.mode {
+    case .none: 
+              arg = String(format: "$%04X", addr, cpu.readMem(at: addr))
     case .absolute:
-//      if instruction.address == 0x8E {
+
         arg = String(format: "$%04X = %02X", addr, cpu.readMem(at: addr))
-//      } else {
-//        arg = String(format: "$%04X", addr, cpu.readMem(at: addr))
-//      }
       
     case .absoluteX: arg = String(format: "$%04X,X @ %04X = %02X}", value, addr, 1231)
     case .absoluteY: arg = String(format: "$%04X,Y @ %04X = %02X}", value, addr, 1231)

@@ -25,6 +25,7 @@ final class CPU {
   }
   
   enum AddressingMode: String {
+    case none
     case absolute
     case absoluteX
     case absoluteY
@@ -128,7 +129,7 @@ final class CPU {
   func getAddressForOpperate(with mode: AddressingMode, at ptr: UInt16) -> UInt16 {
     
     switch mode {
-    case .absolute:
+    case .absolute, .none:
       return bus.readMem16(at: ptr)
     case .accumulator:
       return UInt16(registers.A)
