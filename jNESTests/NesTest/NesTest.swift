@@ -9,23 +9,25 @@ import XCTest
 @testable import jNES
 
 final class NesTest: XCTestCase {
-  var nestest: [CPUState]!
+  var exptectedNesTestResult: [CPUState]!
   override func setUpWithError() throws {
+    
+    continueAfterFailure = false
+    
     // load nestest_no_clock.log file
     let path = Bundle(for: type(of: self)).path(forResource: "nestest_no_clock", ofType: "log")
     //split by new line
     let data = try String(contentsOfFile: path!, encoding: .utf8).split(whereSeparator: \.isNewline)
-    nestest = try data.map { try CPUState(string: String($0)) }
+    exptectedNesTestResult = try data.map { try CPUState(string: String($0)) }
   }
   
   override func tearDownWithError() throws {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
   }
   
-  
   // test the first row of the nestest_no_clock.log file
   func testFirstRow() throws {
-    let firstRow = nestest[0]
+    let firstRow = exptectedNesTestResult[0]
     XCTAssertEqual(firstRow.address, "C000")
     XCTAssertEqual(firstRow.hexDump, "4C F5 C5")
     XCTAssertEqual(firstRow.instruction, "JMP $C5F5")
@@ -36,6 +38,8 @@ final class NesTest: XCTestCase {
     XCTAssertEqual(firstRow.stackPointer, "SP:FD")
   }
   
+  
+  
   func testRunningNesTest() throws {
     let file = Bundle.main.url(forResource: "nestest", withExtension: "nes")!
     let data = try Data(contentsOf: file)
@@ -45,20 +49,28 @@ final class NesTest: XCTestCase {
     let bus = Bus(rom: rom)
     let cpu = CPU(bus: bus)
     
-    var trace = [CPUState]()
     cpu.reset()
-    cpu.__run_with_trace {
-      trace.append($0)
+    cpu.setProgramCounter(0xC000)
+   
+    for i in 0..<exptectedNesTestResult.count {
+      print(i)
+      var r: CPUState!
+      let e = exptectedNesTestResult[i]
+      cpu.__tick_with_trace { r = $0 }
+      
+      test(e.address, r.address, e.address, i)
+      test(e.address, r.hexDump, e.hexDump, i)
+      test(e.address, r.instruction, e.instruction, i)
+      test(e.address, r.registerA, e.registerA, i)
+      test(e.address, r.registerX, e.registerX, i)
+      test(e.address, r.registerY, e.registerY, i)
+      test(e.address, r.status, e.status, i)
+      test(e.address, r.stackPointer, e.stackPointer, i)
     }
+  }
   
-    let expectation = XCTestExpectation(description: "Waiting for CPU to finish")
-    DispatchQueue.main.asyncAfter(deadline: .now() + 5 ) {
-      XCTAssertEqual(trace.count, self.nestest.count)
-      expectation.fulfill()
-    }
-    
-    wait(for: [expectation], timeout: 5)
-    
-
+  func test(_ addr: String, _ actual: String, _ expected: String, _ line: Int) {
+    let m = "exptected: \(expected), got \(actual) @\(line + 1) - \(addr)"
+    XCTAssertEqual(expected, actual, m)
   }
 }

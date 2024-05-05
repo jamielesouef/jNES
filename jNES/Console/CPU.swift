@@ -25,19 +25,19 @@ final class CPU {
   }
   
   enum AddressingMode: String {
-    case accumulator
-    case immediate
-    case zeroPage
-    case zeroPageX
-    case zeroPageY
     case absolute
     case absoluteX
     case absoluteY
+    case accumulator
+    case immediate
+    case implied
+    case indirect
     case indirectX
     case indirectY
     case relative
-    case implied
-    case indirect
+    case zeroPage
+    case zeroPageX
+    case zeroPageY
   }
   
   init(bus: Bus,
@@ -45,18 +45,19 @@ final class CPU {
   ) {
     self.registers = registers
     self.bus = bus
-   
+    
   }
   
   func reset() {
     bus.reset()
     registers.reset()
-//    setProgramCounter(0xC000)
+    //    setProgramCounter(0xC000)
   }
   
-  func __run_with_trace(callback: @escaping (CPUState) -> Void) {
+  func __tick_with_trace(callback: @escaping RunCallback) {
     self.trace = true
-    _run(trace: true) { state in
+    
+    self.tick(trace: self.trace ) { state in
       callback(state)
     }
   }
@@ -69,48 +70,46 @@ final class CPU {
     DispatchQueue.global().async { [weak self] in
       guard let self else { return }
       while loop {
-        
-        let opcode: UInt8 = readMem(at: PC)
-        let instruction: Instruction = getInstructions(for: opcode)
-        let newProgramCounter = PC + 1
-        
-        setProgramCounter(newProgramCounter)
-        programCounterAtOppcodeRun = newProgramCounter
-        
-        instruction.fn()
-        
-        //handle(controllerState: controllerState)
-        
-        // if the opperation does not change the program counter
-        // we need to increment it by the number of bytes in the instruction
-        let postOpcodePC = PC
-        
-        if programCounterAtOppcodeRun == 0xFFFF {
-          loop = false
-          return
+        tick(trace: trace) { state in
+          DispatchQueue.main.async {
+            callback(state)
+          }
         }
-        
-        if programCounterAtOppcodeRun == postOpcodePC {
-          setProgramCounter(postOpcodePC + UInt16(instruction.bytes) - 1)
-        }
-        
-        let state = __build_state(with: instruction)
-        callback(state)
       }
     }
   }
   
-  func __build_state(with instruction: Instruction) -> CPUState {
-    return CPUState(
-      address: String(format: "%04X", PC),
-      hexDump: String(format: "%02X", readMem(at: PC)),
-      instruction: instruction.name,
-      registerA: String(format: "%02X", registers.A),
-      registerX: String(format: "%02X", registers.X),
-      registerY: String(format: "%02X", registers.Y),
-      status: String(format: "%02X", registers.p),
-      stackPointer: String(format: "%02X", bus.getStackPointer())
-    )
+  private func tick(trace: Bool = false, callback: @escaping RunCallback) {
+    
+    let opcode: UInt8 = readMem(at: PC)
+    let instruction: Instruction = getInstructions(for: opcode)
+    
+    if trace {
+      let state = StateBuilder(cpu: self, instruction: instruction, address: PC).build()
+      callback(state)
+    }
+    
+    let newProgramCounter = PC + 1
+    
+    setProgramCounter(newProgramCounter)
+    programCounterAtOppcodeRun = newProgramCounter
+    
+    instruction.fn()
+    
+    //handle(controllerState: controllerState)
+    
+    // if the opperation does not change the program counter
+    // we need to increment it by the number of bytes in the instruction
+    let postOpcodePC = PC
+    
+    if programCounterAtOppcodeRun == 0xFFFF {
+      loop = false
+      return
+    }
+    
+    if programCounterAtOppcodeRun == postOpcodePC {
+      setProgramCounter(postOpcodePC + UInt16(instruction.bytes) - 1)
+    }
   }
   
   func stop() {
@@ -126,31 +125,31 @@ final class CPU {
     return PC
   }
   
-  func getOperand(for mode: AddressingMode) -> UInt16 {
+  func getAddressForOpperate(with mode: AddressingMode, at ptr: UInt16) -> UInt16 {
     
     switch mode {
+    case .absolute:
+      return bus.readMem16(at: ptr)
     case .accumulator:
       return UInt16(registers.A)
-    case .absolute:
-      return bus.readMem16(at: PC)
     case .immediate:
-      return PC
+      return ptr
     case .zeroPage:
-      return UInt16(bus.readMem(at: PC))
+      return UInt16(bus.readMem(at: ptr))
     case .zeroPageX:
-      let data: UInt8 = bus.readMem(at: PC)
+      let data: UInt8 = bus.readMem(at: ptr)
       let addr = data.addingReportingOverflow(registers.X).partialValue
       return UInt16(addr)
     case .zeroPageY:
-      let data: UInt8 = bus.readMem(at: PC)
+      let data: UInt8 = bus.readMem(at: ptr)
       let addr = data.addingReportingOverflow(registers.Y).partialValue
       return UInt16(addr)
     case .absoluteX:
-      let data = bus.readMem16(at: PC)
+      let data = bus.readMem16(at: ptr)
       let addr = data.addingReportingOverflow(UInt16(registers.X)).partialValue
       return addr
     case .absoluteY:
-      let data = bus.readMem16(at: PC)
+      let data = bus.readMem16(at: ptr)
       let addr = data.addingReportingOverflow(UInt16(registers.Y)).partialValue
       return addr
     case .indirectX:
@@ -278,15 +277,24 @@ extension CPU {
   }
   
   func compare(against value: Int, mode: AddressingMode) {
-    let addr = getOperand(for: mode)
+    let addr = getAddressForOpperate(with: mode, at: PC)
     let data = Int(readMem(at: addr))
     
     let result = value - data
     
-    setNegativeFlag(result >> 7 == 1)
-    setZeroFlag(result == 0)
+//    setNegativeFlag(result >> 7 == 1)
+//    setZeroFlag(result == 0)
+//    
+//    setCarryFlag(value >= data)
     
-    setCarryFlag(value >= data)
+    
+    setFlag(.negative, condition: ((result >> 7) & 0x1) == 1)
+            
+            // Set zero flag
+    setFlag(.zero, condition: (result == 0))
+            
+            
+    setFlag(.carry, condition: (value >= data))
     
   }
   
@@ -297,6 +305,14 @@ extension CPU {
   }
   
   //MARK: - Set flag Functions
+  
+  func setFlag(_ flag: Registers.StatusFlag, condition: Bool) {
+    if condition {
+      registers.set(flag)
+    } else {
+      registers.clear(flag)
+    }
+  }
   
   func setCarryFlag(_ set: Bool) {
     if set {

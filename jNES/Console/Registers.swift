@@ -12,7 +12,7 @@ class Registers {
   // https://www.nesdev.org/wiki/Status_flags
   
 //  7  bit  0
-//  ---- ----
+//  7654 3210
 //  NV1B DIZC
 //  |||| ||||
 //  |||| |||+- 0 Carry
@@ -24,12 +24,16 @@ class Registers {
 //  |+-------- 6 Overflow
 //  +--------- 7 Negative
   
+//  1110 1110
+//  0010_1110
+  
   enum StatusFlag {
     case carry
     case zero
     case interrupt
     case decimal
-    case brk //break
+    case b
+    case b2
     case overflow
     case negative
   }
@@ -77,7 +81,7 @@ class Registers {
   func reset() {
     A = 0
     X = 0
-    p = 0
+    p = 0b0010_0100
   }
 }
 
@@ -88,7 +92,8 @@ extension Registers.StatusFlag {
     case .zero: 1 << 1
     case .interrupt: 1 << 2
     case .decimal: 1 << 3
-    case .brk: 1 << 4
+    case .b: 1 << 4
+    case .b2: 1 << 5
     case .overflow: 1 << 6
     case .negative: 1 << 7
     }

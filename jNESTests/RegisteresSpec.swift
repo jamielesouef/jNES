@@ -9,7 +9,7 @@ import XCTest
 @testable import jNES
 
 extension Registers.StatusFlag {
-  static let all: [Registers.StatusFlag] = [.carry, .zero, .interrupt, .brk, .overflow, .negative]
+  static let all: [Registers.StatusFlag] = [.carry, .zero, .interrupt, .b, .overflow, .negative]
 }
 
 final class RegisteresSpec: XCTestCase {
@@ -50,11 +50,11 @@ final class RegisteresSpec: XCTestCase {
   
   func testSettingBreak() throws {
     registers.reset()
-    XCTAssertFalse(registers.isSet(.brk))
-    registers.set(.brk)
-    XCTAssertTrue(registers.isSet(.brk))
-    registers.clear(.brk)
-    XCTAssertFalse(registers.isSet(.brk))
+    XCTAssertFalse(registers.isSet(.b))
+    registers.set(.b)
+    XCTAssertTrue(registers.isSet(.b))
+    registers.clear(.b)
+    XCTAssertFalse(registers.isSet(.b))
   }
   
   func testSettingOverflow() throws {

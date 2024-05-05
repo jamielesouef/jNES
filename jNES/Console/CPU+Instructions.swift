@@ -11,7 +11,7 @@ extension CPU {
   
   func ADC(mode: AddressingMode) {
     
-    let addr = getOperand(for: mode)
+    let addr = getAddressForOpperate(with: mode, at: PC)
     let data = UInt16(readMem(at: addr))
     
     let result = UInt16(registers.A) + data + (registers.isSet(.carry) ? 1 : 0)
@@ -31,8 +31,7 @@ extension CPU {
   }
   
   func AND(mode: AddressingMode) {
-    //A,Z,N = A&M
-    let addr = getOperand(for: mode)
+    let addr = getAddressForOpperate(with: mode, at: PC)
     let data = readMem(at: addr)
     let result = data & registers.A
     
@@ -56,7 +55,7 @@ extension CPU {
   }
   
   private func ASL_memory(mode: AddressingMode) {
-    let addr = getOperand(for: mode)
+    let addr = getAddressForOpperate(with: mode, at: PC)
     var data = readMem(at: addr)
     
     ASL_Logic(&data)
@@ -79,9 +78,9 @@ extension CPU {
     branch(when: !registers.isSet(.carry))
   }
   
-  // Branch if Carry Clear
+  // Branch if Carry Set
   func BCS() {
-    branch(when: !registers.isSet(.carry))
+    branch(when: registers.isSet(.carry))
   }
   
   // Branch if Equal
@@ -91,15 +90,15 @@ extension CPU {
   
   
   func BIT(mode: AddressingMode) {
-    let addr = getOperand(for: mode)
+    let addr = getAddressForOpperate(with: mode, at: PC)
     let data = readMem(at: addr)
     let a = registers.A
     
     let result = data & a
     
-    setNegativeFlag(result)
-    setOverflowFlag(result)
-    setZeroFlag(result)
+    setFlag(.negative, condition: (data >> 7) == 1)
+    setFlag(.overflow, condition: ((data >> 6) & 0x1) == 1)
+    setFlag(.zero, condition: (result == 0))
     
   }
   
@@ -184,7 +183,7 @@ extension CPU {
   }
   
   func DEC(mode: AddressingMode) {
-    let addr = getOperand(for: mode)
+    let addr = getAddressForOpperate(with: mode, at: PC)
     let data = readMem(at: addr)
     
     let result = decrement(data)
@@ -204,7 +203,7 @@ extension CPU {
   
   // Exclusive OR
   func EOR(mode: AddressingMode) {
-    let addr = getOperand(for: mode)
+    let addr = getAddressForOpperate(with: mode, at: PC)
     let data = readMem(at: addr)
     let result = registers.A ^ data
     
@@ -213,7 +212,7 @@ extension CPU {
   
   // Increment Memory
   func INC(mode: AddressingMode) {
-    let addr = getOperand(for: mode)
+    let addr = getAddressForOpperate(with: mode, at: PC)
     let data = Int(readMem(at: addr)) + 1
     
     setNegativeFlag((data >> 7) == 1)
@@ -285,13 +284,13 @@ extension CPU {
   // Jump to Subroutine
   func JSR() {
     stackPush16(PC + 1)
-    let addr = readMem16(at: PC)
+    let addr = getAddressForOpperate(with: .absolute, at: PC)
     setProgramCounter(addr)
   }
   
   // Load Accumulator
   func LDA(mode: AddressingMode) {
-    let addr = getOperand(for: mode)
+    let addr = getAddressForOpperate(with: mode, at: PC)
     let data = readMem(at: addr)
     
     setRegisterA(data)
@@ -300,7 +299,7 @@ extension CPU {
   
   // Load X Register
   func LDX(mode: AddressingMode) {
-    let addr = getOperand(for: mode)
+    let addr = getAddressForOpperate(with: mode, at: PC)
     let data = readMem(at: addr)
     registers.set(.X, to: data)
     setZeroFlag(data)
@@ -309,7 +308,7 @@ extension CPU {
   
   // Load Y Register
   func LDY(mode: AddressingMode) {
-    let addr = getOperand(for: mode)
+    let addr = getAddressForOpperate(with: mode, at: PC)
     let data = readMem(at: addr)
     registers.set(.Y, to: data)
     setZeroFlag(data)
@@ -336,7 +335,7 @@ extension CPU {
   }
   
   private func LSR_Memory(mode: AddressingMode) {
-    let addr = getOperand(for: mode)
+    let addr = getAddressForOpperate(with: mode, at: PC)
     var data = readMem(at: addr)
     
     LSR_Logic(&data)
@@ -359,7 +358,7 @@ extension CPU {
   
   // Logical Inclusive OR
   func ORA(mode: AddressingMode) {
-    let addr = getOperand(for: mode)
+    let addr = getAddressForOpperate(with: mode, at: PC)
     let data = readMem(at: addr)
     let result = registers.A | data
     
@@ -373,7 +372,9 @@ extension CPU {
   
   // Push Processor Status
   func PHP() {
-    stackPush(registers.p)
+    var p = registers.p | 1 << 4
+    
+    stackPush(p)
   }
   
   // Pull Accumulator
@@ -385,6 +386,8 @@ extension CPU {
   // Pull Processor Status
   func PLP() {
     registers.set(programStatus: stackPop())
+    registers.clear(.b)
+    registers.set(.b2)
   }
   
   private func ROL_logic(_ data: inout UInt8) {
@@ -409,7 +412,7 @@ extension CPU {
   
   // Rotate Left
   private func ROL_memory(mode: AddressingMode) {
-    let addr = getOperand(for: mode)
+    let addr = getAddressForOpperate(with: mode, at: PC)
     var data = readMem(at: addr)
     
     ROL_logic(&data)
@@ -451,7 +454,7 @@ extension CPU {
   
   private func ROR_memory(mode: AddressingMode) {
     
-    let addr = getOperand(for: mode)
+    let addr = getAddressForOpperate(with: mode, at: PC)
     var data = readMem(at: addr)
     
     ROR_Logic(&data)
@@ -473,7 +476,7 @@ extension CPU {
   func RTI() {
     let programStatus = stackPop()
     let pc = stackPop16()
-    
+    registers.clear(.b)
     registers.set(programStatus: programStatus)
     setProgramCounter(pc)
   }
@@ -487,16 +490,15 @@ extension CPU {
   
   // Subtract with Carry
   func SBC(mode: AddressingMode) {
-    let addr = getOperand(for: mode)
-    let data = Int(readMem(at: addr))
-    let a = Int(registers.A)
+    let addr = getAddressForOpperate(with: mode, at: PC)
+    let data = readMem(at: addr)
     
-    let result = a - data - (registers.isSet(.carry) ? 1:0)
+    let result = Int(registers.A) - Int(data) - (registers.isSet(.carry) ? 0:1)
     
-    //    setOverflowFlag(((a ^ data) & (a ^ UInt8(result & 0xFF)) & 0x80) == 0x80)
-    setCarryFlag(result >= 0)
-    setNegativeFlag(UInt8(result & 0xFF) == 1)
-    setZeroFlag(result & 0xFF == 0)
+    setFlag(.overflow, condition: ((registers.A ^ data) & (registers.A ^ UInt8(result & 0xFF)) & 0x80) == 0x80)
+    setFlag(.carry, condition: result >= 0)
+    setFlag(.negative, condition: ((result >> 7) & 0x1) == 1)
+    setFlag(.zero, condition: (result & 0xFF) == 0)
     
     registers.set(.A, to: UInt8(result & 0xFF))
     
@@ -520,19 +522,19 @@ extension CPU {
   
   // Store Accumulator
   func STA(mode: AddressingMode) {
-    let address = getOperand(for: mode)
+    let address = getAddressForOpperate(with: mode, at: PC)
     writeMem(at: address, value: registers.A)
   }
   
   // Store X Register
   func STX(mode: AddressingMode) {
-    let address = getOperand(for: mode)
+    let address = getAddressForOpperate(with: mode, at: PC)
     writeMem(at: address, value: registers.X)
   }
   
   // Store Y Register
   func STY(mode: AddressingMode) {
-    let address = getOperand(for: mode)
+    let address = getAddressForOpperate(with: mode, at: PC)
     writeMem(at: address, value: registers.Y)
   }
   
@@ -567,8 +569,8 @@ extension CPU {
   // Transfer X to Stack Pointer
   func TXS() {
     setStackPointer(registers.X)
-    setZeroFlag(registers.X)
-    setNegativeFlag(registers.X)
+//    setZeroFlag(registers.X)
+//    setNegativeFlag(registers.X)
   }
   
   //Transfer Y to Accumulator
@@ -579,96 +581,96 @@ extension CPU {
   //MARK: - Illegal Opcodes
   
   func AAC(mode: AddressingMode) {
-    fatalError("Illegal Opcode AAC")
+    print("Illegal Opcode AAC")
     
   }
   
   func AAX(mode: AddressingMode) {
-    fatalError("Illegal Opcode AAX")
+    print("Illegal Opcode AAX")
   }
   
   func ARR(mode: AddressingMode) {
-    fatalError("Illegal Opcode ASR")
+    print("Illegal Opcode ASR")
   }
   
   func ASR(mode: AddressingMode) {
-    fatalError("Illegal Opcode ASR")
+    print("Illegal Opcode ASR")
   }
   
   func ATX(mode: AddressingMode) {
-    fatalError("Illegal Opcode ATX")
+    print("Illegal Opcode ATX")
   }
   
   func AXA(mode: AddressingMode) {
-    fatalError("Illegal Opcode AXA")
+    print("Illegal Opcode AXA")
   }
   
   func AXS(mode: AddressingMode) {
-    fatalError("Illegal Opcode AXS")
+    print("Illegal Opcode AXS")
   }
   
   func DCP(mode: AddressingMode) {
-    fatalError("Illegal Opcode DCP")
+    print("Illegal Opcode DCP")
   }
   
   func DOP(mode: AddressingMode) {
-    fatalError("Illegal Opcode DOP")
+    print("Illegal Opcode DOP")
   }
   
   func ISC(mode: AddressingMode) {
-    fatalError("Illegal Opcode ISC")
+    print("Illegal Opcode ISC")
   }
   
   func KIL() {
-    fatalError("Illegal Opcode KIL")
+    print("Illegal Opcode KIL")
   }
   
   func LAR(mode: AddressingMode) {
-    fatalError("Illegal Opcode LAR")
+    print("Illegal Opcode LAR")
   }
   
   func LAX(mode: AddressingMode) {
-    fatalError("Illegal Opcode LAX")
+    print("Illegal Opcode LAX")
   }
   
   func RLA(mode: AddressingMode) {
-    fatalError("Illegal Opcode RLA")
+    print("Illegal Opcode RLA")
   }
   
   func RLN(mode: AddressingMode) {
-    fatalError("Illegal Opcode RLN")
+    print("Illegal Opcode RLN")
   }
   
   func RRA(mode: AddressingMode) {
-    fatalError("Illegal Opcode RRA")
+    print("Illegal Opcode RRA")
   }
   
   func SLO(mode: AddressingMode) {
-    fatalError("Illegal Opcode SLO")
+    print("Illegal Opcode SLO")
   }
   
   func SRE(mode: AddressingMode) {
-    fatalError("Illegal Opcode SRE")
+    print("Illegal Opcode SRE")
   }
   
   func SXA(mode: AddressingMode) {
-    fatalError("Illegal Opcode SXA")
+    print("Illegal Opcode SXA")
   }
   
   func SYA(mode: AddressingMode) {
-    fatalError("Illegal Opcode SYA")
+    print("Illegal Opcode SYA")
   }
   
   func TOP(mode: AddressingMode) {
-    fatalError("Illegal Opcode TOP")
+    print("Illegal Opcode TOP")
   }
   
   func XAA(mode: AddressingMode) {
-    fatalError("Illegal Opcode XAA")
+    print("Illegal Opcode XAA")
   }
   
   func XAS(mode: AddressingMode) {
-    fatalError("Illegal Opcode XAS")
+    print("Illegal Opcode XAS")
   }
   
 }

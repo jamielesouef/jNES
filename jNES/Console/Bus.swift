@@ -37,7 +37,7 @@ import Foundation
 
 final class Bus {
   
-  private var sp: UInt8 = 0xFF
+  private var sp: UInt8 = 0xFD
   private var cpu_vram: [UInt8]
   private var rom: Rom
   
@@ -112,7 +112,7 @@ final class Bus {
   }
   
   func reset() {
-    sp = 0xFF
+    sp = 0xFD
   }
   
   func setStackPointer(_ value: UInt8) {
