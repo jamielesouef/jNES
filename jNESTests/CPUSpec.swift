@@ -69,9 +69,9 @@ final class CPUSpec: XCTestCase {
     cpu.writeMem16(at: 0x4002, value: 0x0501)
     cpu.writeMem16(at: 0x4004, value: 0x0024)
     
-    XCTAssertEqual(cpu.readMem16(at: 0x4000), 0xA9AA)
-    XCTAssertEqual(cpu.readMem16(at: 0x4002), 0x0501)
-    XCTAssertEqual(cpu.readMem16(at: 0x4004), 0x0024)
+    XCTAssertEqual(cpu.readMem16(at: UInt16(0x4000)), 0xA9AA)
+    XCTAssertEqual(cpu.readMem16(at: UInt16(0x4002)), 0x0501)
+    XCTAssertEqual(cpu.readMem16(at: UInt16(0x4004)), 0x0024)
   }
   
   func testSettingNegativeFlag() {

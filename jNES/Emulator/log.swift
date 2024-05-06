@@ -25,6 +25,6 @@ func log<T: BinaryInteger>(_ message: String, _ thing: T..., r: Int = 16, fn: St
 
 func log(_ message: String){
   #if DEBUG
-//  print("Debug: \t \(message)") 
+  print("Debug: \t \(message)") 
   #endif
 }

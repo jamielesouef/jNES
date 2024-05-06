@@ -499,6 +499,7 @@ extension CPU {
   
   // Load Accumulator
   func LDA(mode: AddressingMode) {
+    
     let addr = getAddressForOpperate(with: mode, at: PC)
     let data = readMem(at: addr)
     
@@ -520,8 +521,9 @@ extension CPU {
     let addr = getAddressForOpperate(with: mode, at: PC)
     let data = readMem(at: addr)
     registers.set(.Y, to: data)
-    setZeroFlag(data)
-    setNegativeFlag(data)
+    
+    setFlag(.negative, condition: (data >> 7) == 1)
+    setFlag(.zero, condition: (data == 0))
   }
   
   // Store Accumulator

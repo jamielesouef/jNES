@@ -65,18 +65,29 @@ final class StateBuilder {
     switch instruction.mode {
     case .immediate :
       arg = String(format: "#$%02X", data)
-    case .indirectX, .indirectY:
-      let index = instruction.mode == .indirectX ? cpu.registers.X : cpu.registers.Y
-      
+    case .indirectX:
       arg = String(
         format: "($%02X,X) @ %02X = %04X = %02X",
         address,
-        address &+ index,
+        address &+ cpu.registers.X,
         memAdr,
         data
       )
       
-    case .zeroPage: 
+    case .indirectY:
+      arg = String(
+        format: "($%02X),Y = %04X @ %04X = %02X",
+        address,
+        memAdr &- UInt16(cpu.registers.Y),
+        memAdr,
+        data
+      )
+      
+      /*
+       LDA ($FF),Y = 0146 @ 0245 = 12
+       LDA ($FF),Y = 0046 @ 0145 = 00
+       */
+    case .zeroPage:
       arg = String(format: "$%02X = %02X", memAdr, data)
       
     case .zeroPageX, .zeroPageY: 
