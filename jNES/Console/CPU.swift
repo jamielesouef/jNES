@@ -142,12 +142,18 @@ final class CPU {
       let index = mode == .zeroPageX ? registers.X : registers.Y
       let addr = data &+ index
       
-      return UInt16(bus.readMem(at: UInt16(addr)))
+      return UInt16(data &+ index)
    
-    case .absoluteX, .absoluteY:
+    case .absoluteX:
       let data = bus.readMem16(at: ptr)
-      let index = mode == .absoluteX ? registers.X : registers.Y
-      let addr = data &+ UInt16(index)
+      let offset16 = UInt16(registers.X)
+      let addr = data &+ offset16
+      return addr
+      
+    case .absoluteY:
+      let data = bus.readMem16(at: ptr)
+      let offset16 = UInt16(registers.Y)
+      let addr = data &+ offset16
       return addr
    
     case .indirectX:

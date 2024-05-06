@@ -88,7 +88,8 @@ final class StateBuilder {
     case .zeroPageX, .zeroPageY: 
       let index = instruction.mode == .zeroPageX ? "X" : "Y"
       arg = String(format:"$%02X,\(index) @ %02X = %02X",
-      address, index, memAdr, data)
+      address, memAdr, data)
+    
     case .none:
       arg = String(format: "$%04X", (cpu.PC + 2) &+ UInt16(address))
     default: fatalError("Unexpected addressing mode \(instruction.mode) \(instruction.name)")
@@ -127,8 +128,11 @@ final class StateBuilder {
 
         arg = String(format: "$%04X = %02X", memAddr, cpu.readMem(at: address))
       
-    case .absoluteX: arg = String(format: "$%04X,X @ %04X = %02X", data, memAddr, 1231)
-    case .absoluteY: arg = String(format: "$%04X,Y @ %04X = %02X", data, memAddr, 1231)
+    case .absoluteX: 
+      arg = String(format: "$%04X,X @ %04X = %02X", address, memAddr, data)
+    
+    case .absoluteY:
+      arg = String(format: "$%04X,Y @ %04X = %02X", address, memAddr, data)
   
     default: fatalError("Unexpected addressing mode \(instruction.mode) \(instruction.name)")
     }
