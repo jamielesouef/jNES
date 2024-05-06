@@ -13,269 +13,262 @@ struct Instruction {
 
 extension CPU {
   func getInstructions(for opcode: UInt8) ->Instruction {
-    
-    let table: [UInt8: Instruction] = [
-      0x00: Instruction(address: 0x00, name: "BRK", cycles: 7, bytes: 1, mode: .none, fn: { self.BRK() }),
-      0x61: Instruction(address: 0x61, name: "ADC", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.ADC(mode: .indirectX) }),
-      0x65: Instruction(address: 0x65, name: "ADC", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.ADC(mode: .zeroPage) }),
-      0x69: Instruction(address: 0x69, name: "ADC", cycles: 2, bytes: 2, mode: .immediate, fn: { self.ADC(mode: .immediate) }),
-      0x6D: Instruction(address: 0x6D, name: "ADC", cycles: 4, bytes: 3, mode: .absolute, fn: { self.ADC(mode: .absolute) }),
-      0x71: Instruction(address: 0x71, name: "ADC", cycles: 5, bytes: 2, mode: .indirectY, fn: { self.ADC(mode: .indirectY) }),
-      0x75: Instruction(address: 0x75, name: "ADC", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.ADC(mode: .zeroPageX) }),
-      0x79: Instruction(address: 0x79, name: "ADC", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.ADC(mode: .absoluteY) }),
-      0x7D: Instruction(address: 0x7D, name: "ADC", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.ADC(mode: .absoluteX) }),
-      0x21: Instruction(address: 0x21, name: "AND", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.AND(mode: .indirectX) }),
-      0x25: Instruction(address: 0x25, name: "AND", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.AND(mode: .zeroPage) }),
-      0x29: Instruction(address: 0x29, name: "AND", cycles: 2, bytes: 2, mode: .immediate, fn: { self.AND(mode: .immediate) }),
-      0x2D: Instruction(address: 0x2D, name: "AND", cycles: 4, bytes: 3, mode: .absolute, fn: { self.AND(mode: .absolute) }),
-      0x31: Instruction(address: 0x31, name: "AND", cycles: 5, bytes: 2, mode: .indirectY, fn: { self.AND(mode: .indirectY) }),
-      0x35: Instruction(address: 0x35, name: "AND", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.AND(mode: .zeroPageX) }),
-      0x39: Instruction(address: 0x39, name: "AND", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.AND(mode: .absoluteY) }),
-      0x3D: Instruction(address: 0x3D, name: "AND", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.AND(mode: .absoluteX) }),
-      0x06: Instruction(address: 0x06, name: "ASL", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.ASL(mode: .zeroPage)}),
-      0x0A: Instruction(address: 0x0A, name: "ASL", cycles: 2, bytes: 1, mode: .none, fn:{ self.ASL(mode: .accumulator)}),
-      0x0E: Instruction(address: 0x0E, name: "ASL", cycles: 6, bytes: 3, mode: .absolute, fn: { self.ASL(mode: .absolute)}),
-      0x16: Instruction(address: 0x16, name: "ASL", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.ASL(mode: .zeroPageX)}),
-      0x1E: Instruction(address: 0x1E, name: "ASL", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.ASL(mode: .absoluteX)}),
-      0x90: Instruction(address: 0x90, name: "BCC", cycles: 2, bytes: 2, mode: .none, fn: self.BCC),
-      0xB0: Instruction(address: 0xB0, name: "BCS", cycles: 2, bytes: 2, mode: .none, fn: self.BCS),
-      0xF0: Instruction(address: 0xF0, name: "BEQ", cycles: 2, bytes: 2, mode: .none, fn: self.BEQ),
-      0x24: Instruction(address: 0x24, name: "BIT", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.BIT(mode: .zeroPage)}),
-      0x2C: Instruction(address: 0x2C, name: "BIT", cycles: 4, bytes: 3, mode: .absolute, fn: { self.BIT(mode: .absolute)}),
-      0x30: Instruction(address: 0x30, name: "BMI", cycles: 2, bytes: 2, mode: .none, fn: self.BMI),
-      0xD0: Instruction(address: 0xD0, name: "BNE", cycles: 2, bytes: 2, mode: .none, fn: self.BNE),
-      0x10: Instruction(address: 0x10, name: "BPL", cycles: 2, bytes: 2, mode: .none, fn: self.BPL),
-      0x50: Instruction(address: 0x50, name: "BVC", cycles: 2, bytes: 2, mode: .none, fn: self.BVC),
-      0x70: Instruction(address: 0x70, name: "BVS", cycles: 2, bytes: 2, mode: .none, fn: self.BVS),
-      0x18: Instruction(address: 0x18, name: "CLC", cycles: 2, bytes: 1, mode: .none, fn: self.CLC),
-      0xD8: Instruction(address: 0xD8, name: "CLD", cycles: 2, bytes: 1, mode: .none, fn: self.CLD),
-      0x58: Instruction(address: 0x58, name: "CLI", cycles: 2, bytes: 1, mode: .none, fn: self.CLI),
-      0xB8: Instruction(address: 0xB8, name: "CLV", cycles: 2, bytes: 1, mode: .none, fn: self.CLV),
-      0xC1: Instruction(address: 0xC1, name: "CMP", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.CMP(mode: .indirectX)}),
-      0xC5: Instruction(address: 0xC5, name: "CMP", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.CMP(mode: .zeroPage)}),
-      0xC9: Instruction(address: 0xC9, name: "CMP", cycles: 2, bytes: 2, mode: .immediate, fn: { self.CMP(mode: .immediate)}),
-      0xCD: Instruction(address: 0xCD, name: "CMP", cycles: 4, bytes: 3, mode: .absolute, fn: { self.CMP(mode: .absolute)}),
-      0xD1: Instruction(address: 0xD1, name: "CMP", cycles: 5, bytes: 2, mode: .indirectY, fn: { self.CMP(mode: .indirectY)}),
-      0xD5: Instruction(address: 0xD5, name: "CMP", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.CMP(mode: .zeroPageX)}),
-      0xD9: Instruction(address: 0xD9, name: "CMP", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.CMP(mode: .absoluteY)}),
-      0xDD: Instruction(address: 0xDD, name: "CMP", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.CMP(mode: .absoluteX)}),
-      0xE0: Instruction(address: 0xE0, name: "CPX", cycles: 2, bytes: 2, mode: .immediate, fn: { self.CPX(mode: .immediate)}),
-      0xE4: Instruction(address: 0xE4, name: "CPX", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.CPX(mode: .zeroPage)}),
-      0xEC: Instruction(address: 0xEC, name: "CPX", cycles: 4, bytes: 3, mode: .absolute, fn: { self.CPX(mode: .absolute)}),
-      0xC0: Instruction(address: 0xC0, name: "CPY", cycles: 2, bytes: 2, mode: .immediate, fn: { self.CPY(mode: .immediate)}),
-      0xC4: Instruction(address: 0xC4, name: "CPY", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.CPY(mode: .zeroPage)}),
-      0xCC: Instruction(address: 0xCC, name: "CPY", cycles: 4, bytes: 3, mode: .absolute, fn: { self.CPY(mode: .absolute)}),
-      0xC6: Instruction(address: 0xC6, name: "DEC", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.DEC(mode: .zeroPage)}),
-      0xCE: Instruction(address: 0xCE, name: "DEC", cycles: 6, bytes: 3, mode: .absolute, fn: { self.DEC(mode: .absolute)}),
-      0xD6: Instruction(address: 0xD6, name: "DEC", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.DEC(mode: .zeroPageX)}),
-      0xDE: Instruction(address: 0xDE, name: "DEC", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.DEC(mode: .absoluteX)}),
-      0xCA: Instruction(address: 0xCA, name: "DEX", cycles: 2, bytes: 1, mode: .none, fn: self.DEX),
-      0x88: Instruction(address: 0x88, name: "DEY", cycles: 2, bytes: 1, mode: .none, fn: self.DEY),
-      0x41: Instruction(address: 0x41, name: "EOR", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.EOR(mode: .indirectX)}),
-      0x45: Instruction(address: 0x45, name: "EOR", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.EOR(mode: .zeroPage)}),
-      0x49: Instruction(address: 0x49, name: "EOR", cycles: 2, bytes: 2, mode: .immediate, fn: { self.EOR(mode: .immediate)}),
-      0x4D: Instruction(address: 0x4D, name: "EOR", cycles: 4, bytes: 3, mode: .absolute, fn: { self.EOR(mode: .absolute)}),
-      0x51: Instruction(address: 0x51, name: "EOR", cycles: 5, bytes: 2, mode: .indirectY, fn: { self.EOR(mode: .indirectY)}),
-      0x55: Instruction(address: 0x55, name: "EOR", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.EOR(mode: .zeroPageX)}),
-      0x59: Instruction(address: 0x59, name: "EOR", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.EOR(mode: .absoluteY)}),
-      0x5D: Instruction(address: 0x5D, name: "EOR", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.EOR(mode: .absoluteX)}),
-      0xE6: Instruction(address: 0xE6, name: "INC", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.INC(mode: .zeroPage)}),
-      0xEE: Instruction(address: 0xEE, name: "INC", cycles: 6, bytes: 3, mode: .absolute, fn: { self.INC(mode: .absolute)}),
-      0xF6: Instruction(address: 0xF6, name: "INC", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.INC(mode: .zeroPageX)}),
-      0xFE: Instruction(address: 0xFE, name: "INC", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.INC(mode: .absoluteX)}),
-      0xE8: Instruction(address: 0xE8, name: "INX", cycles: 2, bytes: 1, mode: .none, fn: self.INX),
-      0xC8: Instruction(address: 0xC8, name: "INY", cycles: 2, bytes: 1, mode: .none, fn: self.INY),
-      0x4C: Instruction(address: 0x4C, name: "JMP", cycles: 3, bytes: 3, mode: .none, fn: { self.JMP(mode: .absolute)}),
-      0x6C: Instruction(address: 0x6C, name: "JMP", cycles: 5, bytes: 3, mode: .none, fn: { self.JMP(mode: .indirect)}),
-      0x20: Instruction(address: 0x20, name: "JSR", cycles: 6, bytes: 3, mode: .none, fn: self.JSR),
-      0xA1: Instruction(address: 0xA1, name: "LDA", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.LDA(mode: .indirectX)}),
-      0xA5: Instruction(address: 0xA5, name: "LDA", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.LDA(mode: .zeroPage)}),
-      0xA9: Instruction(address: 0xA9, name: "LDA", cycles: 2, bytes: 2, mode: .immediate, fn: { self.LDA(mode: .immediate)}),
-      0xAD: Instruction(address: 0xAD, name: "LDA", cycles: 4, bytes: 3, mode: .absolute, fn: { self.LDA(mode: .absolute)}),
-      0xB1: Instruction(address: 0xB1, name: "LDA", cycles: 5, bytes: 2, mode: .indirectY, fn: { self.LDA(mode: .indirectY)}),
-      0xB5: Instruction(address: 0xB5, name: "LDA", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.LDA(mode: .zeroPageX)}),
-      0xB9: Instruction(address: 0xB9, name: "LDA", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.LDA(mode: .absoluteY)}),
-      0xBD: Instruction(address: 0xBD, name: "LDA", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.LDA(mode: .absoluteX)}),
-      0xA2: Instruction(address: 0xA2, name: "LDX", cycles: 2, bytes: 2, mode: .immediate, fn: { self.LDX(mode: .immediate)}),
-      0xA6: Instruction(address: 0xA6, name: "LDX", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.LDX(mode: .zeroPage)}),
-      0xAE: Instruction(address: 0xAE, name: "LDX", cycles: 4, bytes: 3, mode: .absolute, fn: { self.LDX(mode: .absolute)}),
-      0xB6: Instruction(address: 0xB6, name: "LDX", cycles: 4, bytes: 2, mode: .zeroPageY, fn: { self.LDX(mode: .zeroPageY)}),
-      0xBE: Instruction(address: 0xBE, name: "LDX", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.LDX(mode: .absoluteY)}),
-      0xA0: Instruction(address: 0xA0, name: "LDY", cycles: 2, bytes: 2, mode: .immediate, fn: { self.LDY(mode: .immediate)}),
-      0xA4: Instruction(address: 0xA4, name: "LDY", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.LDY(mode: .zeroPage)}),
-      0xAC: Instruction(address: 0xAC, name: "LDY", cycles: 4, bytes: 3, mode: .absolute, fn: { self.LDY(mode: .absolute)}),
-      0xB4: Instruction(address: 0xB4, name: "LDY", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.LDY(mode: .zeroPageX)}),
-      0xBC: Instruction(address: 0xBC, name: "LDY", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.LDY(mode: .absoluteX)}),
-      0x46: Instruction(address: 0x46, name: "LSR", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.LSR(mode: .zeroPage)}),
-      0x4A: Instruction(address: 0x4A, name: "LSR", cycles: 2, bytes: 1, mode: .none, fn: { self.LSR(mode: .accumulator) }),
-      0x4E: Instruction(address: 0x4E, name: "LSR", cycles: 6, bytes: 3, mode: .absolute, fn: { self.LSR(mode: .absolute)}),
-      0x56: Instruction(address: 0x56, name: "LSR", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.LSR(mode: .zeroPageX)}),
-      0x5E: Instruction(address: 0x5E, name: "LSR", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.LSR(mode: .absoluteX)}),
-      0xEA: Instruction(address: 0xEA, name: "NOP", cycles: 2, bytes: 1, mode: .none, fn: self.NOP),
-      0x01: Instruction(address: 0x01, name: "ORA", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.ORA(mode: .indirectX)}),
-      0x05: Instruction(address: 0x05, name: "ORA", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.ORA(mode: .zeroPage)}),
-      0x09: Instruction(address: 0x09, name: "ORA", cycles: 2, bytes: 2, mode: .immediate, fn: { self.ORA(mode: .immediate)}),
-      0x0D: Instruction(address: 0x0D, name: "ORA", cycles: 4, bytes: 3, mode: .absolute, fn: { self.ORA(mode: .absolute)}),
-      0x11: Instruction(address: 0x11, name: "ORA", cycles: 5, bytes: 2, mode: .indirectY, fn: { self.ORA(mode: .indirectY)}),
-      0x15: Instruction(address: 0x15, name: "ORA", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.ORA(mode: .zeroPageX)}),
-      0x19: Instruction(address: 0x19, name: "ORA", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.ORA(mode: .absoluteY)}),
-      0x1D: Instruction(address: 0x1D, name: "ORA", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.ORA(mode: .absoluteX)}),
-      0x48: Instruction(address: 0x48, name: "PHA", cycles: 3, bytes: 1, mode: .none, fn: self.PHA),
-      0x08: Instruction(address: 0x08, name: "PHP", cycles: 3, bytes: 1, mode: .none, fn: self.PHP),
-      0x68: Instruction(address: 0x68, name: "PLA", cycles: 4, bytes: 1, mode: .none, fn: self.PLA),
-      0x28: Instruction(address: 0x28, name: "PLP", cycles: 4, bytes: 1, mode: .none, fn: self.PLP),
-      0x26: Instruction(address: 0x26, name: "ROL", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.ROL(mode: .zeroPage)}),
-      0x2A: Instruction(address: 0x2A, name: "ROL", cycles: 2, bytes: 1, mode: .none, fn: { self.ROL(mode: .accumulator)}),
-      0x2E: Instruction(address: 0x2E, name: "ROL", cycles: 6, bytes: 3, mode: .absolute, fn: { self.ROL(mode: .absolute)}),
-      0x36: Instruction(address: 0x36, name: "ROL", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.ROL(mode: .zeroPageX)}),
-      0x3E: Instruction(address: 0x3E, name: "ROL", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.ROL(mode: .absoluteX)}),
-      0x66: Instruction(address: 0x66, name: "ROR", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.ROR(mode: .zeroPage)}),
-      0x6A: Instruction(address: 0x6A, name: "ROR", cycles: 2, bytes: 1, mode: .none, fn: { self.ROR(mode: .accumulator)}),
-      0x6E: Instruction(address: 0x6E, name: "ROR", cycles: 6, bytes: 3, mode: .absolute, fn: { self.ROR(mode: .absolute)}),
-      0x76: Instruction(address: 0x76, name: "ROR", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.ROR(mode: .zeroPageX)}),
-      0x7E: Instruction(address: 0x7E, name: "ROR", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.ROR(mode: .absoluteX)}),
-      0x40: Instruction(address: 0x40, name: "RTI", cycles: 6, bytes: 1, mode: .none, fn: self.RTI),
-      0x60: Instruction(address: 0x60, name: "RTS", cycles: 6, bytes: 1, mode: .none, fn: self.RTS),
-      0xE1: Instruction(address: 0xE1, name: "SBC", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.SBC(mode: .indirectX)}),
-      0xE5: Instruction(address: 0xE5, name: "SBC", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.SBC(mode: .zeroPage)}),
-      0xE9: Instruction(address: 0xE9, name: "SBC", cycles: 2, bytes: 2, mode: .immediate, fn: { self.SBC(mode: .immediate)}),
-      0xED: Instruction(address: 0xED, name: "SBC", cycles: 4, bytes: 3, mode: .absolute, fn: { self.SBC(mode: .absolute)}),
-      0xF1: Instruction(address: 0xF1, name: "SBC", cycles: 5, bytes: 2, mode: .indirectY, fn: { self.SBC(mode: .indirectY)}),
-      0xF5: Instruction(address: 0xF5, name: "SBC", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.SBC(mode: .zeroPageX)}),
-      0xF9: Instruction(address: 0xF9, name: "SBC", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.SBC(mode: .absoluteY)}),
-      0xFD: Instruction(address: 0xFD, name: "SBC", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.SBC(mode: .absoluteX)}),
-      0x38: Instruction(address: 0x38, name: "SEC", cycles: 2, bytes: 1, mode: .none, fn: self.SEC),
-      0xF8: Instruction(address: 0xF8, name: "SED", cycles: 2, bytes: 1, mode: .none, fn: self.SED),
-      0x78: Instruction(address: 0x78, name: "SEI", cycles: 2, bytes: 1, mode: .none, fn: self.SEI),
-      0x85: Instruction(address: 0x85, name: "STA", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.STA(mode: .zeroPage)}),
-      0x95: Instruction(address: 0x95, name: "STA", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.STA(mode: .zeroPageX)}),
-      0x8D: Instruction(address: 0x8D, name: "STA", cycles: 4, bytes: 3, mode: .absolute, fn: { self.STA(mode: .absolute)}),
-      0x9D: Instruction(address: 0x9D, name: "STA", cycles: 5, bytes: 3, mode: .absoluteX, fn: { self.STA(mode: .absoluteX)}),
-      0x99: Instruction(address: 0x99, name: "STA", cycles: 5, bytes: 3, mode: .absoluteY, fn: { self.STA(mode: .absoluteY)}),
-      0x81: Instruction(address: 0x81, name: "STA", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.STA(mode: .indirectX)}),
-      0x91: Instruction(address: 0x91, name: "STA", cycles: 6, bytes: 2, mode: .indirectY, fn: { self.STA(mode: .indirectY)}),
-      0x86: Instruction(address: 0x86, name: "STX", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.STX(mode: .zeroPage)}),
-      0x8E: Instruction(address: 0x8E, name: "STX", cycles: 4, bytes: 3, mode: .absolute, fn: { self.STX(mode: .absolute)}),
-      0x96: Instruction(address: 0x96, name: "STX", cycles: 4, bytes: 2, mode: .zeroPageY, fn: { self.STX(mode: .zeroPageY)}),
-      0x84: Instruction(address: 0x84, name: "STY", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.STY(mode: .zeroPage)}),
-      0x8C: Instruction(address: 0x8C, name: "STY", cycles: 4, bytes: 3, mode: .absolute, fn: { self.STY(mode: .absolute)}),
-      0x94: Instruction(address: 0x94, name: "STY", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.STY(mode: .zeroPageX)}),
-      0xAA: Instruction(address: 0xAA, name: "TAX", cycles: 2, bytes: 1, mode: .none, fn: self.TAX),
-      0xA8: Instruction(address: 0xA8, name: "TAY", cycles: 2, bytes: 1, mode: .none, fn: self.TAY),
-      0xBA: Instruction(address: 0xBA, name: "TSX", cycles: 2, bytes: 1, mode: .none, fn: self.TSX),
-      0x8A: Instruction(address: 0x8A, name: "TXA", cycles: 2, bytes: 1, mode: .none, fn: self.TXA),
-      0x9A: Instruction(address: 0x9A, name: "TXS", cycles: 2, bytes: 1, mode: .none, fn: self.TXS),
-      0x98: Instruction(address: 0x98, name: "TYA", cycles: 2, bytes: 1, mode: .none, fn: self.TYA),
-      0x0B: Instruction(address: 0x0B, name: "AAC", cycles: 2, bytes: 2, mode: .immediate, fn: { self.AAC(mode: .immediate)}),
-      0x2B: Instruction(address: 0x2B, name: "AAC", cycles: 2, bytes: 2, mode: .immediate, fn: { self.AAC(mode: .immediate)}),
-      0x87: Instruction(address: 0x87, name: "AAX", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.AAX(mode: .zeroPage)}),
-      0x97: Instruction(address: 0x97, name: "AAX", cycles: 4, bytes: 2, mode: .zeroPageY, fn: { self.AAX(mode: .zeroPageY)}),
-      0x83: Instruction(address: 0x83, name: "AAX", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.AAX(mode: .indirectX)}),
-      0x8F: Instruction(address: 0x8F, name: "AAX", cycles: 4, bytes: 3, mode: .absolute, fn: { self.AAX(mode: .absolute)}),
-      0x6B: Instruction(address: 0x6B, name: "ARR", cycles: 2, bytes: 2, mode: .immediate, fn: { self.ARR(mode: .immediate)}),
-      0x4B: Instruction(address: 0x4B, name: "ASR", cycles: 2, bytes: 2, mode: .immediate, fn: { self.ASR(mode: .immediate)}),
-      0xAB: Instruction(address: 0xAB, name: "ATX", cycles: 2, bytes: 2, mode: .immediate, fn: { self.ATX(mode: .immediate)}),
-      0x9F: Instruction(address: 0x9F, name: "AXA", cycles: 5, bytes: 3, mode: .absoluteY, fn: { self.AXA(mode: .absoluteY)}),
-      0x93: Instruction(address: 0x93, name: "AXA", cycles: 6, bytes: 2, mode: .indirectY, fn: { self.AXA(mode: .indirectY)}),
-      0xCB: Instruction(address: 0xCB, name: "AXS", cycles: 2, bytes: 2, mode: .immediate, fn: { self.AXS(mode: .immediate)}),
-      0xC7: Instruction(address: 0xC7, name: "DCP", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.DCP(mode: .zeroPage)}),
-      0xD7: Instruction(address: 0xD7, name: "DCP", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.DCP(mode: .zeroPageX)}),
-      0xCF: Instruction(address: 0xCF, name: "DCP", cycles: 6, bytes: 3, mode: .absolute, fn: { self.DCP(mode: .absolute)}),
-      0xDF: Instruction(address: 0xDF, name: "DCP", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.DCP(mode: .absoluteX)}),
-      0xDB: Instruction(address: 0xDB, name: "DCP", cycles: 7, bytes: 3, mode: .absoluteY, fn: { self.DCP(mode: .absoluteY)}),
-      0xC3: Instruction(address: 0xC3, name: "DCP", cycles: 8, bytes: 2, mode: .indirectX, fn: { self.DCP(mode: .indirectX)}),
-      0xD3: Instruction(address: 0xD3, name: "DCP", cycles: 8, bytes: 2, mode: .indirectY, fn: { self.DCP(mode: .indirectY)}),
-      0x04: Instruction(address: 0x04, name: "DOP", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.DOP(mode: .zeroPage)}),
-      0x14: Instruction(address: 0x14, name: "DOP", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.DOP(mode: .zeroPageX)}),
-      0x34: Instruction(address: 0x34, name: "DOP", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.DOP(mode: .zeroPageX)}),
-      0x44: Instruction(address: 0x44, name: "DOP", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.DOP(mode: .zeroPage)}),
-      0x54: Instruction(address: 0x54, name: "DOP", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.DOP(mode: .zeroPageX)}),
-      0x64: Instruction(address: 0x64, name: "DOP", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.DOP(mode: .zeroPage)}),
-      0x74: Instruction(address: 0x74, name: "DOP", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.DOP(mode: .zeroPageX)}),
-      0x80: Instruction(address: 0x80, name: "DOP", cycles: 2, bytes: 2, mode: .immediate, fn: { self.DOP(mode: .immediate)}),
-      0x82: Instruction(address: 0x82, name: "DOP", cycles: 2, bytes: 2, mode: .immediate, fn: { self.DOP(mode: .immediate)}),
-      0x89: Instruction(address: 0x89, name: "DOP", cycles: 2, bytes: 2, mode: .immediate, fn: { self.DOP(mode: .immediate)}),
-      0xC2: Instruction(address: 0xC2, name: "DOP", cycles: 2, bytes: 2, mode: .immediate, fn: { self.DOP(mode: .immediate)}),
-      0xD4: Instruction(address: 0xD4, name: "DOP", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.DOP(mode: .zeroPageX)}),
-      0xE2: Instruction(address: 0xE2, name: "DOP", cycles: 2, bytes: 2, mode: .immediate, fn: { self.DOP(mode: .immediate)}),
-      0xF4: Instruction(address: 0xF4, name: "DOP", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.DOP(mode: .zeroPageX)}),
-      0xE7: Instruction(address: 0xE7, name: "ISC", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.ISC(mode: .zeroPage)}),
-      0xF7: Instruction(address: 0xF7, name: "ISC", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.ISC(mode: .zeroPageX)}),
-      0xEF: Instruction(address: 0xEF, name: "ISC", cycles: 6, bytes: 3, mode: .absolute, fn: { self.ISC(mode: .absolute)}),
-      0xFF: Instruction(address: 0xFF, name: "ISC", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.ISC(mode: .absoluteX)}),
-      0xFB: Instruction(address: 0xFB, name: "ISC", cycles: 7, bytes: 3, mode: .absoluteY, fn: { self.ISC(mode: .absoluteY)}),
-      0xE3: Instruction(address: 0xE3, name: "ISC", cycles: 8, bytes: 2, mode: .indirectX, fn: { self.ISC(mode: .indirectX)}),
-      0xF3: Instruction(address: 0xF3, name: "ISC", cycles: 8, bytes: 2, mode: .indirectY, fn: { self.ISC(mode: .indirectY)}),
-      0x02: Instruction(address: 0x02, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL),
-      0x12: Instruction(address: 0x12, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL),
-      0x22: Instruction(address: 0x22, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL),
-      0x32: Instruction(address: 0x32, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL),
-      0x42: Instruction(address: 0x42, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL),
-      0x52: Instruction(address: 0x52, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL),
-      0x62: Instruction(address: 0x62, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL),
-      0x72: Instruction(address: 0x72, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL),
-      0x92: Instruction(address: 0x92, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL),
-      0xB2: Instruction(address: 0xB2, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL),
-      0xD2: Instruction(address: 0xD2, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL),
-      0xBB: Instruction(address: 0xBB, name: "LAR", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.LAR(mode: .absoluteY)}),
-      0xA7: Instruction(address: 0xA7, name: "LAX", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.LAX(mode: .zeroPage)}),
-      0xB7: Instruction(address: 0xB7, name: "LAX", cycles: 4, bytes: 2, mode: .zeroPageY, fn: { self.LAX(mode: .zeroPageY)}),
-      0xAF: Instruction(address: 0xAF, name: "LAX", cycles: 4, bytes: 3, mode: .absolute, fn: { self.LAX(mode: .absolute)}),
-      0xBF: Instruction(address: 0xBF, name: "LAX", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.LAX(mode: .absoluteY)}),
-      0xA3: Instruction(address: 0xA3, name: "LAX", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.LAX(mode: .indirectX)}),
-      0xB3: Instruction(address: 0xB3, name: "LAX", cycles: 5, bytes: 2, mode: .indirectY, fn: { self.LAX(mode: .indirectY)}),
-      0x1A: Instruction(address: 0x1A, name: "NOP", cycles: 2, bytes: 1, mode: .implied, fn: self.NOP),
-      0x3A: Instruction(address: 0x3A, name: "NOP", cycles: 2, bytes: 1, mode: .implied, fn: self.NOP),
-      0x5A: Instruction(address: 0x5A, name: "NOP", cycles: 2, bytes: 1, mode: .implied, fn: self.NOP),
-      0x7A: Instruction(address: 0x7A, name: "NOP", cycles: 2, bytes: 1, mode: .implied, fn: self.NOP),
-      0xDA: Instruction(address: 0xDA, name: "NOP", cycles: 2, bytes: 1, mode: .implied, fn: self.NOP),
-      0xFA: Instruction(address: 0xFA, name: "NOP", cycles: 2, bytes: 1, mode: .implied, fn: self.NOP),
-      0x27: Instruction(address: 0x27, name: "RLA", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.RLA(mode: .zeroPage)}),
-      0x37: Instruction(address: 0x37, name: "RLA", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.RLA(mode: .zeroPageX)}),
-      0x2F: Instruction(address: 0x2F, name: "RLA", cycles: 6, bytes: 3, mode: .absolute, fn: { self.RLA(mode: .absolute)}),
-      0x3F: Instruction(address: 0x3F, name: "RLA", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.RLA(mode: .absoluteX)}),
-      0x3B: Instruction(address: 0x3B, name: "RLA", cycles: 7, bytes: 3, mode: .absoluteY, fn: { self.RLA(mode: .absoluteY)}),
-      0x23: Instruction(address: 0x23, name: "RLA", cycles: 8, bytes: 2, mode: .indirectX, fn: { self.RLA(mode: .indirectX)}),
-      0x33: Instruction(address: 0x33, name: "RLA", cycles: 8, bytes: 2, mode: .indirectY, fn: { self.RLA(mode: .indirectY)}),
-      0x67: Instruction(address: 0x67, name: "RRA", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.RRA(mode: .zeroPage)}),
-      0x77: Instruction(address: 0x77, name: "RRA", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.RRA(mode: .zeroPageX)}),
-      0x6F: Instruction(address: 0x6F, name: "RRA", cycles: 6, bytes: 3, mode: .absolute, fn: { self.RRA(mode: .absolute)}),
-      0x7F: Instruction(address: 0x7F, name: "RRA", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.RRA(mode: .absoluteX)}),
-      0x7B: Instruction(address: 0x7B, name: "RRA", cycles: 7, bytes: 3, mode: .absoluteY, fn: { self.RRA(mode: .absoluteY)}),
-      0x63: Instruction(address: 0x63, name: "RRA", cycles: 8, bytes: 2, mode: .indirectX, fn: { self.RRA(mode: .indirectX)}),
-      0x73: Instruction(address: 0x73, name: "RRA", cycles: 8, bytes: 2, mode: .indirectY, fn: { self.RRA(mode: .indirectY)}),
-      0xEB: Instruction(address: 0xEB, name: "SBC", cycles: 2, bytes: 2, mode: .immediate, fn: { self.SBC(mode: .immediate)}),
-      0x07: Instruction(address: 0x07, name: "SLO", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.SLO(mode: .zeroPage)}),
-      0x17: Instruction(address: 0x17, name: "SLO", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.SLO(mode: .zeroPageX)}),
-      0x0F: Instruction(address: 0x0F, name: "SLO", cycles: 6, bytes: 3, mode: .absolute, fn: { self.SLO(mode: .absolute)}),
-      0x1F: Instruction(address: 0x1F, name: "SLO", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.SLO(mode: .absoluteX)}),
-      0x1B: Instruction(address: 0x1B, name: "SLO", cycles: 7, bytes: 3, mode: .absoluteY, fn: { self.SLO(mode: .absoluteY)}),
-      0x03: Instruction(address: 0x03, name: "SLO", cycles: 8, bytes: 2, mode: .indirectX, fn: { self.SLO(mode: .indirectX)}),
-      0x13: Instruction(address: 0x13, name: "SLO", cycles: 8, bytes: 2, mode: .indirectY, fn: { self.SLO(mode: .indirectY)}),
-      0x47: Instruction(address: 0x47, name: "SRE", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.SRE(mode: .zeroPage)}),
-      0x57: Instruction(address: 0x57, name: "SRE", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.SRE(mode: .zeroPageX)}),
-      0x4F: Instruction(address: 0x4F, name: "SRE", cycles: 6, bytes: 3, mode: .absolute, fn: { self.SRE(mode: .absolute)}),
-      0x5F: Instruction(address: 0x5F, name: "SRE", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.SRE(mode: .absoluteX)}),
-      0x5B: Instruction(address: 0x5B, name: "SRE", cycles: 7, bytes: 3, mode: .absoluteY, fn: { self.SRE(mode: .absoluteY)}),
-      0x43: Instruction(address: 0x43, name: "SRE", cycles: 8, bytes: 2, mode: .indirectX, fn: { self.SRE(mode: .indirectX)}),
-      0x53: Instruction(address: 0x53, name: "SRE", cycles: 8, bytes: 2, mode: .indirectY, fn: { self.SRE(mode: .indirectY)}),
-      0x9E: Instruction(address: 0x9E, name: "SXA", cycles: 5, bytes: 3, mode: .absoluteY, fn: { self.SXA(mode: .absoluteY)}),
-      0x9C: Instruction(address: 0x9C, name: "SYA", cycles: 5, bytes: 3, mode: .absoluteX, fn: { self.SYA(mode: .absoluteX)}),
-      0x0C: Instruction(address: 0x0C, name: "TOP", cycles: 4, bytes: 3, mode: .absolute, fn: { self.TOP(mode: .absolute)}),
-      0x1C: Instruction(address: 0x1C, name: "TOP", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.TOP(mode: .absoluteX)}),
-      0x3C: Instruction(address: 0x3C, name: "TOP", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.TOP(mode: .absoluteX)}),
-      0x5C: Instruction(address: 0x5C, name: "TOP", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.TOP(mode: .absoluteX)}),
-      0x7C: Instruction(address: 0x7C, name: "TOP", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.TOP(mode: .absoluteX)}),
-      0xDC: Instruction(address: 0xDC, name: "TOP", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.TOP(mode: .absoluteX)}),
-      0xFC: Instruction(address: 0xFC, name: "TOP", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.TOP(mode: .absoluteX)}),
-      0x8B: Instruction(address: 0x8B, name: "XAA", cycles: 2, bytes: 2, mode: .immediate, fn: { self.XAA(mode: .immediate)}),
-    ]
-    
-    guard let instruction = table[opcode] else {
-      let code = String(opcode, radix: 16)
-      fatalError("Unknown opcode: \(code)")
+    return switch opcode {
+    case 0x00: Instruction(address: 0x00, name: "BRK", cycles: 7, bytes: 1, mode: .none, fn: { self.BRK() })
+    case 0x61: Instruction(address: 0x61, name: "ADC", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.ADC(mode: .indirectX) })
+    case 0x65: Instruction(address: 0x65, name: "ADC", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.ADC(mode: .zeroPage) })
+    case 0x69: Instruction(address: 0x69, name: "ADC", cycles: 2, bytes: 2, mode: .immediate, fn: { self.ADC(mode: .immediate) })
+    case 0x6D: Instruction(address: 0x6D, name: "ADC", cycles: 4, bytes: 3, mode: .absolute, fn: { self.ADC(mode: .absolute) })
+    case 0x71: Instruction(address: 0x71, name: "ADC", cycles: 5, bytes: 2, mode: .indirectY, fn: { self.ADC(mode: .indirectY) })
+    case 0x75: Instruction(address: 0x75, name: "ADC", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.ADC(mode: .zeroPageX) })
+    case 0x79: Instruction(address: 0x79, name: "ADC", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.ADC(mode: .absoluteY) })
+    case 0x7D: Instruction(address: 0x7D, name: "ADC", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.ADC(mode: .absoluteX) })
+    case 0x21: Instruction(address: 0x21, name: "AND", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.AND(mode: .indirectX) })
+    case 0x25: Instruction(address: 0x25, name: "AND", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.AND(mode: .zeroPage) })
+    case 0x29: Instruction(address: 0x29, name: "AND", cycles: 2, bytes: 2, mode: .immediate, fn: { self.AND(mode: .immediate) })
+    case 0x2D: Instruction(address: 0x2D, name: "AND", cycles: 4, bytes: 3, mode: .absolute, fn: { self.AND(mode: .absolute) })
+    case 0x31: Instruction(address: 0x31, name: "AND", cycles: 5, bytes: 2, mode: .indirectY, fn: { self.AND(mode: .indirectY) })
+    case 0x35: Instruction(address: 0x35, name: "AND", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.AND(mode: .zeroPageX) })
+    case 0x39: Instruction(address: 0x39, name: "AND", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.AND(mode: .absoluteY) })
+    case 0x3D: Instruction(address: 0x3D, name: "AND", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.AND(mode: .absoluteX) })
+    case 0x06: Instruction(address: 0x06, name: "ASL", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.ASL(mode: .zeroPage)})
+    case 0x0A: Instruction(address: 0x0A, name: "ASL", cycles: 2, bytes: 1, mode: .none, fn:{ self.ASL(mode: .accumulator)})
+    case 0x0E: Instruction(address: 0x0E, name: "ASL", cycles: 6, bytes: 3, mode: .absolute, fn: { self.ASL(mode: .absolute)})
+    case 0x16: Instruction(address: 0x16, name: "ASL", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.ASL(mode: .zeroPageX)})
+    case 0x1E: Instruction(address: 0x1E, name: "ASL", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.ASL(mode: .absoluteX)})
+    case 0x90: Instruction(address: 0x90, name: "BCC", cycles: 2, bytes: 2, mode: .none, fn: self.BCC)
+    case 0xB0: Instruction(address: 0xB0, name: "BCS", cycles: 2, bytes: 2, mode: .none, fn: self.BCS)
+    case 0xF0: Instruction(address: 0xF0, name: "BEQ", cycles: 2, bytes: 2, mode: .none, fn: self.BEQ)
+    case 0x24: Instruction(address: 0x24, name: "BIT", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.BIT(mode: .zeroPage)})
+    case 0x2C: Instruction(address: 0x2C, name: "BIT", cycles: 4, bytes: 3, mode: .absolute, fn: { self.BIT(mode: .absolute)})
+    case 0x30: Instruction(address: 0x30, name: "BMI", cycles: 2, bytes: 2, mode: .none, fn: self.BMI)
+    case 0xD0: Instruction(address: 0xD0, name: "BNE", cycles: 2, bytes: 2, mode: .none, fn: self.BNE)
+    case 0x10: Instruction(address: 0x10, name: "BPL", cycles: 2, bytes: 2, mode: .none, fn: self.BPL)
+    case 0x50: Instruction(address: 0x50, name: "BVC", cycles: 2, bytes: 2, mode: .none, fn: self.BVC)
+    case 0x70: Instruction(address: 0x70, name: "BVS", cycles: 2, bytes: 2, mode: .none, fn: self.BVS)
+    case 0x18: Instruction(address: 0x18, name: "CLC", cycles: 2, bytes: 1, mode: .none, fn: self.CLC)
+    case 0xD8: Instruction(address: 0xD8, name: "CLD", cycles: 2, bytes: 1, mode: .none, fn: self.CLD)
+    case 0x58: Instruction(address: 0x58, name: "CLI", cycles: 2, bytes: 1, mode: .none, fn: self.CLI)
+    case 0xB8: Instruction(address: 0xB8, name: "CLV", cycles: 2, bytes: 1, mode: .none, fn: self.CLV)
+    case 0xC1: Instruction(address: 0xC1, name: "CMP", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.CMP(mode: .indirectX)})
+    case 0xC5: Instruction(address: 0xC5, name: "CMP", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.CMP(mode: .zeroPage)})
+    case 0xC9: Instruction(address: 0xC9, name: "CMP", cycles: 2, bytes: 2, mode: .immediate, fn: { self.CMP(mode: .immediate)})
+    case 0xCD: Instruction(address: 0xCD, name: "CMP", cycles: 4, bytes: 3, mode: .absolute, fn: { self.CMP(mode: .absolute)})
+    case 0xD1: Instruction(address: 0xD1, name: "CMP", cycles: 5, bytes: 2, mode: .indirectY, fn: { self.CMP(mode: .indirectY)})
+    case 0xD5: Instruction(address: 0xD5, name: "CMP", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.CMP(mode: .zeroPageX)})
+    case 0xD9: Instruction(address: 0xD9, name: "CMP", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.CMP(mode: .absoluteY)})
+    case 0xDD: Instruction(address: 0xDD, name: "CMP", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.CMP(mode: .absoluteX)})
+    case 0xE0: Instruction(address: 0xE0, name: "CPX", cycles: 2, bytes: 2, mode: .immediate, fn: { self.CPX(mode: .immediate)})
+    case 0xE4: Instruction(address: 0xE4, name: "CPX", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.CPX(mode: .zeroPage)})
+    case 0xEC: Instruction(address: 0xEC, name: "CPX", cycles: 4, bytes: 3, mode: .absolute, fn: { self.CPX(mode: .absolute)})
+    case 0xC0: Instruction(address: 0xC0, name: "CPY", cycles: 2, bytes: 2, mode: .immediate, fn: { self.CPY(mode: .immediate)})
+    case 0xC4: Instruction(address: 0xC4, name: "CPY", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.CPY(mode: .zeroPage)})
+    case 0xCC: Instruction(address: 0xCC, name: "CPY", cycles: 4, bytes: 3, mode: .absolute, fn: { self.CPY(mode: .absolute)})
+    case 0xC6: Instruction(address: 0xC6, name: "DEC", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.DEC(mode: .zeroPage)})
+    case 0xCE: Instruction(address: 0xCE, name: "DEC", cycles: 6, bytes: 3, mode: .absolute, fn: { self.DEC(mode: .absolute)})
+    case 0xD6: Instruction(address: 0xD6, name: "DEC", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.DEC(mode: .zeroPageX)})
+    case 0xDE: Instruction(address: 0xDE, name: "DEC", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.DEC(mode: .absoluteX)})
+    case 0xCA: Instruction(address: 0xCA, name: "DEX", cycles: 2, bytes: 1, mode: .none, fn: self.DEX)
+    case 0x88: Instruction(address: 0x88, name: "DEY", cycles: 2, bytes: 1, mode: .none, fn: self.DEY)
+    case 0x41: Instruction(address: 0x41, name: "EOR", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.EOR(mode: .indirectX)})
+    case 0x45: Instruction(address: 0x45, name: "EOR", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.EOR(mode: .zeroPage)})
+    case 0x49: Instruction(address: 0x49, name: "EOR", cycles: 2, bytes: 2, mode: .immediate, fn: { self.EOR(mode: .immediate)})
+    case 0x4D: Instruction(address: 0x4D, name: "EOR", cycles: 4, bytes: 3, mode: .absolute, fn: { self.EOR(mode: .absolute)})
+    case 0x51: Instruction(address: 0x51, name: "EOR", cycles: 5, bytes: 2, mode: .indirectY, fn: { self.EOR(mode: .indirectY)})
+    case 0x55: Instruction(address: 0x55, name: "EOR", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.EOR(mode: .zeroPageX)})
+    case 0x59: Instruction(address: 0x59, name: "EOR", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.EOR(mode: .absoluteY)})
+    case 0x5D: Instruction(address: 0x5D, name: "EOR", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.EOR(mode: .absoluteX)})
+    case 0xE6: Instruction(address: 0xE6, name: "INC", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.INC(mode: .zeroPage)})
+    case 0xEE: Instruction(address: 0xEE, name: "INC", cycles: 6, bytes: 3, mode: .absolute, fn: { self.INC(mode: .absolute)})
+    case 0xF6: Instruction(address: 0xF6, name: "INC", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.INC(mode: .zeroPageX)})
+    case 0xFE: Instruction(address: 0xFE, name: "INC", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.INC(mode: .absoluteX)})
+    case 0xE8: Instruction(address: 0xE8, name: "INX", cycles: 2, bytes: 1, mode: .none, fn: self.INX)
+    case 0xC8: Instruction(address: 0xC8, name: "INY", cycles: 2, bytes: 1, mode: .none, fn: self.INY)
+    case 0x4C: Instruction(address: 0x4C, name: "JMP", cycles: 3, bytes: 3, mode: .none, fn: { self.JMP(mode: .absolute)})
+    case 0x6C: Instruction(address: 0x6C, name: "JMP", cycles: 5, bytes: 3, mode: .none, fn: { self.JMP(mode: .indirect)})
+    case 0x20: Instruction(address: 0x20, name: "JSR", cycles: 6, bytes: 3, mode: .none, fn: self.JSR)
+    case 0xA1: Instruction(address: 0xA1, name: "LDA", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.LDA(mode: .indirectX)})
+    case 0xA5: Instruction(address: 0xA5, name: "LDA", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.LDA(mode: .zeroPage)})
+    case 0xA9: Instruction(address: 0xA9, name: "LDA", cycles: 2, bytes: 2, mode: .immediate, fn: { self.LDA(mode: .immediate)})
+    case 0xAD: Instruction(address: 0xAD, name: "LDA", cycles: 4, bytes: 3, mode: .absolute, fn: { self.LDA(mode: .absolute)})
+    case 0xB1: Instruction(address: 0xB1, name: "LDA", cycles: 5, bytes: 2, mode: .indirectY, fn: { self.LDA(mode: .indirectY)})
+    case 0xB5: Instruction(address: 0xB5, name: "LDA", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.LDA(mode: .zeroPageX)})
+    case 0xB9: Instruction(address: 0xB9, name: "LDA", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.LDA(mode: .absoluteY)})
+    case 0xBD: Instruction(address: 0xBD, name: "LDA", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.LDA(mode: .absoluteX)})
+    case 0xA2: Instruction(address: 0xA2, name: "LDX", cycles: 2, bytes: 2, mode: .immediate, fn: { self.LDX(mode: .immediate)})
+    case 0xA6: Instruction(address: 0xA6, name: "LDX", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.LDX(mode: .zeroPage)})
+    case 0xAE: Instruction(address: 0xAE, name: "LDX", cycles: 4, bytes: 3, mode: .absolute, fn: { self.LDX(mode: .absolute)})
+    case 0xB6: Instruction(address: 0xB6, name: "LDX", cycles: 4, bytes: 2, mode: .zeroPageY, fn: { self.LDX(mode: .zeroPageY)})
+    case 0xBE: Instruction(address: 0xBE, name: "LDX", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.LDX(mode: .absoluteY)})
+    case 0xA0: Instruction(address: 0xA0, name: "LDY", cycles: 2, bytes: 2, mode: .immediate, fn: { self.LDY(mode: .immediate)})
+    case 0xA4: Instruction(address: 0xA4, name: "LDY", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.LDY(mode: .zeroPage)})
+    case 0xAC: Instruction(address: 0xAC, name: "LDY", cycles: 4, bytes: 3, mode: .absolute, fn: { self.LDY(mode: .absolute)})
+    case 0xB4: Instruction(address: 0xB4, name: "LDY", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.LDY(mode: .zeroPageX)})
+    case 0xBC: Instruction(address: 0xBC, name: "LDY", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.LDY(mode: .absoluteX)})
+    case 0x46: Instruction(address: 0x46, name: "LSR", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.LSR(mode: .zeroPage)})
+    case 0x4A: Instruction(address: 0x4A, name: "LSR", cycles: 2, bytes: 1, mode: .none, fn: { self.LSR(mode: .accumulator) })
+    case 0x4E: Instruction(address: 0x4E, name: "LSR", cycles: 6, bytes: 3, mode: .absolute, fn: { self.LSR(mode: .absolute)})
+    case 0x56: Instruction(address: 0x56, name: "LSR", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.LSR(mode: .zeroPageX)})
+    case 0x5E: Instruction(address: 0x5E, name: "LSR", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.LSR(mode: .absoluteX)})
+    case 0xEA: Instruction(address: 0xEA, name: "NOP", cycles: 2, bytes: 1, mode: .none, fn: self.NOP)
+    case 0x01: Instruction(address: 0x01, name: "ORA", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.ORA(mode: .indirectX)})
+    case 0x05: Instruction(address: 0x05, name: "ORA", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.ORA(mode: .zeroPage)})
+    case 0x09: Instruction(address: 0x09, name: "ORA", cycles: 2, bytes: 2, mode: .immediate, fn: { self.ORA(mode: .immediate)})
+    case 0x0D: Instruction(address: 0x0D, name: "ORA", cycles: 4, bytes: 3, mode: .absolute, fn: { self.ORA(mode: .absolute)})
+    case 0x11: Instruction(address: 0x11, name: "ORA", cycles: 5, bytes: 2, mode: .indirectY, fn: { self.ORA(mode: .indirectY)})
+    case 0x15: Instruction(address: 0x15, name: "ORA", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.ORA(mode: .zeroPageX)})
+    case 0x19: Instruction(address: 0x19, name: "ORA", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.ORA(mode: .absoluteY)})
+    case 0x1D: Instruction(address: 0x1D, name: "ORA", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.ORA(mode: .absoluteX)})
+    case 0x48: Instruction(address: 0x48, name: "PHA", cycles: 3, bytes: 1, mode: .none, fn: self.PHA)
+    case 0x08: Instruction(address: 0x08, name: "PHP", cycles: 3, bytes: 1, mode: .none, fn: self.PHP)
+    case 0x68: Instruction(address: 0x68, name: "PLA", cycles: 4, bytes: 1, mode: .none, fn: self.PLA)
+    case 0x28: Instruction(address: 0x28, name: "PLP", cycles: 4, bytes: 1, mode: .none, fn: self.PLP)
+    case 0x26: Instruction(address: 0x26, name: "ROL", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.ROL(mode: .zeroPage)})
+    case 0x2A: Instruction(address: 0x2A, name: "ROL", cycles: 2, bytes: 1, mode: .none, fn: { self.ROL(mode: .accumulator)})
+    case 0x2E: Instruction(address: 0x2E, name: "ROL", cycles: 6, bytes: 3, mode: .absolute, fn: { self.ROL(mode: .absolute)})
+    case 0x36: Instruction(address: 0x36, name: "ROL", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.ROL(mode: .zeroPageX)})
+    case 0x3E: Instruction(address: 0x3E, name: "ROL", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.ROL(mode: .absoluteX)})
+    case 0x66: Instruction(address: 0x66, name: "ROR", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.ROR(mode: .zeroPage)})
+    case 0x6A: Instruction(address: 0x6A, name: "ROR", cycles: 2, bytes: 1, mode: .none, fn: { self.ROR(mode: .accumulator)})
+    case 0x6E: Instruction(address: 0x6E, name: "ROR", cycles: 6, bytes: 3, mode: .absolute, fn: { self.ROR(mode: .absolute)})
+    case 0x76: Instruction(address: 0x76, name: "ROR", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.ROR(mode: .zeroPageX)})
+    case 0x7E: Instruction(address: 0x7E, name: "ROR", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.ROR(mode: .absoluteX)})
+    case 0x40: Instruction(address: 0x40, name: "RTI", cycles: 6, bytes: 1, mode: .none, fn: self.RTI)
+    case 0x60: Instruction(address: 0x60, name: "RTS", cycles: 6, bytes: 1, mode: .none, fn: self.RTS)
+    case 0xE1: Instruction(address: 0xE1, name: "SBC", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.SBC(mode: .indirectX)})
+    case 0xE5: Instruction(address: 0xE5, name: "SBC", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.SBC(mode: .zeroPage)})
+    case 0xE9: Instruction(address: 0xE9, name: "SBC", cycles: 2, bytes: 2, mode: .immediate, fn: { self.SBC(mode: .immediate)})
+    case 0xED: Instruction(address: 0xED, name: "SBC", cycles: 4, bytes: 3, mode: .absolute, fn: { self.SBC(mode: .absolute)})
+    case 0xF1: Instruction(address: 0xF1, name: "SBC", cycles: 5, bytes: 2, mode: .indirectY, fn: { self.SBC(mode: .indirectY)})
+    case 0xF5: Instruction(address: 0xF5, name: "SBC", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.SBC(mode: .zeroPageX)})
+    case 0xF9: Instruction(address: 0xF9, name: "SBC", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.SBC(mode: .absoluteY)})
+    case 0xFD: Instruction(address: 0xFD, name: "SBC", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.SBC(mode: .absoluteX)})
+    case 0x38: Instruction(address: 0x38, name: "SEC", cycles: 2, bytes: 1, mode: .none, fn: self.SEC)
+    case 0xF8: Instruction(address: 0xF8, name: "SED", cycles: 2, bytes: 1, mode: .none, fn: self.SED)
+    case 0x78: Instruction(address: 0x78, name: "SEI", cycles: 2, bytes: 1, mode: .none, fn: self.SEI)
+    case 0x85: Instruction(address: 0x85, name: "STA", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.STA(mode: .zeroPage)})
+    case 0x95: Instruction(address: 0x95, name: "STA", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.STA(mode: .zeroPageX)})
+    case 0x8D: Instruction(address: 0x8D, name: "STA", cycles: 4, bytes: 3, mode: .absolute, fn: { self.STA(mode: .absolute)})
+    case 0x9D: Instruction(address: 0x9D, name: "STA", cycles: 5, bytes: 3, mode: .absoluteX, fn: { self.STA(mode: .absoluteX)})
+    case 0x99: Instruction(address: 0x99, name: "STA", cycles: 5, bytes: 3, mode: .absoluteY, fn: { self.STA(mode: .absoluteY)})
+    case 0x81: Instruction(address: 0x81, name: "STA", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.STA(mode: .indirectX)})
+    case 0x91: Instruction(address: 0x91, name: "STA", cycles: 6, bytes: 2, mode: .indirectY, fn: { self.STA(mode: .indirectY)})
+    case 0x86: Instruction(address: 0x86, name: "STX", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.STX(mode: .zeroPage)})
+    case 0x8E: Instruction(address: 0x8E, name: "STX", cycles: 4, bytes: 3, mode: .absolute, fn: { self.STX(mode: .absolute)})
+    case 0x96: Instruction(address: 0x96, name: "STX", cycles: 4, bytes: 2, mode: .zeroPageY, fn: { self.STX(mode: .zeroPageY)})
+    case 0x84: Instruction(address: 0x84, name: "STY", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.STY(mode: .zeroPage)})
+    case 0x8C: Instruction(address: 0x8C, name: "STY", cycles: 4, bytes: 3, mode: .absolute, fn: { self.STY(mode: .absolute)})
+    case 0x94: Instruction(address: 0x94, name: "STY", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.STY(mode: .zeroPageX)})
+    case 0xAA: Instruction(address: 0xAA, name: "TAX", cycles: 2, bytes: 1, mode: .none, fn: self.TAX)
+    case 0xA8: Instruction(address: 0xA8, name: "TAY", cycles: 2, bytes: 1, mode: .none, fn: self.TAY)
+    case 0xBA: Instruction(address: 0xBA, name: "TSX", cycles: 2, bytes: 1, mode: .none, fn: self.TSX)
+    case 0x8A: Instruction(address: 0x8A, name: "TXA", cycles: 2, bytes: 1, mode: .none, fn: self.TXA)
+    case 0x9A: Instruction(address: 0x9A, name: "TXS", cycles: 2, bytes: 1, mode: .none, fn: self.TXS)
+    case 0x98: Instruction(address: 0x98, name: "TYA", cycles: 2, bytes: 1, mode: .none, fn: self.TYA)
+    case 0x0B: Instruction(address: 0x0B, name: "AAC", cycles: 2, bytes: 2, mode: .immediate, fn: { self.AAC(mode: .immediate)})
+    case 0x2B: Instruction(address: 0x2B, name: "AAC", cycles: 2, bytes: 2, mode: .immediate, fn: { self.AAC(mode: .immediate)})
+    case 0x87: Instruction(address: 0x87, name: "AAX", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.AAX(mode: .zeroPage)})
+    case 0x97: Instruction(address: 0x97, name: "AAX", cycles: 4, bytes: 2, mode: .zeroPageY, fn: { self.AAX(mode: .zeroPageY)})
+    case 0x83: Instruction(address: 0x83, name: "AAX", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.AAX(mode: .indirectX)})
+    case 0x8F: Instruction(address: 0x8F, name: "AAX", cycles: 4, bytes: 3, mode: .absolute, fn: { self.AAX(mode: .absolute)})
+    case 0x6B: Instruction(address: 0x6B, name: "ARR", cycles: 2, bytes: 2, mode: .immediate, fn: { self.ARR(mode: .immediate)})
+    case 0x4B: Instruction(address: 0x4B, name: "ASR", cycles: 2, bytes: 2, mode: .immediate, fn: { self.ASR(mode: .immediate)})
+    case 0xAB: Instruction(address: 0xAB, name: "ATX", cycles: 2, bytes: 2, mode: .immediate, fn: { self.ATX(mode: .immediate)})
+    case 0x9F: Instruction(address: 0x9F, name: "AXA", cycles: 5, bytes: 3, mode: .absoluteY, fn: { self.AXA(mode: .absoluteY)})
+    case 0x93: Instruction(address: 0x93, name: "AXA", cycles: 6, bytes: 2, mode: .indirectY, fn: { self.AXA(mode: .indirectY)})
+    case 0xCB: Instruction(address: 0xCB, name: "AXS", cycles: 2, bytes: 2, mode: .immediate, fn: { self.AXS(mode: .immediate)})
+    case 0xC7: Instruction(address: 0xC7, name: "DCP", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.DCP(mode: .zeroPage)})
+    case 0xD7: Instruction(address: 0xD7, name: "DCP", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.DCP(mode: .zeroPageX)})
+    case 0xCF: Instruction(address: 0xCF, name: "DCP", cycles: 6, bytes: 3, mode: .absolute, fn: { self.DCP(mode: .absolute)})
+    case 0xDF: Instruction(address: 0xDF, name: "DCP", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.DCP(mode: .absoluteX)})
+    case 0xDB: Instruction(address: 0xDB, name: "DCP", cycles: 7, bytes: 3, mode: .absoluteY, fn: { self.DCP(mode: .absoluteY)})
+    case 0xC3: Instruction(address: 0xC3, name: "DCP", cycles: 8, bytes: 2, mode: .indirectX, fn: { self.DCP(mode: .indirectX)})
+    case 0xD3: Instruction(address: 0xD3, name: "DCP", cycles: 8, bytes: 2, mode: .indirectY, fn: { self.DCP(mode: .indirectY)})
+    case 0x04: Instruction(address: 0x04, name: "DOP", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.DOP(mode: .zeroPage)})
+    case 0x14: Instruction(address: 0x14, name: "DOP", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.DOP(mode: .zeroPageX)})
+    case 0x34: Instruction(address: 0x34, name: "DOP", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.DOP(mode: .zeroPageX)})
+    case 0x44: Instruction(address: 0x44, name: "DOP", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.DOP(mode: .zeroPage)})
+    case 0x54: Instruction(address: 0x54, name: "DOP", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.DOP(mode: .zeroPageX)})
+    case 0x64: Instruction(address: 0x64, name: "DOP", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.DOP(mode: .zeroPage)})
+    case 0x74: Instruction(address: 0x74, name: "DOP", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.DOP(mode: .zeroPageX)})
+    case 0x80: Instruction(address: 0x80, name: "DOP", cycles: 2, bytes: 2, mode: .immediate, fn: { self.DOP(mode: .immediate)})
+    case 0x82: Instruction(address: 0x82, name: "DOP", cycles: 2, bytes: 2, mode: .immediate, fn: { self.DOP(mode: .immediate)})
+    case 0x89: Instruction(address: 0x89, name: "DOP", cycles: 2, bytes: 2, mode: .immediate, fn: { self.DOP(mode: .immediate)})
+    case 0xC2: Instruction(address: 0xC2, name: "DOP", cycles: 2, bytes: 2, mode: .immediate, fn: { self.DOP(mode: .immediate)})
+    case 0xD4: Instruction(address: 0xD4, name: "DOP", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.DOP(mode: .zeroPageX)})
+    case 0xE2: Instruction(address: 0xE2, name: "DOP", cycles: 2, bytes: 2, mode: .immediate, fn: { self.DOP(mode: .immediate)})
+    case 0xF4: Instruction(address: 0xF4, name: "DOP", cycles: 4, bytes: 2, mode: .zeroPageX, fn: { self.DOP(mode: .zeroPageX)})
+    case 0xE7: Instruction(address: 0xE7, name: "ISC", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.ISC(mode: .zeroPage)})
+    case 0xF7: Instruction(address: 0xF7, name: "ISC", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.ISC(mode: .zeroPageX)})
+    case 0xEF: Instruction(address: 0xEF, name: "ISC", cycles: 6, bytes: 3, mode: .absolute, fn: { self.ISC(mode: .absolute)})
+    case 0xFF: Instruction(address: 0xFF, name: "ISC", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.ISC(mode: .absoluteX)})
+    case 0xFB: Instruction(address: 0xFB, name: "ISC", cycles: 7, bytes: 3, mode: .absoluteY, fn: { self.ISC(mode: .absoluteY)})
+    case 0xE3: Instruction(address: 0xE3, name: "ISC", cycles: 8, bytes: 2, mode: .indirectX, fn: { self.ISC(mode: .indirectX)})
+    case 0xF3: Instruction(address: 0xF3, name: "ISC", cycles: 8, bytes: 2, mode: .indirectY, fn: { self.ISC(mode: .indirectY)})
+    case 0x02: Instruction(address: 0x02, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL)
+    case 0x12: Instruction(address: 0x12, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL)
+    case 0x22: Instruction(address: 0x22, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL)
+    case 0x32: Instruction(address: 0x32, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL)
+    case 0x42: Instruction(address: 0x42, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL)
+    case 0x52: Instruction(address: 0x52, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL)
+    case 0x62: Instruction(address: 0x62, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL)
+    case 0x72: Instruction(address: 0x72, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL)
+    case 0x92: Instruction(address: 0x92, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL)
+    case 0xB2: Instruction(address: 0xB2, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL)
+    case 0xD2: Instruction(address: 0xD2, name: "*nop", cycles: 1, bytes: 1, mode: .none, fn: self.KIL)
+    case 0xBB: Instruction(address: 0xBB, name: "LAR", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.LAR(mode: .absoluteY)})
+    case 0xA7: Instruction(address: 0xA7, name: "LAX", cycles: 3, bytes: 2, mode: .zeroPage, fn: { self.LAX(mode: .zeroPage)})
+    case 0xB7: Instruction(address: 0xB7, name: "LAX", cycles: 4, bytes: 2, mode: .zeroPageY, fn: { self.LAX(mode: .zeroPageY)})
+    case 0xAF: Instruction(address: 0xAF, name: "LAX", cycles: 4, bytes: 3, mode: .absolute, fn: { self.LAX(mode: .absolute)})
+    case 0xBF: Instruction(address: 0xBF, name: "LAX", cycles: 4, bytes: 3, mode: .absoluteY, fn: { self.LAX(mode: .absoluteY)})
+    case 0xA3: Instruction(address: 0xA3, name: "LAX", cycles: 6, bytes: 2, mode: .indirectX, fn: { self.LAX(mode: .indirectX)})
+    case 0xB3: Instruction(address: 0xB3, name: "LAX", cycles: 5, bytes: 2, mode: .indirectY, fn: { self.LAX(mode: .indirectY)})
+    case 0x1A: Instruction(address: 0x1A, name: "NOP", cycles: 2, bytes: 1, mode: .implied, fn: self.NOP)
+    case 0x3A: Instruction(address: 0x3A, name: "NOP", cycles: 2, bytes: 1, mode: .implied, fn: self.NOP)
+    case 0x5A: Instruction(address: 0x5A, name: "NOP", cycles: 2, bytes: 1, mode: .implied, fn: self.NOP)
+    case 0x7A: Instruction(address: 0x7A, name: "NOP", cycles: 2, bytes: 1, mode: .implied, fn: self.NOP)
+    case 0xDA: Instruction(address: 0xDA, name: "NOP", cycles: 2, bytes: 1, mode: .implied, fn: self.NOP)
+    case 0xFA: Instruction(address: 0xFA, name: "NOP", cycles: 2, bytes: 1, mode: .implied, fn: self.NOP)
+    case 0x27: Instruction(address: 0x27, name: "RLA", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.RLA(mode: .zeroPage)})
+    case 0x37: Instruction(address: 0x37, name: "RLA", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.RLA(mode: .zeroPageX)})
+    case 0x2F: Instruction(address: 0x2F, name: "RLA", cycles: 6, bytes: 3, mode: .absolute, fn: { self.RLA(mode: .absolute)})
+    case 0x3F: Instruction(address: 0x3F, name: "RLA", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.RLA(mode: .absoluteX)})
+    case 0x3B: Instruction(address: 0x3B, name: "RLA", cycles: 7, bytes: 3, mode: .absoluteY, fn: { self.RLA(mode: .absoluteY)})
+    case 0x23: Instruction(address: 0x23, name: "RLA", cycles: 8, bytes: 2, mode: .indirectX, fn: { self.RLA(mode: .indirectX)})
+    case 0x33: Instruction(address: 0x33, name: "RLA", cycles: 8, bytes: 2, mode: .indirectY, fn: { self.RLA(mode: .indirectY)})
+    case 0x67: Instruction(address: 0x67, name: "RRA", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.RRA(mode: .zeroPage)})
+    case 0x77: Instruction(address: 0x77, name: "RRA", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.RRA(mode: .zeroPageX)})
+    case 0x6F: Instruction(address: 0x6F, name: "RRA", cycles: 6, bytes: 3, mode: .absolute, fn: { self.RRA(mode: .absolute)})
+    case 0x7F: Instruction(address: 0x7F, name: "RRA", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.RRA(mode: .absoluteX)})
+    case 0x7B: Instruction(address: 0x7B, name: "RRA", cycles: 7, bytes: 3, mode: .absoluteY, fn: { self.RRA(mode: .absoluteY)})
+    case 0x63: Instruction(address: 0x63, name: "RRA", cycles: 8, bytes: 2, mode: .indirectX, fn: { self.RRA(mode: .indirectX)})
+    case 0x73: Instruction(address: 0x73, name: "RRA", cycles: 8, bytes: 2, mode: .indirectY, fn: { self.RRA(mode: .indirectY)})
+    case 0xEB: Instruction(address: 0xEB, name: "SBC", cycles: 2, bytes: 2, mode: .immediate, fn: { self.SBC(mode: .immediate)})
+    case 0x07: Instruction(address: 0x07, name: "SLO", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.SLO(mode: .zeroPage)})
+    case 0x17: Instruction(address: 0x17, name: "SLO", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.SLO(mode: .zeroPageX)})
+    case 0x0F: Instruction(address: 0x0F, name: "SLO", cycles: 6, bytes: 3, mode: .absolute, fn: { self.SLO(mode: .absolute)})
+    case 0x1F: Instruction(address: 0x1F, name: "SLO", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.SLO(mode: .absoluteX)})
+    case 0x1B: Instruction(address: 0x1B, name: "SLO", cycles: 7, bytes: 3, mode: .absoluteY, fn: { self.SLO(mode: .absoluteY)})
+    case 0x03: Instruction(address: 0x03, name: "SLO", cycles: 8, bytes: 2, mode: .indirectX, fn: { self.SLO(mode: .indirectX)})
+    case 0x13: Instruction(address: 0x13, name: "SLO", cycles: 8, bytes: 2, mode: .indirectY, fn: { self.SLO(mode: .indirectY)})
+    case 0x47: Instruction(address: 0x47, name: "SRE", cycles: 5, bytes: 2, mode: .zeroPage, fn: { self.SRE(mode: .zeroPage)})
+    case 0x57: Instruction(address: 0x57, name: "SRE", cycles: 6, bytes: 2, mode: .zeroPageX, fn: { self.SRE(mode: .zeroPageX)})
+    case 0x4F: Instruction(address: 0x4F, name: "SRE", cycles: 6, bytes: 3, mode: .absolute, fn: { self.SRE(mode: .absolute)})
+    case 0x5F: Instruction(address: 0x5F, name: "SRE", cycles: 7, bytes: 3, mode: .absoluteX, fn: { self.SRE(mode: .absoluteX)})
+    case 0x5B: Instruction(address: 0x5B, name: "SRE", cycles: 7, bytes: 3, mode: .absoluteY, fn: { self.SRE(mode: .absoluteY)})
+    case 0x43: Instruction(address: 0x43, name: "SRE", cycles: 8, bytes: 2, mode: .indirectX, fn: { self.SRE(mode: .indirectX)})
+    case 0x53: Instruction(address: 0x53, name: "SRE", cycles: 8, bytes: 2, mode: .indirectY, fn: { self.SRE(mode: .indirectY)})
+    case 0x9E: Instruction(address: 0x9E, name: "SXA", cycles: 5, bytes: 3, mode: .absoluteY, fn: { self.SXA(mode: .absoluteY)})
+    case 0x9C: Instruction(address: 0x9C, name: "SYA", cycles: 5, bytes: 3, mode: .absoluteX, fn: { self.SYA(mode: .absoluteX)})
+    case 0x0C: Instruction(address: 0x0C, name: "TOP", cycles: 4, bytes: 3, mode: .absolute, fn: { self.TOP(mode: .absolute)})
+    case 0x1C: Instruction(address: 0x1C, name: "TOP", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.TOP(mode: .absoluteX)})
+    case 0x3C: Instruction(address: 0x3C, name: "TOP", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.TOP(mode: .absoluteX)})
+    case 0x5C: Instruction(address: 0x5C, name: "TOP", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.TOP(mode: .absoluteX)})
+    case 0x7C: Instruction(address: 0x7C, name: "TOP", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.TOP(mode: .absoluteX)})
+    case 0xDC: Instruction(address: 0xDC, name: "TOP", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.TOP(mode: .absoluteX)})
+    case 0xFC: Instruction(address: 0xFC, name: "TOP", cycles: 4, bytes: 3, mode: .absoluteX, fn: { self.TOP(mode: .absoluteX)})
+    case 0x8B: Instruction(address: 0x8B, name: "XAA", cycles: 2, bytes: 2, mode: .immediate, fn: { self.XAA(mode: .immediate)})
+    default: fatalError("Unknown opcode: \(String(opcode, radix: 16))")
     }
-    
-    return instruction
   }
 }

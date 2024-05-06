@@ -131,31 +131,30 @@ final class CPU {
     switch mode {
     case .absolute, .none:
       return bus.readMem16(at: ptr)
+      
     case .accumulator:
       return UInt16(registers.A)
+      
     case .immediate:
       return ptr
+      
     case .zeroPage:
       return UInt16(bus.readMem(at: ptr))
+      
     case .zeroPageX, .zeroPageY:
       let data: UInt8 = bus.readMem(at: ptr)
       let index = mode == .zeroPageX ? registers.X : registers.Y
       let addr = data &+ index
       
-      return UInt16(data &+ index)
+      return UInt16(addr)
    
-    case .absoluteX:
+    case .absoluteX, .absoluteY:
       let data = bus.readMem16(at: ptr)
-      let offset16 = UInt16(registers.X)
+      let offset16 = UInt16(mode == .absoluteX ? registers.X : registers.Y)
       let addr = data &+ offset16
       return addr
       
-    case .absoluteY:
-      let data = bus.readMem16(at: ptr)
-      let offset16 = UInt16(registers.Y)
-      let addr = data &+ offset16
-      return addr
-   
+  
     case .indirectX:
       let storedAddress: UInt8 = readMem(at: ptr)
       let addr = storedAddress &+ registers.X
@@ -165,6 +164,7 @@ final class CPU {
       let ptr = (hi << 8) | lo
       
       return ptr
+      
     case .indirectY:
       let storedAddress = readMem(at: ptr)
       
