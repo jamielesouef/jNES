@@ -82,11 +82,6 @@ final class StateBuilder {
         memAdr,
         data
       )
-      
-      /*
-       LDA ($FF),Y = 0146 @ 0245 = 12
-       LDA ($FF),Y = 0046 @ 0145 = 00
-       */
     case .zeroPage:
       arg = String(format: "$%02X = %02X", memAdr, data)
       
@@ -111,13 +106,29 @@ final class StateBuilder {
     
     switch instruction.mode {
     case .none: 
-              arg = String(format: "$%04X", memAddr, cpu.readMem(at: address))
+      
+      if instruction.address == 0x6c {
+        var jumpAddr: UInt16!
+         if address & 0x00FF == 0x00FF {
+          let lo = cpu.readMem(at: address)
+          let hi = cpu.readMem(at: address & 0xFF00)
+           jumpAddr = (UInt16(hi) << 8) | UInt16(lo)
+        } else {
+          jumpAddr = cpu.readMem16(at: address)
+        }
+        
+        arg = String(format: "($%04X) = %04X", address, jumpAddr)
+        
+      } else {
+        arg = String(format: "$%04X", memAddr, cpu.readMem(at: address))
+        
+      }
     case .absolute:
 
         arg = String(format: "$%04X = %02X", memAddr, cpu.readMem(at: address))
       
-    case .absoluteX: arg = String(format: "$%04X,X @ %04X = %02X}", data, memAddr, 1231)
-    case .absoluteY: arg = String(format: "$%04X,Y @ %04X = %02X}", data, memAddr, 1231)
+    case .absoluteX: arg = String(format: "$%04X,X @ %04X = %02X", data, memAddr, 1231)
+    case .absoluteY: arg = String(format: "$%04X,Y @ %04X = %02X", data, memAddr, 1231)
   
     default: fatalError("Unexpected addressing mode \(instruction.mode) \(instruction.name)")
     }
