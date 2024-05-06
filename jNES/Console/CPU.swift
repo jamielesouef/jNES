@@ -139,24 +139,36 @@ final class CPU {
       return UInt16(bus.readMem(at: ptr))
     case .zeroPageX:
       let data: UInt8 = bus.readMem(at: ptr)
-      let addr = data.addingReportingOverflow(registers.X).partialValue
+      let addr = data &+ registers.X
       return UInt16(addr)
     case .zeroPageY:
       let data: UInt8 = bus.readMem(at: ptr)
-      let addr = data.addingReportingOverflow(registers.Y).partialValue
+      let addr = data &+ registers.Y
       return UInt16(addr)
     case .absoluteX:
       let data = bus.readMem16(at: ptr)
-      let addr = data.addingReportingOverflow(UInt16(registers.X)).partialValue
+      let addr = data &+ UInt16(registers.X)
       return addr
     case .absoluteY:
       let data = bus.readMem16(at: ptr)
-      let addr = data.addingReportingOverflow(UInt16(registers.Y)).partialValue
+      let addr = data &+ UInt16(registers.Y)
       return addr
     case .indirectX:
-      return indirectX()
+      let storedAddress: UInt8 = readMem(at: PC)
+      let addr = storedAddress &+ registers.X
+      
+      let lo = UInt16(readMem(at: UInt16(addr)))
+      let hi = UInt16(readMem(at: UInt16(addr &+ 1)))
+      let ptr = (hi << 8) | lo
+      return ptr
     case .indirectY:
-      return indirectY()
+      let storedAddress = UInt16(readMem(at: PC))
+      let lo: UInt8 = readMem(at: storedAddress)
+      let hi: UInt8 = readMem(at: storedAddress &+ 1)
+      let pointer = UInt16(hi) << 8 | UInt16(lo)
+      
+      return pointer &+ UInt16(registers.Y)
+      
     default: fatalError("Addressing mode: \(mode) not implemented")
     }
   }
@@ -204,24 +216,6 @@ final class CPU {
 }
 
 private extension CPU {
-  
-  func indirectX() -> UInt16 {
-    let storedAddress: UInt8 = readMem(at: PC)
-    let addr = storedAddress.addingReportingOverflow(registers.X).partialValue
-    
-    let lo = UInt16(readMem(at: UInt16(addr)))
-    let hi = UInt16(readMem(at: UInt16(addr.addingReportingOverflow(1).partialValue)))
-    let ptr = (hi << 8) | lo
-    return ptr
-  }
-  
-  func indirectY() -> UInt16 {
-    let storedAddress = UInt16(readMem(at: PC))
-    let lo: UInt8 = readMem(at: storedAddress)
-    let hi: UInt8 = readMem(at: storedAddress.addingReportingOverflow(1).partialValue)
-    let pointer = UInt16(hi) << 8 | UInt16(lo)
-    return pointer.addingReportingOverflow(UInt16(registers.Y)).partialValue
-  }
   // MARK: - Addressing mode
   
   func handle(controllerState state: UInt8) {
@@ -283,26 +277,16 @@ extension CPU {
     
     let result = value - data
     
-//    setNegativeFlag(result >> 7 == 1)
-//    setZeroFlag(result == 0)
-//    
-//    setCarryFlag(value >= data)
-    
-    
     setFlag(.negative, condition: ((result >> 7) & 0x1) == 1)
-            
-            // Set zero flag
     setFlag(.zero, condition: (result == 0))
-            
-            
     setFlag(.carry, condition: (value >= data))
-    
   }
   
   func setRegisterA(_ value: UInt8) {
     registers.set(.A, to: value)
-    setZeroFlag(value)
-    setNegativeFlag(value)
+    
+    setFlag(.negative, condition: (registers.A >> 7) == 1)
+    setFlag(.zero, condition: (registers.A == 0))
   }
   
   //MARK: - Set flag Functions

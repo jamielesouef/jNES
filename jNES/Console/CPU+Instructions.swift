@@ -287,45 +287,17 @@ extension CPU {
     let addr = getAddressForOpperate(with: .absolute, at: PC)
     setProgramCounter(addr)
   }
-  
-  // Load Accumulator
-  func LDA(mode: AddressingMode) {
-    let addr = getAddressForOpperate(with: mode, at: PC)
-    let data = readMem(at: addr)
     
-    setRegisterA(data)
-    
-  }
-  
-  // Load X Register
-  func LDX(mode: AddressingMode) {
-    let addr = getAddressForOpperate(with: mode, at: PC)
-    let data = readMem(at: addr)
-    registers.set(.X, to: data)
-    setZeroFlag(data)
-    setNegativeFlag(data)
-  }
-  
-  // Load Y Register
-  func LDY(mode: AddressingMode) {
-    let addr = getAddressForOpperate(with: mode, at: PC)
-    let data = readMem(at: addr)
-    registers.set(.Y, to: data)
-    setZeroFlag(data)
-    setNegativeFlag(data)
-  }
-  
   
   // Logical Shift Right
   
   private func LSR_Logic(_ data: inout UInt8) {
-    setCarryFlag((data & 0x1) == 1)
+    setFlag(.negative, condition: false)
+    setFlag(.carry, condition: (data & 0x1) == 1)
     
     data = (data >> 1) & 0x7F
-    
-    setNegativeFlag(false)
-    setZeroFlag(data)
-    setCarryFlag(data)
+              
+    setFlag(.zero, condition: (data == 0))
   }
   
   private func LSR_Accumulator() {
@@ -346,9 +318,10 @@ extension CPU {
   func LSR(mode: AddressingMode) {
     if mode == .accumulator {
       LSR_Accumulator()
-    } else {
-      LSR_Memory(mode: mode)
+      return
     }
+      
+    LSR_Memory(mode: mode)
   }
   
   // No Operation
@@ -372,7 +345,7 @@ extension CPU {
   
   // Push Processor Status
   func PHP() {
-    var p = registers.p | 1 << 4
+    let p = registers.p | 1 << 4
     
     stackPush(p)
   }
@@ -435,12 +408,15 @@ extension CPU {
   
   
   private func ROR_Logic(_ data: inout UInt8) {
-    data = (data >> 1) & 0x7F
-    data = data | (registers.isSet(.carry) ? 0x80:0)
+    let carry = data & 0x1
     
-    setZeroFlag(data)
-    setNegativeFlag(data)
-    setCarryFlag(data)
+    data = (data >> 1) & 0x7F
+    data = data | (registers.isSet(.carry) ? 0x80 : 0)
+    
+    
+    setFlag(.carry, condition: carry == 1)
+    setFlag(.zero, condition: (data == 0))
+    setFlag(.negative, condition: (data >> 7) & 0x1 == 1)
   }
   
   private func ROR_accumulator() {
@@ -456,7 +432,7 @@ extension CPU {
     
     let addr = getAddressForOpperate(with: mode, at: PC)
     var data = readMem(at: addr)
-    
+
     ROR_Logic(&data)
     
     writeMem(at: addr, value: data)
@@ -476,8 +452,9 @@ extension CPU {
   func RTI() {
     let programStatus = stackPop()
     let pc = stackPop16()
-    registers.clear(.b)
     registers.set(programStatus: programStatus)
+    registers.clear(.b)
+    registers.set(.b2)
     setProgramCounter(pc)
   }
   
@@ -518,6 +495,33 @@ extension CPU {
   // Set Interrupt Disable
   func SEI() {
     registers.set(.interrupt)
+  }
+  
+  // Load Accumulator
+  func LDA(mode: AddressingMode) {
+    let addr = getAddressForOpperate(with: mode, at: PC)
+    let data = readMem(at: addr)
+    
+    setRegisterA(data)
+    
+  }
+  
+  // Load X Register
+  func LDX(mode: AddressingMode) {
+    let addr = getAddressForOpperate(with: mode, at: PC)
+    let data = readMem(at: addr)
+    registers.set(.X, to: data)
+    setZeroFlag(data)
+    setNegativeFlag(data)
+  }
+  
+  // Load Y Register
+  func LDY(mode: AddressingMode) {
+    let addr = getAddressForOpperate(with: mode, at: PC)
+    let data = readMem(at: addr)
+    registers.set(.Y, to: data)
+    setZeroFlag(data)
+    setNegativeFlag(data)
   }
   
   // Store Accumulator
@@ -581,96 +585,96 @@ extension CPU {
   //MARK: - Illegal Opcodes
   
   func AAC(mode: AddressingMode) {
-    print("Illegal Opcode AAC")
+    fatalError("Opcode AAC not implimented")
     
   }
   
   func AAX(mode: AddressingMode) {
-    print("Illegal Opcode AAX")
+    fatalError("Opcode AAX not implimented")
   }
   
   func ARR(mode: AddressingMode) {
-    print("Illegal Opcode ASR")
+    fatalError("Opcode ASR not implimented")
   }
   
   func ASR(mode: AddressingMode) {
-    print("Illegal Opcode ASR")
+    fatalError("Opcode ASR not implimented")
   }
   
   func ATX(mode: AddressingMode) {
-    print("Illegal Opcode ATX")
+    fatalError("Opcode ATX not implimented")
   }
   
   func AXA(mode: AddressingMode) {
-    print("Illegal Opcode AXA")
+    fatalError("Opcode AXA not implimented")
   }
   
   func AXS(mode: AddressingMode) {
-    print("Illegal Opcode AXS")
+    fatalError("Opcode AXS not implimented")
   }
   
   func DCP(mode: AddressingMode) {
-    print("Illegal Opcode DCP")
+    fatalError("Opcode DCP not implimented")
   }
   
   func DOP(mode: AddressingMode) {
-    print("Illegal Opcode DOP")
+    fatalError("Opcode DOP not implimented")
   }
   
   func ISC(mode: AddressingMode) {
-    print("Illegal Opcode ISC")
+    fatalError("Opcode ISC not implimented")
   }
   
   func KIL() {
-    print("Illegal Opcode KIL")
+    fatalError("Opcode KIL not implimented")
   }
   
   func LAR(mode: AddressingMode) {
-    print("Illegal Opcode LAR")
+    fatalError("Opcode LAR not implimented")
   }
   
   func LAX(mode: AddressingMode) {
-    print("Illegal Opcode LAX")
+    fatalError("Opcode LAX not implimented")
   }
   
   func RLA(mode: AddressingMode) {
-    print("Illegal Opcode RLA")
+    fatalError("Opcode RLA not implimented")
   }
   
   func RLN(mode: AddressingMode) {
-    print("Illegal Opcode RLN")
+    fatalError("Opcode RLN not implimented")
   }
   
   func RRA(mode: AddressingMode) {
-    print("Illegal Opcode RRA")
+    fatalError("Opcode RRA not implimented")
   }
   
   func SLO(mode: AddressingMode) {
-    print("Illegal Opcode SLO")
+    fatalError("Opcode SLO not implimented")
   }
   
   func SRE(mode: AddressingMode) {
-    print("Illegal Opcode SRE")
+    fatalError("Opcode SRE not implimented")
   }
   
   func SXA(mode: AddressingMode) {
-    print("Illegal Opcode SXA")
+    fatalError("Opcode SXA not implimented")
   }
   
   func SYA(mode: AddressingMode) {
-    print("Illegal Opcode SYA")
+    fatalError("Opcode SYA not implimented")
   }
   
   func TOP(mode: AddressingMode) {
-    print("Illegal Opcode TOP")
+    fatalError("Opcode TOP not implimented")
   }
   
   func XAA(mode: AddressingMode) {
-    print("Illegal Opcode XAA")
+    fatalError("Opcode XAA not implimented")
   }
   
   func XAS(mode: AddressingMode) {
-    print("Illegal Opcode XAS")
+    fatalError("Opcode XAS not implimented")
   }
   
 }

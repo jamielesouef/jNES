@@ -30,7 +30,7 @@ final class StateBuilder {
     var instructionString: String!
     
     switch instruction.bytes {
-    case 1: instructionString = instruction.name
+    case 1: instructionString = buildSingleBiteInstruction()
     case 2: instructionString = buildTwoBitInstruction()
     case 3: instructionString = buildThreeBitInstruction()
     default: fatalError("Unhandled byte count")
@@ -48,34 +48,39 @@ final class StateBuilder {
     )
   }
   
+  private func buildSingleBiteInstruction() -> String {
+    switch instruction.address {
+    case 0x0a, 0x4a, 0x2a, 0x6a: return "\(instruction.name) A"
+    default: return instruction.name
+    }
+  }
+  
   private func buildTwoBitInstruction() -> String {
-    let (addr, value) = getAddressAndValue()
+    let (memAdr, data) = getAddressAndValue()
     
-    let rAddress: UInt8 = cpu.readMem(at: cpu.PC + 1);
+    let address: UInt8 = cpu.readMem(at: cpu.PC + 1);
     
     let arg = switch instruction.mode {
-    case .immediate : String(format: "#$%02X", value)
+    case .immediate : String(format: "#$%02X", data)
     case .indirectX:
       String(
         format: "($%02X,X) @ %02X = %04X = %02X",
         address,
-        address.addingReportingOverflow(
-          UInt16(cpu.registers.X)).partialValue,
-        addr,
-        value
+        address &+ cpu.registers.X,
+        memAdr,
+        data
       )
       
     case .indirectY:
       String(
-        format: "($%02X,X) @ %02X = %04X = %02X",
+        format: "($%02X,Y) @ %02X = %04X = %02X",
         address,
-        address.addingReportingOverflow(
-          UInt16(cpu.registers.Y)).partialValue,
-        addr,
-        value
+        address &+ cpu.registers.Y,
+        memAdr,
+        data
       )
-    case .zeroPage: String(format: "$%02X = %02X", addr, value)
-    case .none: String(format: "$%04X", (cpu.PC + 2).addingReportingOverflow(UInt16(rAddress)).partialValue)
+    case .zeroPage: String(format: "$%02X = %02X", memAdr, data)
+    case .none: String(format: "$%04X", (cpu.PC + 2) &+ UInt16(address))
     default: fatalError("Unexpected addressing mode \(instruction.mode) \(instruction.name)")
     }
     
@@ -84,19 +89,19 @@ final class StateBuilder {
   
   private func buildThreeBitInstruction() -> String {
     
-    let (addr, value) = getAddressAndValue()
+    let (memAddr, data) = getAddressAndValue()
     
     var arg: String = ""
     
     switch instruction.mode {
     case .none: 
-              arg = String(format: "$%04X", addr, cpu.readMem(at: addr))
+              arg = String(format: "$%04X", memAddr, cpu.readMem(at: memAddr))
     case .absolute:
 
-        arg = String(format: "$%04X = %02X", addr, cpu.readMem(at: addr))
+        arg = String(format: "$%04X = %02X", memAddr, cpu.readMem(at: memAddr))
       
-    case .absoluteX: arg = String(format: "$%04X,X @ %04X = %02X}", value, addr, 1231)
-    case .absoluteY: arg = String(format: "$%04X,Y @ %04X = %02X}", value, addr, 1231)
+    case .absoluteX: arg = String(format: "$%04X,X @ %04X = %02X}", data, memAddr, 1231)
+    case .absoluteY: arg = String(format: "$%04X,Y @ %04X = %02X}", data, memAddr, 1231)
   
     default: fatalError("Unexpected addressing mode \(instruction.mode) \(instruction.name)")
     }
@@ -108,6 +113,7 @@ final class StateBuilder {
     if instruction.mode == .implied || instruction.mode == .relative {
       return (0,0)
     }
+    
     let addr = cpu.getAddressForOpperate(with: instruction.mode, at: cpu.PC + 1)
     let mem = cpu.readMem(at: addr)
     return (addr, mem)
