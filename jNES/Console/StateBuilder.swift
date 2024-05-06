@@ -60,45 +60,50 @@ final class StateBuilder {
     
     let address: UInt8 = cpu.readMem(at: cpu.PC + 1);
     
-    let arg = switch instruction.mode {
-    case .immediate : String(format: "#$%02X", data)
-    case .indirectX:
-      String(
+    var arg: String!
+    
+    switch instruction.mode {
+    case .immediate :
+      arg = String(format: "#$%02X", data)
+    case .indirectX, .indirectY:
+      let index = instruction.mode == .indirectX ? cpu.registers.X : cpu.registers.Y
+      
+      arg = String(
         format: "($%02X,X) @ %02X = %04X = %02X",
         address,
-        address &+ cpu.registers.X,
+        address &+ index,
         memAdr,
         data
       )
       
-    case .indirectY:
-      String(
-        format: "($%02X,Y) @ %02X = %04X = %02X",
-        address,
-        address &+ cpu.registers.Y,
-        memAdr,
-        data
-      )
-    case .zeroPage: String(format: "$%02X = %02X", memAdr, data)
-    case .none: String(format: "$%04X", (cpu.PC + 2) &+ UInt16(address))
+    case .zeroPage: 
+      arg = String(format: "$%02X = %02X", memAdr, data)
+      
+    case .zeroPageX, .zeroPageY: 
+      let index = instruction.mode == .zeroPageX ? "X" : "Y"
+      arg = String(format:"$%02X,\(index) @ %02X = %02X",
+      address, index, memAdr, data)
+    case .none:
+      arg = String(format: "$%04X", (cpu.PC + 2) &+ UInt16(address))
     default: fatalError("Unexpected addressing mode \(instruction.mode) \(instruction.name)")
     }
     
-    return "\(instruction.name) \(arg)"
+    return "\(instruction.name) \(arg!)"
   }
   
   private func buildThreeBitInstruction() -> String {
     
+    let address = cpu.readMem16(at: cpu.PC + 1)
     let (memAddr, data) = getAddressAndValue()
     
     var arg: String = ""
     
     switch instruction.mode {
     case .none: 
-              arg = String(format: "$%04X", memAddr, cpu.readMem(at: memAddr))
+              arg = String(format: "$%04X", memAddr, cpu.readMem(at: address))
     case .absolute:
 
-        arg = String(format: "$%04X = %02X", memAddr, cpu.readMem(at: memAddr))
+        arg = String(format: "$%04X = %02X", memAddr, cpu.readMem(at: address))
       
     case .absoluteX: arg = String(format: "$%04X,X @ %04X = %02X}", data, memAddr, 1231)
     case .absoluteY: arg = String(format: "$%04X,Y @ %04X = %02X}", data, memAddr, 1231)
@@ -110,9 +115,9 @@ final class StateBuilder {
   }
   
   private func getAddressAndValue() -> (UInt16, UInt8) {
-    if instruction.mode == .implied || instruction.mode == .relative {
-      return (0,0)
-    }
+//    if instruction.mode == .implied || instruction.mode == .relative {
+//      return (0,0)
+//    }
     
     let addr = cpu.getAddressForOpperate(with: instruction.mode, at: cpu.PC + 1)
     let mem = cpu.readMem(at: addr)

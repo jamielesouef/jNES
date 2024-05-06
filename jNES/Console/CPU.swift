@@ -126,33 +126,30 @@ final class CPU {
     return PC
   }
   
-  func getAddressForOpperate(with mode: AddressingMode, at ptr: UInt16) -> UInt16 {
+  func getAddressForOpperate(with mode: AddressingMode, at pc: UInt16) -> UInt16 {
     
     switch mode {
     case .absolute, .none:
-      return bus.readMem16(at: ptr)
+      return bus.readMem16(at: pc)
     case .accumulator:
       return UInt16(registers.A)
     case .immediate:
-      return ptr
+      return pc
     case .zeroPage:
-      return UInt16(bus.readMem(at: ptr))
-    case .zeroPageX:
-      let data: UInt8 = bus.readMem(at: ptr)
-      let addr = data &+ registers.X
-      return UInt16(addr)
-    case .zeroPageY:
-      let data: UInt8 = bus.readMem(at: ptr)
-      let addr = data &+ registers.Y
-      return UInt16(addr)
-    case .absoluteX:
-      let data = bus.readMem16(at: ptr)
-      let addr = data &+ UInt16(registers.X)
+      return UInt16(bus.readMem(at: pc))
+    case .zeroPageX, .zeroPageY:
+      let data: UInt8 = bus.readMem(at: pc)
+      let index = mode == .zeroPageX ? registers.X : registers.Y
+      let addr = data &+ index
+      
+      return UInt16(bus.readMem(at: UInt16(addr)))
+   
+    case .absoluteX, .absoluteY:
+      let data = bus.readMem16(at: pc)
+      let index = mode == .absoluteX ? registers.X : registers.Y
+      let addr = data &+ UInt16(index)
       return addr
-    case .absoluteY:
-      let data = bus.readMem16(at: ptr)
-      let addr = data &+ UInt16(registers.Y)
-      return addr
+   
     case .indirectX:
       let storedAddress: UInt8 = readMem(at: PC)
       let addr = storedAddress &+ registers.X
@@ -187,7 +184,7 @@ final class CPU {
   }
   
   func writeMem16(at address: UInt16, value: UInt16) {
-    bus.writeMem16(at: address, value: value)
+    bus.writeMem16(at: address, data: value)
   }
   
   func stackPush(_ value: UInt8) {

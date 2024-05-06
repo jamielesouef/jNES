@@ -58,14 +58,6 @@ final class Bus {
     }
   }
   
-  func readMem16(at address: UInt16) -> UInt16 {
-    let lo = readMem(at: address)
-    let hi = readMem(at: address + 1)
-    
-    let ptr = UInt16(hi) << 8 | UInt16(lo)
-    return ptr
-  }
-  
   func writeMem(at address: UInt16, value: UInt8) {
     switch address {
     case 0x8000...0xFFFF: fatalError("Cannot write to ROM")
@@ -73,9 +65,19 @@ final class Bus {
     }
   }
   
-  func writeMem16(at address: UInt16, value: UInt16) {
-    let lo = UInt8(value & 0xFF)
-    let hi = UInt8(value >> 8)
+  func readMem16(at address: UInt16) -> UInt16 {
+    
+    let lo = UInt16(readMem(at: address))
+    let hi = UInt16(readMem(at: address + 1))
+    
+    let ptr = (hi << 8) | lo
+    return ptr
+  }
+  
+  
+  func writeMem16(at address: UInt16, data: UInt16) {
+    let hi = UInt8(data >> 8)
+    let lo = UInt8(data & 0xFF)
     
     self.writeMem(at: address, value: lo)
     self.writeMem(at: address + 1, value: hi)
