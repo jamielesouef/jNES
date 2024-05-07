@@ -63,11 +63,7 @@ final class CPU {
     }
   }
   
-  func run(callback: @escaping RunCallback) {
-    _run(callback: callback)
-  }
-  
-  private func _run(trace: Bool = false, callback: @escaping RunCallback) {
+ func run(trace: Bool = false, callback: @escaping RunCallback) {
     DispatchQueue.global().async { [weak self] in
       guard let self else { return }
       while loop {
@@ -265,7 +261,7 @@ extension CPU {
       if signedOffset >= 0 {
         targetAddress = pc &+ UInt16(signedOffset) + 1
       } else {
-        targetAddress = pc &- UInt16(abs(signedOffset)) + 1
+        targetAddress = pc &- UInt16(abs(signedOffset) + 10)
       }
       
       setProgramCounter(targetAddress)

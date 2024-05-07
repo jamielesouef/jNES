@@ -619,10 +619,6 @@ extension CPU {
     fatalError("Opcode DCP not implimented")
   }
   
-  func DOP(mode: AddressingMode) {
-    fatalError("Opcode DOP not implimented")
-  }
-  
   func ISC(mode: AddressingMode) {
     fatalError("Opcode ISC not implimented")
   }
@@ -668,7 +664,7 @@ extension CPU {
   }
   
   func TOP(mode: AddressingMode) {
-    fatalError("Opcode TOP not implimented")
+    return
   }
   
   func XAA(mode: AddressingMode) {
