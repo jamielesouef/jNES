@@ -140,15 +140,15 @@ extension NES: Controllable {
 extension NES.Color {
   var pixelData: PixelData {
     switch self {
-    case .black: return PixelData(r: 0, g: 0, b: 0, a: 255)
-    case .white: return PixelData(r: 255, g: 255, b: 255, a: 255)
-    case .grey: return PixelData(r: 128, g: 128, b: 128, a: 255)
-    case .red: return PixelData(r: 255, g: 0, b: 0, a: 255)
-    case .green: return PixelData(r: 0, g: 255, b: 0, a: 255)
-    case .blue: return PixelData(r: 0, g: 0, b: 255, a: 255)
-    case .magenta: return PixelData(r: 255, g: 0, b: 255, a: 255)
-    case .yellow: return PixelData(r: 255, g: 255, b: 0, a: 255)
-    case .cyan: return PixelData(r: 0, g: 255, b: 255, a: 255)
+    case .black: return PixelData(red: 0, green: 0, blue: 0, alpha: 255)
+    case .white: return PixelData(red: 255, green: 255, blue: 255, alpha: 255)
+    case .grey: return PixelData(red: 128, green: 128, blue: 128, alpha: 255)
+    case .red: return PixelData(red: 255, green: 0, blue: 0, alpha: 255)
+    case .green: return PixelData(red: 0, green: 255, blue: 0, alpha: 255)
+    case .blue: return PixelData(red: 0, green: 0, blue: 255, alpha: 255)
+    case .magenta: return PixelData(red: 255, green: 0, blue: 255, alpha: 255)
+    case .yellow: return PixelData(red: 255, green: 255, blue: 0, alpha: 255)
+    case .cyan: return PixelData(red: 0, green: 255, blue: 255, alpha: 255)
     }
   }
 }

@@ -1,0 +1,164 @@
+# Swiftlint configuration
+# Modified from Nautilus Swiftlint configuration
+#
+# See
+#   https://github.com/realm/SwiftLint
+#
+# Use the following to fix the issues if possible
+# > swiftlint autocorrect
+#
+# Learn about the rules here
+#   https://github.com/realm/SwiftLint/blob/master/Rules.md.
+#
+
+included:
+  - jNES
+
+excluded: # paths to ignore during linting. Takes precedence over `included`.
+  
+
+# whitelist_rules:
+ 
+# Custom configurations
+generic_type_name: # Type parameters can have descriptive names, but should attempt to be as succinct as possible.
+  max_length: 30
+
+large_tuple: # Don't user tuples with over 4 elements
+  - 5 # warning
+  - 5 # error
+
+nesting: # Types should be nested at most 2 level deep
+  type_level: 2
+
+line_length:
+   ignores_interpolated_strings: true
+   ignores_comments: true
+   ignores_urls: true
+
+# To be whitelisted
+#  - private_outlet
+#  - quick_discouraged_pending_test
+
+disabled_rules: # rule identifiers to exclude from running
+   - trailing_comma                             # Having the additional comma allows us to directly enter what we need
+   - type_name                                  # Underscore is used to separate the extension from the actual class/struct in tests
+#  - attributes                                 # Too many fails
+#  - closure_parameter_position                 # Too strict
+#  - conditional_returns_on_newline             # Too irritating
+#  - cyclomatic_complexity                      # One day I would like to have this
+#  - discarded_notification_center_observer     # No longer need as iOS 10 automatically dispose observer
+#  - discouraged_object_literal                 # Not sure why, but we are using #imageLiteral literals
+#  - discouraged_optional_boolean               # This maybe a good idea, but a bit late now
+#  - discouraged_optional_collection            # We're not going to prefer empty collection over optional collection
+#  - empty_count                                # RLMArray has no isEmpty
+#  - explicit_acl                               # Too irritating
+#  - explicit_enum_raw_value                    # Too irritating
+#  - explicit_top_level_acl                     # We are not building library for others, no need for our app
+#  - explicit_type_interface                    # Too irritating
+#  - file_length                                # Ideally, but no
+#  - force_cast                                 # Too irritating
+#  - force_try                                  # Too many fails
+#  - force_unwrapping                           # Too irritating
+#  - function_body_length                       # Not really practical
+#  - function_parameter_count                   # Not so useful
+   - identifier_name                            # Not so useful
+#  - implicit_return                            # Doesn't make things more readable
+#  - implicitly_unwrapped_optional              # There are valid use cases
+#  - line_length                                # Not really practical
+#  - literal_expression_end_indentation         # This prevents K&R style array and dictionary literals
+#  - lower_acl_than_parent                      # Too irritating
+#  - multiline_arguments                        # We lay arguments out for human readability, so this rule is too strict
+#  - multiline_parameters                       # Not really practical
+#  - nimble_operator                            # Not making test any easier to read
+#  - no_extension_access_modifier               # Not useful
+#  - no_grouping_extension                      # Not useful
+#  - notification_center_detachment             # Not useful
+#  - number_separator                           # Not useful
+#  - object_literal                             # Not useful
+#  - override_in_extension                      # There are only a couple in our code, and this seems a little pedantic
+#  - prefixed_toplevel_constant                 # Doesn't match our swift naming convention, we're not doing `k` prefix in swift
+#  - quick_discouraged_call                     # Not really practical
+#  - sorted_imports                             # Don't bother until Xcode supporting sorting automatically
+#  - strict_fileprivate                         # Not really practical
+#  - switch_case_on_newline                     # I like it that way
+#  - todo
+#  - trailing_closure                           # Not really practical
+#  - type_body_length                           # Not really practical
+#  - vertical_parameter_alignment               # Don't care
+#  - vertical_parameter_alignment_on_call       # Don't care
+#  - xctfail_message                            # Don't care
+#  - opening_brace                              # It is sometimes more readable to have the opening brace on the next line to clearly separate the two statements
+#  - closure_parameter_position                 # It is sometimes more readable to have the parameters on the next line
+#  - array_init
+#  - block_based_kvo
+#  - closing_brace
+#  - closure_end_indentation
+#  - closure_spacing
+#  - colon
+#  - comma
+#  - compiler_protocol_init
+#  - contains_over_first_not_nil
+#  - control_statement
+#  - custom_rules
+#  - discouraged_direct_init
+#  - dynamic_inline
+#  - empty_enum_arguments
+#  - empty_parameters
+#  - empty_parentheses_with_trailing_closure
+#  - empty_string
+#  - explicit_init
+#  - fallthrough
+#  - fatal_error_message
+#  - first_where
+#  - for_where
+#  - generic_type_name
+#  - implicit_getter
+#  - is_disjoint
+#  - joined_default_parameter
+#  - large_tuple
+#  - leading_whitespace
+#  - legacy_cggeometry_functions
+#  - legacy_constant
+#  - legacy_constructor
+#  - legacy_nsgeometry_functions
+#  - let_var_whitespace
+#  - mark
+#  - multiple_closures_with_trailing_closure
+#  - nesting
+#  - operator_usage_whitespace
+#  - operator_whitespace
+#  - overridden_super_call
+#  - pattern_matching_keywords
+#  - private_action
+#  - private_over_fileprivate
+#  - private_unit_test
+#  - protocol_property_accessors_order
+#  - quick_discouraged_focused_test
+#  - redundant_discardable_let
+#  - redundant_nil_coalescing
+#  - redundant_optional_initialization
+#  - redundant_string_enum_value
+#  - redundant_void_return
+#  - required_enum_case
+#  - return_arrow_whitespace
+#  - shorthand_operator
+#  - single_test_class
+#  - sorted_first_last
+#  - statement_position
+#  - superfluous_disable_command
+#  - switch_case_alignment
+#  - syntactic_sugar
+#  - trailing_newline
+#  - trailing_semicolon
+#  - trailing_whitespace
+#  - unneeded_break_in_switch
+#  - unneeded_parentheses_in_closure_argument
+#  - untyped_error_in_catch
+#  - unused_closure_parameter
+#  - unused_enumerated
+#  - unused_optional_binding
+#  - valid_ibinspectable
+#  - vertical_whitespace
+#  - void_return
+#  - yoda_condition
+#  - weak_delegate

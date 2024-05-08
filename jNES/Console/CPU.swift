@@ -33,9 +33,7 @@ final class CPU {
     case zeroPageY
   }
 
-  init(bus: Bus,
-       registers: Registers = Registers())
-  {
+  init(bus: Bus, registers: Registers = Registers()) {
     self.registers = registers
     self.bus = bus
   }

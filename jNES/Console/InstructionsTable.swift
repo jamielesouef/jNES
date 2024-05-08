@@ -10,6 +10,9 @@ struct Instruction {
 }
 
 extension CPU {
+  // swiftlint:disable cyclomatic_complexity
+  // swiftlint:disable function_body_length
+  // swiftlint:disable line_length
   func getInstructions(for opcode: UInt8) -> Instruction {
     return switch opcode {
     case 0x00: Instruction(address: 0x00, name: "BRK", cycles: 7, bytes: 1, mode: .none, fn: { self.BRK() })
@@ -247,3 +250,7 @@ extension CPU {
     }
   }
 }
+
+// swiftlint:enable cyclomatic_complexity
+// swiftlint:enable function_body_length
+// swiftlint:enable line_length

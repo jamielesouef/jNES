@@ -1,5 +1,6 @@
 import Foundation
 
+// swiftlint:disable file_length
 extension CPU {
   func ADC(mode: AddressingMode) {
     let addr = getAddressForOpperate(with: mode, at: PC)
@@ -309,8 +310,8 @@ extension CPU {
 
   func PLP() {
     registers.set(programStatus: stackPop())
-    registers.clear(.b)
-    registers.set(.b2)
+    registers.clear(.brk)
+    registers.set(.brk2)
   }
 
   private func ROL_logic(_ data: inout UInt8) {
@@ -318,7 +319,7 @@ extension CPU {
     setCarryFlag(carry == 1)
 
     data = data << 1
-    data = data + (registers.isSet(.carry) ? 1 : 0)
+    data += (registers.isSet(.carry) ? 1 : 0)
 
     setZeroFlag(data == 0)
     setNegativeFlag(data >> 7 == 1)
@@ -391,8 +392,8 @@ extension CPU {
     let programStatus = stackPop()
     let pc = stackPop16()
     registers.set(programStatus: programStatus)
-    registers.clear(.b)
-    registers.set(.b2)
+    registers.clear(.brk)
+    registers.set(.brk2)
     setProgramCounter(pc)
   }
 
@@ -615,3 +616,5 @@ extension CPU {
     writeMem(at: addr, value: result)
   }
 }
+
+// swiftlint:enable file_length

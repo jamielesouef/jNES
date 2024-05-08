@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct jNESApp: App {
+struct JNESApp: App {
   let console = try? NES()
   var body: some Scene {
     WindowGroup {
@@ -17,7 +17,6 @@ struct jNESApp: App {
         console?.reset()
         console?.cpu.setProgramCounter(0xC000)
         console?.cpu.run { _ in
-          0
         }
       }
     }

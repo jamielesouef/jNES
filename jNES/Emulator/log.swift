@@ -7,17 +7,17 @@
 
 import Foundation
 
-func log<T: BinaryInteger>(_ thing: T..., r: Int = 2) {
+func log<T: BinaryInteger>(_ thing: T..., radix: Int = 2) {
   #if DEBUG
     for item in thing {
-      log(String(item, radix: r))
+      log(String(item, radix: radix))
     }
   #endif
 }
 
-func log<T: BinaryInteger>(_ message: String, _ thing: T..., r: Int = 16, fn: String = #function) {
+func log<T: BinaryInteger>(_ message: String, _ thing: T..., radix: Int = 16, fn: String = #function) {
   #if DEBUG
-    log("\(fn): \(message) : " + thing.map { String($0, radix: r) }.joined(separator: " "))
+    log("\(fn): \(message) : " + thing.map { String($0, radix: radix) }.joined(separator: " "))
   #endif
 }
 

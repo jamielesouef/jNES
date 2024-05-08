@@ -24,8 +24,8 @@ class Registers {
     case zero
     case interrupt
     case decimal
-    case b
-    case b2
+    case brk
+    case brk2
     case overflow
     case negative
   }
@@ -84,8 +84,8 @@ extension Registers.StatusFlag {
     case .zero: 1 << 1
     case .interrupt: 1 << 2
     case .decimal: 1 << 3
-    case .b: 1 << 4
-    case .b2: 1 << 5
+    case .brk: 1 << 4
+    case .brk2: 1 << 5
     case .overflow: 1 << 6
     case .negative: 1 << 7
     }

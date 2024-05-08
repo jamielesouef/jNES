@@ -66,8 +66,8 @@ final class NesTest: XCTestCase {
     }
   }
 
-  func test(_: String, _ actual: String, _ expected: String, _: Int) {
-    let m = "\n xpt:\t \(expected)\n got:\t \(actual) (@\(line + 1) - \(addr))"
+  func test(_: String, _ actual: String, _ expected: String, _ line: Int) {
+    let m = "\n xpt:\t \(expected)\n got:\t \(actual) (@\(line + 1))"
     XCTAssertEqual(expected, actual, m)
   }
 }

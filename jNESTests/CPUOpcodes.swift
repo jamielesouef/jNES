@@ -8,7 +8,7 @@
 @testable import jNES
 import XCTest
 
-final class _6502_Opcodes: XCTestCase {
+final class CPUOpcodes: XCTestCase {
   var cpu: CPU!
 
   override func setUpWithError() throws {

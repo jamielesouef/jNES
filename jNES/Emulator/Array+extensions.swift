@@ -9,9 +9,9 @@ import Foundation
 
 extension Array where Element == UInt8 {
   subscript(range: Range<UInt16>) -> [UInt8].SubSequence {
-    let l = Int(range.lowerBound)
-    let u = Int(range.upperBound)
-    return self[l ..< u]
+    let lhs = Int(range.lowerBound)
+    let rhs = Int(range.upperBound)
+    return self[lhs ..< rhs]
   }
 
   subscript(index: UInt16) -> UInt8 {

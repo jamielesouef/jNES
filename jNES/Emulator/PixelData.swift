@@ -12,19 +12,19 @@ protocol ScreenPixelBufferAdapter {
 }
 
 struct PixelData {
-  var r: UInt8
-  var g: UInt8
-  var b: UInt8
-  var a: UInt8 = 255
+  var red: UInt8
+  var green: UInt8
+  var blue: UInt8
+  var alpha: UInt8 = 255
 }
 
 extension PixelData {
   static var black: PixelData {
-    return PixelData(r: 0, g: 0, b: 0, a: 255)
+    return PixelData(red: 0, green: 0, blue: 0)
   }
 
   func toHexString() -> String {
-    let r = UInt16(r) + UInt16(b) + UInt16(g)
-    return String(r, radix: 16)
+    let combined = UInt16(red) + UInt16(blue) + UInt16(green)
+    return String(combined, radix: 16)
   }
 }
