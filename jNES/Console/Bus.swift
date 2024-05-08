@@ -57,22 +57,6 @@ final class Bus {
     }
   }
 
-  func readMem16(at address: UInt16) -> UInt16 {
-    let lo = UInt16(readMem(at: address))
-    let hi = UInt16(readMem(at: address + 1))
-
-    let ptr = (hi << 8) | lo
-    return ptr
-  }
-
-  func writeMem16(at address: UInt16, data: UInt16) {
-    let hi = UInt8(data >> 8)
-    let lo = UInt8(data & 0xFF)
-
-    writeMem(at: address, value: lo)
-    writeMem(at: address + 1, value: hi)
-  }
-
   func stackPush(_ value: UInt8) {
     let sp = getStackPointer()
     let stackAddress = 0x0100 | UInt16(sp)
@@ -80,25 +64,10 @@ final class Bus {
     setStackPointer(sp - 1)
   }
 
-  func stackPush16(_ value: UInt16) {
-    let hi = UInt8(value >> 8)
-    let lo = UInt8(value & 0xFF)
-
-    stackPush(hi)
-    stackPush(lo)
-  }
-
   func stackPop() -> UInt8 {
     let sp = getStackPointer() + 1
     setStackPointer(sp)
     let value = readMem(at: 0x100 + UInt16(sp))
-    return value
-  }
-
-  func stackPop16() -> UInt16 {
-    let lo = UInt16(stackPop())
-    let hi = UInt16(stackPop())
-    let value = hi << 8 | lo
     return value
   }
 

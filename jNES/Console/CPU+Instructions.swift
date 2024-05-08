@@ -243,7 +243,13 @@ extension CPU {
   }
 
   func JSR() {
-    stackPush16(PC + 1)
+    let value = PC + 1
+    let hi = UInt8(value >> 8)
+    let lo = UInt8(value & 0xFF)
+
+    stackPush(hi)
+    stackPush(lo)
+
     let addr = getAddressForOpperate(with: .absolute, at: PC)
     setProgramCounter(addr)
   }
@@ -390,7 +396,11 @@ extension CPU {
 
   func RTI() {
     let programStatus = stackPop()
-    let pc = stackPop16()
+
+    let lo = UInt16(stackPop())
+    let hi = UInt16(stackPop())
+    let pc = hi << 8 | lo
+
     registers.set(programStatus: programStatus)
     registers.clear(.brk)
     registers.set(.brk2)
@@ -398,8 +408,11 @@ extension CPU {
   }
 
   func RTS() {
-    let returnAddress = stackPop16() + 1
-    setProgramCounter(returnAddress)
+    let lo = UInt16(stackPop())
+    let hi = UInt16(stackPop())
+    let address = hi << 8 | lo
+
+    setProgramCounter(address + 1)
   }
 
   func SBC(mode: AddressingMode) {

@@ -113,7 +113,7 @@ final class CPU {
   func getAddressForOpperate(with mode: AddressingMode, at ptr: UInt16) -> UInt16 {
     switch mode {
     case .absolute, .none:
-      return bus.readMem16(at: ptr)
+      return readMem16(at: ptr)
 
     case .accumulator:
       return UInt16(registers.A)
@@ -132,7 +132,7 @@ final class CPU {
       return UInt16(addr)
 
     case .absoluteX, .absoluteY:
-      let data = bus.readMem16(at: ptr)
+      let data = readMem16(at: ptr)
       let offset16 = UInt16(mode == .absoluteX ? registers.X : registers.Y)
       let addr = data &+ offset16
       return addr
@@ -170,27 +170,19 @@ final class CPU {
   }
 
   func readMem16(at address: UInt16) -> UInt16 {
-    bus.readMem16(at: address)
-  }
+    let lo = UInt16(bus.readMem(at: address))
+    let hi = UInt16(bus.readMem(at: address + 1))
 
-  func writeMem16(at address: UInt16, value: UInt16) {
-    bus.writeMem16(at: address, data: value)
+    let ptr = (hi << 8) | lo
+    return ptr
   }
 
   func stackPush(_ value: UInt8) {
     bus.stackPush(value)
   }
 
-  func stackPush16(_ value: UInt16) {
-    bus.stackPush16(value)
-  }
-
   func stackPop() -> UInt8 {
     bus.stackPop()
-  }
-
-  func stackPop16() -> UInt16 {
-    bus.stackPop16()
   }
 
   func setStackPointer(_ value: UInt8) {
