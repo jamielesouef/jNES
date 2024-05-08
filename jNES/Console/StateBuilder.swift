@@ -3,11 +3,11 @@ import Foundation
 struct StateBuilder {
   let cpu: CPU
   let instruction: Instruction
-  let address: UInt16
+  let instructionVector: [UInt16]
 
   func build() -> CPUState {
     let hex: String = (0 ..< instruction.bytes)
-      .map { cpu.readMem(at: address + UInt16($0)) }
+      .map { cpu.readMem(at: instructionVector[0] + UInt16($0)) }
       .map { String(format: "%02X", $0) }
       .joined(separator: " ")
 
@@ -21,7 +21,7 @@ struct StateBuilder {
     }
 
     return CPUState(
-      address: String(format: "%04X", address),
+      address: String(format: "%04X", instructionVector[0]),
       hexDump: hex,
       instruction: instructionString,
       registerA: String(format: "A:%02X", cpu.registers.A),
@@ -30,6 +30,12 @@ struct StateBuilder {
       status: String(format: "P:%02X", cpu.registers.p),
       stackPointer: String(format: "SP:%02X", cpu.bus.getStackPointer())
     )
+  }
+
+  private func getAddressAndValue() -> (UInt16, UInt8) {
+    let addr = cpu.getAddressForOpperate(with: instruction.mode, at: instructionVector[1])
+    let mem = cpu.readMem(at: addr)
+    return (addr, mem)
   }
 
   private func buildSingleBiteInstruction() -> String {
@@ -42,7 +48,7 @@ struct StateBuilder {
   private func buildTwoBitInstruction() -> String {
     let (memAdr, data) = getAddressAndValue()
 
-    let address: UInt8 = cpu.readMem(at: cpu.PC + 1)
+    let address: UInt8 = cpu.readMem(at: instructionVector[1])
 
     var arg: String!
 
@@ -94,7 +100,7 @@ struct StateBuilder {
   }
 
   private func buildThreeBitInstruction() -> String {
-    let address = cpu.getLittleEndianAddress(at: cpu.PC + 1)
+    let address = cpu.getLittleEndianAddress(at: instructionVector[1])
     let (memAddr, data) = getAddressAndValue()
 
     var arg = ""
@@ -135,15 +141,5 @@ struct StateBuilder {
     }
 
     return "\(instruction.name) \(arg)"
-  }
-
-  private func getAddressAndValue() -> (UInt16, UInt8) {
-//    if instruction.mode == .implied || instruction.mode == .relative {
-//      return (0,0)
-//    }
-
-    let addr = cpu.getAddressForOpperate(with: instruction.mode, at: cpu.PC + 1)
-    let mem = cpu.readMem(at: addr)
-    return (addr, mem)
   }
 }

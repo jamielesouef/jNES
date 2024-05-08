@@ -66,7 +66,8 @@ final class CPU {
     let instruction: Instruction = getInstructions(for: opcode)
 
     if buildState {
-      let state = StateBuilder(cpu: self, instruction: instruction, address: PC).build()
+      let vector = (0..<instruction.name.count).map { PC + UInt16($0) }
+      let state = StateBuilder(cpu: self, instruction: instruction, instructionVector: vector).build()
       callback(state)
     }
 
@@ -93,9 +94,14 @@ final class CPU {
     }
   }
 
+
   func stop() {
     loop = false
     reset()
+  }
+
+  func incrementProgramCounter(by value: UInt16 = 1) {
+    PC += value
   }
 
   func setProgramCounter(_ value: UInt16) {
