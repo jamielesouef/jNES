@@ -5,18 +5,17 @@
 //  Created by Jamie Le Souef on 9/4/2024.
 //
 
-import XCTest
 @testable import jNES
+import XCTest
 
 extension Registers.StatusFlag {
   static let all: [Registers.StatusFlag] = [.carry, .zero, .interrupt, .b, .overflow, .negative]
 }
 
 final class RegisteresSpec: XCTestCase {
-  
   var registers: Registers!
   let statusInitValue: UInt8 = 0x20
-  
+
   override func setUpWithError() throws {
     registers = Registers()
   }
@@ -29,7 +28,7 @@ final class RegisteresSpec: XCTestCase {
     registers.clear(.carry)
     XCTAssertFalse(registers.isSet(.carry))
   }
-  
+
   func testSettingInterupt() throws {
     registers.reset()
     XCTAssertTrue(registers.isSet(.interrupt))
@@ -38,7 +37,7 @@ final class RegisteresSpec: XCTestCase {
     registers.clear(.interrupt)
     XCTAssertFalse(registers.isSet(.interrupt))
   }
-  
+
   func testSettingDecimal() throws {
     registers.reset()
     XCTAssertFalse(registers.isSet(.decimal))
@@ -47,7 +46,7 @@ final class RegisteresSpec: XCTestCase {
     registers.clear(.decimal)
     XCTAssertFalse(registers.isSet(.decimal))
   }
-  
+
   func testSettingBreak() throws {
     registers.reset()
     XCTAssertFalse(registers.isSet(.b))
@@ -56,7 +55,7 @@ final class RegisteresSpec: XCTestCase {
     registers.clear(.b)
     XCTAssertFalse(registers.isSet(.b))
   }
-  
+
   func testSettingOverflow() throws {
     registers.reset()
     XCTAssertFalse(registers.isSet(.overflow))
@@ -65,7 +64,7 @@ final class RegisteresSpec: XCTestCase {
     registers.clear(.overflow)
     XCTAssertFalse(registers.isSet(.overflow))
   }
-  
+
   func testSettingNegative() throws {
     registers.reset()
     XCTAssertFalse(registers.isSet(.negative))
@@ -74,16 +73,16 @@ final class RegisteresSpec: XCTestCase {
     registers.clear(.negative)
     XCTAssertFalse(registers.isSet(.negative))
   }
-  
+
   func testSetMultipleFlags() throws {
     let expected: UInt8 = 0b1111_1101
     XCTAssertEqual(registers.p, expected)
     registers.set(.carry)
     registers.set(.zero)
     registers.set(.negative)
-    //0110_0011
+    // 0110_0011
     XCTAssertEqual(registers.p, 0xFF)
-    
+
     registers.clear(.carry)
     XCTAssertEqual(registers.p, 0b1111_1110)
     registers.clear(.zero)
@@ -91,9 +90,9 @@ final class RegisteresSpec: XCTestCase {
     registers.clear(.negative)
     XCTAssertEqual(registers.p, 0b0111_1100)
   }
-  
+
   func testFlagsIsSet() {
-    Registers.StatusFlag.all.forEach { flag in
+    for flag in Registers.StatusFlag.all {
       registers.set(flag)
       XCTAssertTrue(registers.isSet(flag))
     }

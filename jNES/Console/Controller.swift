@@ -19,47 +19,47 @@ protocol Controllable {
 }
 
 final class Controller: Controllable {
-  
-  private (set) var state: UInt8 = 0x00
-  
+  private(set) var state: UInt8 = 0x00
+
   func didReceiveButtonUp(keyCode: UInt16) {
     guard let validButton = getButton(for: keyCode) else { return }
     setState(with: validButton, isPressed: false)
   }
-  
+
   func didReceiveButtonDown(keyCode: UInt16) {
-    guard let validButton = getButton(for: keyCode), 
-            !isPressed(validButton) else {
+    guard let validButton = getButton(for: keyCode),
+          !isPressed(validButton)
+    else {
       return
     }
-    
+
     setState(with: validButton, isPressed: true)
   }
-  
+
   func didReceiveButtonUp(button: ControllerButton) {
     setState(with: button, isPressed: false)
     print("Button up: \(button)")
   }
-  
+
   func didReceiveButtonDown(button: ControllerButton) {
     setState(with: button, isPressed: true)
     print("Button down: \(button)")
   }
-  
+
   private func getButton(for keyCode: UInt16) -> ControllerButton? {
     ControllerButton(rawValue: keyCode)
   }
-  
+
   private func isPressed(_ button: ControllerButton) -> Bool {
     state & button.mask != 0
   }
-  
+
   private func setState(with button: ControllerButton, isPressed: Bool) {
-   if isPressed {
-     state |= button.mask
-   } else {
-     state &= ~button.mask
-   }
+    if isPressed {
+      state |= button.mask
+    } else {
+      state &= ~button.mask
+    }
   }
 }
 

@@ -16,7 +16,7 @@ struct jNESApp: App {
       Button("GO!") {
         console?.reset()
         console?.cpu.setProgramCounter(0xC000)
-        console?.cpu.run {_ in
+        console?.cpu.run { _ in
           0
         }
       }

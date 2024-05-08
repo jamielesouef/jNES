@@ -10,10 +10,10 @@ import SwiftUI
 struct DPadView: View {
   let buttonSize: CGFloat = 50
   let spacing: CGFloat = 10
-  
+
   let onUp: (ControllerButton) -> Void
   let onDown: (ControllerButton) -> Void
-  
+
   var body: some View {
     VStack(spacing: spacing) {
       buildButton(button: .up)
@@ -25,14 +25,14 @@ struct DPadView: View {
       buildButton(button: .down)
     }
   }
-  
+
   func buildbuttonSpacer() -> some View {
     Rectangle()
       .fill(Color.clear)
       .frame(width: buttonSize, height: buttonSize)
       .cornerRadius(10)
   }
-  
+
   func buildButton(button: ControllerButton) -> some View {
     Rectangle()
       .fill(Color.blue)
@@ -51,5 +51,5 @@ struct DPadView: View {
 }
 
 #Preview {
-  DPadView(onUp: {_ in}, onDown: {_ in})
+  DPadView(onUp: { _ in }, onDown: { _ in })
 }

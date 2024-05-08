@@ -13,18 +13,18 @@ struct ImageView: View {
   }
 }
 
-//struct ImageView: View {
+// struct ImageView: View {
 //    var pixelData: [[PixelData]]
-//    
+//
 //    var body: some View {
 //        VStack {
 //            Image(createUIImageFromPixelData(pixelData: pixelData)!)
 //              .resizable()
 //              .aspectRatio(contentMode: .fit)
-//                
+//
 //        }
 //    }
-//  
+//
 //    func updatedPixelData() -> [[PixelData]] {
 //        // Your logic to update pixel data buffer
 //        var pixelData: [[PixelData]] = []
@@ -38,11 +38,11 @@ struct ImageView: View {
 //        }
 //        return pixelData
 //    }
-//    
+//
 //    func createUIImageFromPixelData(pixelData: [[PixelData]]) -> UIImage? {
 //        let width = 32
 //        let height = 32
-//        
+//
 //        // Create a context with RGBA pixels
 //        guard let context = CGContext(data: nil,
 //                                      width: width,
@@ -53,7 +53,7 @@ struct ImageView: View {
 //                                      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else {
 //            return nil
 //        }
-//        
+//
 //        // Fill the context with pixel data
 //        guard let buffer = context.data else { return nil }
 //        let opaquePtr = buffer.bindMemory(to: PixelData.self, capacity: width * height)
@@ -62,21 +62,21 @@ struct ImageView: View {
 //                opaquePtr[y * width + x] = pixelData[y][x]
 //            }
 //        }
-//        
+//
 //        // Create CGImage from context
 //        guard let cgImage = context.makeImage() else { return nil }
-//        
+//
 //        // Create UIImage from CGImage
 //        return UIImage(cgImage: cgImage)
 //    }
-//}
+// }
 
 //
 //// Preview
-//#if DEBUG
-//struct ContentView_Previews: PreviewProvider {
+// #if DEBUG
+// struct ContentView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        ContentView()
 //    }
-//}
-//#endif
+// }
+// #endif

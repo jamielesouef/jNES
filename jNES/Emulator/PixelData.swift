@@ -22,7 +22,7 @@ extension PixelData {
   static var black: PixelData {
     return PixelData(r: 0, g: 0, b: 0, a: 255)
   }
-  
+
   func toHexString() -> String {
     let r = UInt16(r) + UInt16(b) + UInt16(g)
     return String(r, radix: 16)
