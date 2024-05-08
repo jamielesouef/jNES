@@ -106,7 +106,6 @@
 			children = (
 				E42A9E812BD9ED8100858AFC /* jNES */,
 				E42A9E922BD9ED8200858AFC /* jNESTests */,
-				E42A9E9C2BD9ED8200858AFC /* jNESUITests */,
 				E42A9E802BD9ED8100858AFC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -151,13 +150,6 @@
 				7006EF7B2BDF3C0900AF8681 /* RomSpec.swift */,
 			);
 			path = jNESTests;
-			sourceTree = "<group>";
-		};
-		E42A9E9C2BD9ED8200858AFC /* jNESUITests */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = jNESUITests;
 			sourceTree = "<group>";
 		};
 		E42A9EAC2BD9EDA500858AFC /* Console */ = {

@@ -1,10 +1,3 @@
-//
-//  6502.swift
-//  SwiftNES
-//
-//  Created by Jamie Le Souef on 8/4/2024.
-//
-
 import Foundation
 
 final class CPU {
@@ -252,20 +245,15 @@ extension CPU {
   func branch(when condition: Bool) {
     if condition {
       
-      let pc = PC
-      let data = readMem(at: pc)
-      let signedOffset = Int8(bitPattern: data)
+      let data = readMem(at: PC)
+     
+      let targetAddress = PC &+ (UInt16(data) ^ 0x80) &- 0x80
       
-      var targetAddress: UInt16
-      
-      if signedOffset >= 0 {
-        targetAddress = pc &+ UInt16(signedOffset) + 1
-      } else {
-        targetAddress = pc &- UInt16(abs(signedOffset) + 10)
-      }
-      
-      setProgramCounter(targetAddress)
-      
+      setProgramCounter(targetAddress &+ 1)
+      /*
+       xpt:   BNE $C70C
+       got:   BNE $C80C (@5071 - C72A)
+       */
     }
   }
   

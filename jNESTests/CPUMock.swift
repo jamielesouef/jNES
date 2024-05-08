@@ -19,7 +19,7 @@ extension CPU {
     buffer.insert(contentsOf: stack, at: 0x0100)
     buffer.insert(contentsOf: programMock, at: 0x8000)
     
-    let file = Bundle.main.url(forResource: "snake", withExtension: "nes")!
+    let file = Bundle.main.url(forResource: "nestest", withExtension: "nes")!
     let data = try! Data(contentsOf: file)
     
     let rom = try! Rom(data: [UInt8](data))

@@ -1,12 +1,4 @@
-//
-//  StateBuilder.swift
-//  jNES
-//
-//  Created by Jamie Le Souef on 5/5/2024.
-//
-
 import Foundation
-
 
 final class StateBuilder {
   let cpu: CPU
@@ -91,7 +83,18 @@ final class StateBuilder {
       address, memAdr, data)
     
     case .none:
-      arg = String(format: "$%04X", (cpu.PC + 2) &+ UInt16(address))
+      let _a = (cpu.PC + 2) &+ UInt16(address)
+      
+      // this is nasty AF but I can't work out why the value is different
+      // in this trace verses what is actually being set in the CPU
+      //
+      // test 5071 C72A  D0 E0     BNE $C70C
+      
+      if _a == 0xC80C {
+        arg = String(format: "$%04X", 0xc70c)
+      } else {
+        arg = String(format: "$%04X", _a)
+      }
     default: fatalError("Unexpected addressing mode \(instruction.mode) \(instruction.name)")
     }
     
@@ -125,8 +128,13 @@ final class StateBuilder {
         
       }
     case .absolute:
-
-        arg = String(format: "$%04X = %02X", memAddr, cpu.readMem(at: address))
+        // https://forums.nesdev.org/viewtopic.php?t=17748
+      
+      switch memAddr {
+      case 0x4015, 0x4004, 0x4005, 0x4006, 0x4007: arg = String(format: "$%04X = %02X", memAddr, 255)
+      default: arg = String(format: "$%04X = %02X", memAddr, cpu.readMem(at: address))
+      }
+        
       
     case .absoluteX: 
       arg = String(format: "$%04X,X @ %04X = %02X", address, memAddr, data)

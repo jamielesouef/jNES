@@ -55,7 +55,7 @@ final class NesTest: XCTestCase {
     for i in 0..<exptectedNesTestResult.count {
       var r: CPUState!
       let e = exptectedNesTestResult[i]
-      print(e.address)
+      print(i, e.address)
       cpu.__tick_with_trace { r = $0 }
       
       test(e.address, r.address, e.address, i)
@@ -70,7 +70,8 @@ final class NesTest: XCTestCase {
   }
   
   func test(_ addr: String, _ actual: String, _ expected: String, _ line: Int) {
-    let m = "\n xpt:\t \(expected)\n got:\t \(actual) (@\(line + 1) - \(addr))"
-    XCTAssertEqual(expected, actual, m)
+//    let m = "\n xpt:\t \(expected)\n got:\t \(actual) (@\(line + 1) - \(addr))"
+//    XCTAssertEqual(expected, actual, m)
+    XCTAssertEqual(expected, actual)
   }
 }

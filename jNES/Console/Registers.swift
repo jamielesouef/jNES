@@ -1,10 +1,3 @@
-//
-//  Registers.swift
-//  SwiftNES
-//
-//  Created by Jamie Le Souef on 9/4/2024.
-//
-
 import Foundation
 
 class Registers {

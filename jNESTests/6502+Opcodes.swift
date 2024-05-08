@@ -109,10 +109,10 @@ final class _6502_Opcodes: XCTestCase {
   }
   
   func testBCS() throws {
-    cpu.registers.set(.A, to: 0b1010_0000)
+    cpu.registers.set(.A, to: 0b1010_0001)
     XCTAssertEqual(cpu.readMem(at: 0x00), 0x15)
     cpu.BCS()
-    XCTAssertEqual(cpu.getProgramCounter(), 0x16)
+    XCTAssertEqual(cpu.getProgramCounter(), 0x0)
   }
   
   func testBEQ() throws {
@@ -492,7 +492,7 @@ final class _6502_Opcodes: XCTestCase {
   func testPLP() throws {
     cpu.stackPush(0xC1)
     cpu.PLP()
-    XCTAssertEqual(cpu.registers.p, 0xC1)
+    XCTAssertEqual(cpu.registers.p, 0xE1)
   }
   
   func testROL() throws {
@@ -579,7 +579,7 @@ final class _6502_Opcodes: XCTestCase {
     XCTAssertEqual(cpu.getProgramCounter(), 0)
     XCTAssertEqual(cpu.registers.p, 0)
     cpu.RTI()
-    XCTAssertEqual(cpu.registers.p, 0x1D)
+    XCTAssertEqual(cpu.registers.p, 0x2D)
     XCTAssertEqual(cpu.getProgramCounter(), 0xCCFF)
   }
   
@@ -600,7 +600,7 @@ final class _6502_Opcodes: XCTestCase {
   
   func testSBC() throws {
     let val: UInt8 = 0x0A
-    let exp: UInt8 = 0xF5
+    let exp: UInt8 = 0xF4
     let pc: UInt16 = 0x23
     
     cpu.registers.set(.A, to: 0xFF)

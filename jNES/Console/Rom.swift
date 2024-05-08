@@ -1,12 +1,4 @@
-//
-//  rom.swift
-//  SwiftNES
-//
-//  Created by Jamie Le Souef on 19/4/2024.
-//
-
 import Foundation
-
 
 /*
  

@@ -1,10 +1,3 @@
-//
-//  CPU+Instructions.swift
-//  jNES
-//
-//  Created by Jamie Le Souef on 3/5/2024.
-//
-
 import Foundation
 
 extension CPU {
@@ -73,17 +66,15 @@ extension CPU {
     ASL_memory(mode: mode)
     
   }
-  // Branch if Carry Clear
+  
   func BCC() {
     branch(when: !registers.isSet(.carry))
   }
   
-  // Branch if Carry Set
   func BCS() {
     branch(when: registers.isSet(.carry))
   }
   
-  // Branch if Equal
   func BEQ() {
     branch(when: registers.isSet(.zero))
   }
@@ -99,10 +90,8 @@ extension CPU {
     setFlag(.negative, condition: (data >> 7) == 1)
     setFlag(.overflow, condition: ((data >> 6) & 0x1) == 1)
     setFlag(.zero, condition: (result == 0))
-    
   }
   
-  // Branch if negative
   func BMI() {
     branch(when: registers.isSet(.negative))
   }
@@ -115,7 +104,6 @@ extension CPU {
     branch(when: !registers.isSet(.negative))
   }
   
-  // Break
   func BRK() {
     //
     //    let vector = readMem16(at: 0xFFFE)
@@ -127,52 +115,42 @@ extension CPU {
     return
   }
   
-  // Branch if Overflow Clear
   func BVC() {
     branch(when: !registers.isSet(.overflow))
   }
   
-  // Branch if Overflow Set
   func BVS() {
     branch(when: registers.isSet(.overflow))
   }
   
-  // Clear Carry Flag
   func CLC() {
     setCarryFlag(false)
   }
   
-  // Clear Decimal Mode
   func CLD() {
     registers.clear(.decimal)
   }
   
-  // Clear Interrupt Disable
   func CLI() {
     registers.clear(.interrupt)
   }
   
-  // Clear Overflow Flag
   func CLV() {
     setOverflowFlag(false)
   }
   
-  // Compare Accumulator
   func CMP(mode: AddressingMode) {
     compare(against: registers.A, mode: mode)
   }
   
-  // Compare X Register
   func CPX(mode: AddressingMode) {
     compare(against: registers.X, mode: mode)
   }
   
-  // Compare Y Register
   func CPY(mode: AddressingMode) {
     compare(against: registers.Y, mode: mode)
   }
   
-  // Decrement Memory
   
   private func decrement(_ value: UInt8) -> UInt8 {
     let result = UInt8((Int(value) - 1) & 0xFF)
@@ -191,17 +169,14 @@ extension CPU {
     
   }
   
-  // Decrement X Register
   func DEX() {
     registers.set(.X, to: decrement(registers.X))
   }
   
-  // Decrement Y Register
   func DEY() {
     registers.set(.Y, to: decrement(registers.Y))
   }
   
-  // Exclusive OR
   func EOR(mode: AddressingMode) {
     let addr = getAddressForOpperate(with: mode, at: PC)
     let data = readMem(at: addr)
@@ -210,7 +185,6 @@ extension CPU {
     setRegisterA(result)
   }
   
-  // Increment Memory
   func INC(mode: AddressingMode) {
     let addr = getAddressForOpperate(with: mode, at: PC)
     let data = Int(readMem(at: addr)) + 1
@@ -221,7 +195,6 @@ extension CPU {
     writeMem(at: addr, value: UInt8(data & 0xFF))
   }
   
-  // Increment X Register
   func INX() {
     let data = Int(registers.X) + 1
     
@@ -231,7 +204,6 @@ extension CPU {
     registers.set(.X, to: UInt8(data & 0xFF))
   }
   
-  // Increment Y Register
   func INY() {
     let data = Int(registers.Y) + 1
     
@@ -280,23 +252,18 @@ extension CPU {
     }
   }
   
-  
-  // Jump to Subroutine
   func JSR() {
     stackPush16(PC + 1)
     let addr = getAddressForOpperate(with: .absolute, at: PC)
     setProgramCounter(addr)
   }
-    
-  
-  // Logical Shift Right
   
   private func LSR_Logic(_ data: inout UInt8) {
     setFlag(.negative, condition: false)
     setFlag(.carry, condition: (data & 0x1) == 1)
     
     data = (data >> 1) & 0x7F
-              
+    
     setFlag(.zero, condition: (data == 0))
   }
   
@@ -320,16 +287,14 @@ extension CPU {
       LSR_Accumulator()
       return
     }
-      
+    
     LSR_Memory(mode: mode)
   }
   
-  // No Operation
   func NOP() {
     // NOP
   }
   
-  // Logical Inclusive OR
   func ORA(mode: AddressingMode) {
     let addr = getAddressForOpperate(with: mode, at: PC)
     let data = readMem(at: addr)
@@ -338,25 +303,21 @@ extension CPU {
     setRegisterA(result)
   }
   
-  // Push Accumulator
   func PHA() {
     stackPush(registers.A)
   }
   
-  // Push Processor Status
   func PHP() {
     let p = registers.p | 1 << 4
     
     stackPush(p)
   }
   
-  // Pull Accumulator
   func PLA() {
     let result = stackPop()
     setRegisterA(result)
   }
   
-  // Pull Processor Status
   func PLP() {
     registers.set(programStatus: stackPop())
     registers.clear(.b)
@@ -383,7 +344,6 @@ extension CPU {
     registers.set(.A, to: data)
   }
   
-  // Rotate Left
   private func ROL_memory(mode: AddressingMode) {
     let addr = getAddressForOpperate(with: mode, at: PC)
     var data = readMem(at: addr)
@@ -394,7 +354,6 @@ extension CPU {
   }
   
   
-  // Rotate Left
   func ROL(mode: AddressingMode) {
     if mode == .accumulator {
       ROL_accumulator()
@@ -404,7 +363,6 @@ extension CPU {
     ROL_memory(mode: mode)
   }
   
-  // Rotate Right
   
   
   private func ROR_Logic(_ data: inout UInt8) {
@@ -432,7 +390,7 @@ extension CPU {
     
     let addr = getAddressForOpperate(with: mode, at: PC)
     var data = readMem(at: addr)
-
+    
     ROR_Logic(&data)
     
     writeMem(at: addr, value: data)
@@ -448,7 +406,6 @@ extension CPU {
   }
   
   
-  // Return from interrupt
   func RTI() {
     let programStatus = stackPop()
     let pc = stackPop16()
@@ -458,14 +415,12 @@ extension CPU {
     setProgramCounter(pc)
   }
   
-  // Return from Subroutine
   func RTS() {
     
     let returnAddress = stackPop16() + 1
     setProgramCounter(returnAddress)
   }
   
-  // Subtract with Carry
   func SBC(mode: AddressingMode) {
     let addr = getAddressForOpperate(with: mode, at: PC)
     let data = readMem(at: addr)
@@ -481,23 +436,19 @@ extension CPU {
     
   }
   
-  // Set Carry Flag
   func SEC() {
     registers.set(.carry)
   }
   
   
-  // Set Decimal Flag
   func SED() {
     registers.set(.decimal)
   }
   
-  // Set Interrupt Disable
   func SEI() {
     registers.set(.interrupt)
   }
   
-  // Load Accumulator
   func LDA(mode: AddressingMode) {
     
     let addr = getAddressForOpperate(with: mode, at: PC)
@@ -507,7 +458,6 @@ extension CPU {
     
   }
   
-  // Load X Register
   func LDX(mode: AddressingMode) {
     let addr = getAddressForOpperate(with: mode, at: PC)
     let data = readMem(at: addr)
@@ -516,7 +466,6 @@ extension CPU {
     setNegativeFlag(data)
   }
   
-  // Load Y Register
   func LDY(mode: AddressingMode) {
     let addr = getAddressForOpperate(with: mode, at: PC)
     let data = readMem(at: addr)
@@ -526,39 +475,33 @@ extension CPU {
     setFlag(.zero, condition: (data == 0))
   }
   
-  // Store Accumulator
   func STA(mode: AddressingMode) {
     let address = getAddressForOpperate(with: mode, at: PC)
     writeMem(at: address, value: registers.A)
   }
   
-  // Store X Register
   func STX(mode: AddressingMode) {
     let address = getAddressForOpperate(with: mode, at: PC)
     writeMem(at: address, value: registers.X)
   }
   
-  // Store Y Register
   func STY(mode: AddressingMode) {
     let address = getAddressForOpperate(with: mode, at: PC)
     writeMem(at: address, value: registers.Y)
   }
   
-  // Transfer Accumulator to X
   func TAX() {
     registers.set(.X, to: registers.A)
     setZeroFlag(registers.X)
     setNegativeFlag(registers.X)
   }
   
-  // Transfer Accumulator to Y
   func TAY() {
     registers.set(.Y, to: registers.A)
     setZeroFlag(registers.Y)
     setNegativeFlag(registers.Y)
   }
   
-  // Transfer Stack Pointer to X
   func TSX() {
     registers.set(.X, to: getStackPointer())
     setZeroFlag(registers.X)
@@ -572,108 +515,137 @@ extension CPU {
     setNegativeFlag(registers.X)
   }
   
-  // Transfer X to Stack Pointer
   func TXS() {
     setStackPointer(registers.X)
-//    setZeroFlag(registers.X)
-//    setNegativeFlag(registers.X)
   }
   
-  //Transfer Y to Accumulator
+  
   func TYA() {
     setRegisterA(registers.Y)
   }
   
   //MARK: - Illegal Opcodes
   
-  func AAC(mode: AddressingMode) {
-    fatalError("Opcode AAC not implimented")
-    
-  }
-  
-  func AAX(mode: AddressingMode) {
-    fatalError("Opcode AAX not implimented")
-  }
-  
-  func ARR(mode: AddressingMode) {
-    fatalError("Opcode ASR not implimented")
-  }
-  
-  func ASR(mode: AddressingMode) {
-    fatalError("Opcode ASR not implimented")
-  }
-  
-  func ATX(mode: AddressingMode) {
-    fatalError("Opcode ATX not implimented")
-  }
-  
-  func AXA(mode: AddressingMode) {
-    fatalError("Opcode AXA not implimented")
-  }
-  
-  func AXS(mode: AddressingMode) {
-    fatalError("Opcode AXS not implimented")
+  func SAX(mode: AddressingMode) {
+    let result = registers.A & registers.X
+    writeMem(at: getAddressForOpperate(with: mode, at: PC), value: result)
   }
   
   func DCP(mode: AddressingMode) {
-    fatalError("Opcode DCP not implimented")
+    let addr = getAddressForOpperate(with: mode, at: PC)
+    var data = Int(readMem(at: addr))
+    data -= 1
+    
+    let result = Int(registers.A) - Int(data)
+    
+    setFlag(.negative, condition: ((result >> 7) & 0x1) == 1)
+    setFlag(.zero, condition: (result & 0xFF) == 0)
+    setFlag(.carry, condition: registers.A >= data)
+    
+    writeMem(at: addr, value: UInt8(data & 0xFF))
+    
   }
   
-  func ISC(mode: AddressingMode) {
-    fatalError("Opcode ISC not implimented")
-  }
-  
-  func KIL() {
-    fatalError("Opcode KIL not implimented")
-  }
-  
-  func LAR(mode: AddressingMode) {
-    fatalError("Opcode LAR not implimented")
+  func ISB(mode: AddressingMode) {
+    let addr = getAddressForOpperate(with: mode, at: PC)
+    var data = Int(readMem(at: addr))
+    
+    data += 1
+    
+    let a = Int(registers.A) &- Int(data & 0xFF) &- (registers.isSet(.carry) ? 0 : 1)
+    
+    
+    setFlag(.carry, condition: a >= 0)
+    setFlag(.zero, condition: a == 0)
+    setFlag(.negative, condition: ((a >> 7) & 0xF) == 1)
+    
+    setFlag(.overflow, condition: ((registers.A ^ UInt8(data & 0x80)) & (registers.A ^ UInt8(a & 0xFF)) & 0x80) == 0x80)
+    
+    registers.set(.A, to: UInt8(a & 0xFF))
+    writeMem(at: addr, value: UInt8(data & 0xFF))
+    
   }
   
   func LAX(mode: AddressingMode) {
-    fatalError("Opcode LAX not implimented")
+    let addr = getAddressForOpperate(with: mode, at: PC)
+    let data = readMem(at: addr)
+    registers.set(.A, to: data)
+    registers.set(.X, to: data)
+    
+    setZeroFlag(data)
+    setNegativeFlag(data)
+    
   }
   
   func RLA(mode: AddressingMode) {
-    fatalError("Opcode RLA not implimented")
-  }
-  
-  func RLN(mode: AddressingMode) {
-    fatalError("Opcode RLN not implimented")
+    let addr = getAddressForOpperate(with: mode, at: PC)
+    let data = readMem(at: addr)
+    
+    let result = (data << 1) &+ (registers.isSet(.carry) ? 1 : 0)
+    let a = registers.A & result
+    
+    registers.set(.A, to: a)
+    writeMem(at: addr, value: result)
+    
+    setFlag(.carry, condition: ((data >> 7) & 0x1) == 1)
+    setFlag(.zero, condition: a == 0)
+    setFlag(.negative, condition: ((a >> 7) & 0x1) == 1)
   }
   
   func RRA(mode: AddressingMode) {
-    fatalError("Opcode RRA not implimented")
+    let addr = getAddressForOpperate(with: mode, at: PC)
+    var data = readMem(at: addr)
+    
+    let carry = data & 0x1
+    
+    data = (data >> 1) & 0x7F
+    data = data | (registers.isSet(.carry) ? 0x80 : 0)
+    
+    
+    let a = UInt16(registers.A) + UInt16(data) + UInt16(carry)
+    
+    setFlag(.carry, condition: a > 0xFF)
+    setFlag(.zero, condition: (a & 0xFF) == 0)
+    setFlag(.negative, condition: ((a >> 7) & 0x1) == 1)
+    setFlag(.overflow, condition: (~(registers.A ^ data) & (registers.A ^ UInt8(a & 0xFF)) & 0x80) == 0x80)
+    
+    registers.set(.A, to: UInt8(a & 0xFF))
+    writeMem(at: addr, value: data)
+    
   }
   
   func SLO(mode: AddressingMode) {
-    fatalError("Opcode SLO not implimented")
+    let addr = getAddressForOpperate(with: mode, at: PC)
+    let data = readMem(at: addr)
+    
+    let result = (data << 1)
+    let a = registers.A | result
+    
+    registers.set(.A, to: a)
+    
+    setFlag(.carry, condition: ((data >> 7) & 0x1) == 1)
+    setFlag(.zero, condition: a == 0)
+    setFlag(.negative, condition: ((a >> 7) & 0x1) == 1)
+    
+    writeMem(at: addr, value: result)
+    
   }
   
   func SRE(mode: AddressingMode) {
-    fatalError("Opcode SRE not implimented")
+    
+    let addr = getAddressForOpperate(with: mode, at: PC)
+    let data = readMem(at: addr)
+    
+    let result = (data >> 1)
+    let a = registers.A ^ result
+    
+    registers.set(.A, to: a)
+    
+    setFlag(.carry, condition: ((data & 0x1) == 1))
+    setFlag(.zero, condition: a == 0)
+    setFlag(.negative, condition: ((a >> 7) & 0x1) == 1)
+    
+    writeMem(at: addr, value: result)
   }
-  
-  func SXA(mode: AddressingMode) {
-    fatalError("Opcode SXA not implimented")
-  }
-  
-  func SYA(mode: AddressingMode) {
-    fatalError("Opcode SYA not implimented")
-  }
-  
-  func TOP(mode: AddressingMode) {
-    return
-  }
-  
-  func XAA(mode: AddressingMode) {
-    fatalError("Opcode XAA not implimented")
-  }
-  
-  func XAS(mode: AddressingMode) {
-    fatalError("Opcode XAS not implimented")
-  }
-  
 }
-  
+

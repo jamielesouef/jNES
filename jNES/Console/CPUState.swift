@@ -1,10 +1,3 @@
-//
-//  CPUState.swift
-//  jNESTests
-//
-//  Created by Jamie Le Souef on 3/5/2024.
-//
-
 import Foundation
 
 enum CPUStateError: Error {

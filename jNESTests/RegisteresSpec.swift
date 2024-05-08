@@ -32,7 +32,7 @@ final class RegisteresSpec: XCTestCase {
   
   func testSettingInterupt() throws {
     registers.reset()
-    XCTAssertFalse(registers.isSet(.interrupt))
+    XCTAssertTrue(registers.isSet(.interrupt))
     registers.set(.interrupt)
     XCTAssertTrue(registers.isSet(.interrupt))
     registers.clear(.interrupt)
