@@ -5,16 +5,12 @@ final class CPU {
 
   private var loop = true
   private var programCounterAtOppcodeRun: UInt16 = 0x00
-  private(set) var registers: Registers
-  private(set) var PC: UInt16 = 0x00
   private var trace: Bool = false
 
-  typealias RunCallback = (CPUState) -> Void
+  private(set) var registers: Registers
+  private(set) var PC: UInt16 = 0x00
 
-  enum CPUError: Error {
-    case invalidOpcode(String)
-    case missingOpcode(String)
-  }
+  typealias RunCallback = (CPUState) -> Void
 
   enum AddressingMode: String {
     case none
@@ -47,7 +43,7 @@ final class CPU {
   func __tick_with_trace(callback: @escaping RunCallback) {
     trace = true
 
-    tick(trace: trace) { state in
+    tick(buildState: trace) { state in
       callback(state)
     }
   }
@@ -56,7 +52,7 @@ final class CPU {
     DispatchQueue.global().async { [weak self] in
       guard let self else { return }
       while loop {
-        tick(trace: trace) { state in
+        tick(buildState: trace) { state in
           DispatchQueue.main.async {
             callback(state)
           }
@@ -65,11 +61,11 @@ final class CPU {
     }
   }
 
-  private func tick(trace: Bool = false, callback: @escaping RunCallback) {
+  private func tick(buildState: Bool = false, callback: @escaping RunCallback) {
     let opcode: UInt8 = readMem(at: PC)
     let instruction: Instruction = getInstructions(for: opcode)
 
-    if trace {
+    if buildState {
       let state = StateBuilder(cpu: self, instruction: instruction, address: PC).build()
       callback(state)
     }
@@ -110,10 +106,15 @@ final class CPU {
     return PC
   }
 
+  func getAddressForOpperateAtPC(with mode: AddressingMode) -> UInt16 {
+//    let ptr = PC + 1
+    return getAddressForOpperate(with: mode, at: PC)
+  }
+
   func getAddressForOpperate(with mode: AddressingMode, at ptr: UInt16) -> UInt16 {
     switch mode {
     case .absolute, .none:
-      return readMem16(at: ptr)
+      return getLittleEndianAddress(at: ptr)
 
     case .accumulator:
       return UInt16(registers.A)
@@ -132,7 +133,7 @@ final class CPU {
       return UInt16(addr)
 
     case .absoluteX, .absoluteY:
-      let data = readMem16(at: ptr)
+      let data = getLittleEndianAddress(at: ptr)
       let offset16 = UInt16(mode == .absoluteX ? registers.X : registers.Y)
       let addr = data &+ offset16
       return addr
@@ -169,7 +170,7 @@ final class CPU {
     bus.writeMem(at: address, value: value)
   }
 
-  func readMem16(at address: UInt16) -> UInt16 {
+  func getLittleEndianAddress(at address: UInt16) -> UInt16 {
     let lo = UInt16(bus.readMem(at: address))
     let hi = UInt16(bus.readMem(at: address + 1))
 
@@ -232,10 +233,6 @@ extension CPU {
       let targetAddress = PC &+ (UInt16(data) ^ 0x80) &- 0x80
 
       setProgramCounter(targetAddress &+ 1)
-      /*
-       xpt:   BNE $C70C
-       got:   BNE $C80C (@5071 - C72A)
-       */
     }
   }
 

@@ -1,15 +1,9 @@
 import Foundation
 
-final class StateBuilder {
+struct StateBuilder {
   let cpu: CPU
   let instruction: Instruction
   let address: UInt16
-
-  init(cpu: CPU, instruction: Instruction, address: UInt16) {
-    self.cpu = cpu
-    self.instruction = instruction
-    self.address = address
-  }
 
   func build() -> CPUState {
     let hex: String = (0 ..< instruction.bytes)
@@ -100,7 +94,7 @@ final class StateBuilder {
   }
 
   private func buildThreeBitInstruction() -> String {
-    let address = cpu.readMem16(at: cpu.PC + 1)
+    let address = cpu.getLittleEndianAddress(at: cpu.PC + 1)
     let (memAddr, data) = getAddressAndValue()
 
     var arg = ""
@@ -115,7 +109,7 @@ final class StateBuilder {
           let hi = cpu.readMem(at: address & 0xFF00)
           jumpAddr = (UInt16(hi) << 8) | UInt16(lo)
         } else {
-          jumpAddr = cpu.readMem16(at: address)
+          jumpAddr = cpu.getLittleEndianAddress(at: address)
         }
 
         arg = String(format: "($%04X) = %04X", address, jumpAddr)
