@@ -30,7 +30,6 @@
 		E459643A2BE48ADC00481956 /* nestest.log in Resources */ = {isa = PBXBuildFile; fileRef = E45964392BE48ADC00481956 /* nestest.log */; };
 		E459643C2BE48D4A00481956 /* CPU+Instructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E459643B2BE48D4A00481956 /* CPU+Instructions.swift */; };
 		E459643E2BE48FA700481956 /* NesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E459643D2BE48FA700481956 /* NesTest.swift */; };
-		E46785A92BEB437B00724044 /* swiftlint in Frameworks */ = {isa = PBXBuildFile; productRef = E46785A82BEB437B00724044 /* swiftlint */; };
 		E4810D962BE4BC8D008CFA93 /* nestest.nes in Resources */ = {isa = PBXBuildFile; fileRef = E45964342BE481DE00481956 /* nestest.nes */; };
 		E4810D972BE4BC8E008CFA93 /* nestest.nes in Resources */ = {isa = PBXBuildFile; fileRef = E45964342BE481DE00481956 /* nestest.nes */; };
 		E4810D982BE4BDEF008CFA93 /* CPUState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45964352BE4892E00481956 /* CPUState.swift */; };
@@ -89,7 +88,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E46785A92BEB437B00724044 /* swiftlint in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -203,7 +201,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E42A9EA32BD9ED8200858AFC /* Build configuration list for PBXNativeTarget "jNES" */;
 			buildPhases = (
-				E4EFC97B2BEB45EE009763CD /* ShellScript */,
 				E42A9E7B2BD9ED8100858AFC /* Sources */,
 				E42A9E7C2BD9ED8100858AFC /* Frameworks */,
 				E42A9E7D2BD9ED8100858AFC /* Resources */,
@@ -214,7 +211,6 @@
 			);
 			name = jNES;
 			packageProductDependencies = (
-				E46785A82BEB437B00724044 /* swiftlint */,
 			);
 			productName = jNES;
 			productReference = E42A9E7F2BD9ED8100858AFC /* jNES.app */;
@@ -267,7 +263,6 @@
 			);
 			mainGroup = E42A9E762BD9ED8100858AFC;
 			packageReferences = (
-				E46785A52BEB437B00724044 /* XCRemoteSwiftPackageReference "SwiftLint" */,
 			);
 			productRefGroup = E42A9E802BD9ED8100858AFC /* Products */;
 			projectDirPath = "";
@@ -301,27 +296,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		E4EFC97B2BEB45EE009763CD /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E42A9E7B2BD9ED8100858AFC /* Sources */ = {
@@ -637,25 +611,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		E46785A52BEB437B00724044 /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/realm/SwiftLint.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.54.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		E46785A82BEB437B00724044 /* swiftlint */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E46785A52BEB437B00724044 /* XCRemoteSwiftPackageReference "SwiftLint" */;
-			productName = swiftlint;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E42A9E772BD9ED8100858AFC /* Project object */;
 }

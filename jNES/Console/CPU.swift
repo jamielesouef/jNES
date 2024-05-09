@@ -4,7 +4,6 @@ final class CPU {
   let bus: Bus
 
   private var loop = true
-  private var programCounterAtOppcodeRun: UInt16 = 0x00
   private var trace: Bool = false
 
   private(set) var registers: Registers
@@ -37,7 +36,6 @@ final class CPU {
   func reset() {
     bus.reset()
     registers.reset()
-    //    setProgramCounter(0xC000)
   }
 
   func __tick_with_trace(callback: @escaping RunCallback) {
@@ -62,38 +60,36 @@ final class CPU {
   }
 
   private func tick(buildState: Bool = false, callback: @escaping RunCallback) {
-    let opcode: UInt8 = readMem(at: PC)
-    let instruction: Instruction = getInstructions(for: opcode)
-
-    if buildState {
-      let vector = (0..<instruction.name.count).map { PC + UInt16($0) }
-      let state = StateBuilder(cpu: self, instruction: instruction, instructionVector: vector).build()
-      callback(state)
-    }
-
-    let newProgramCounter = PC + 1
-
-    setProgramCounter(newProgramCounter)
-    programCounterAtOppcodeRun = newProgramCounter
-
-    instruction.fn()
-
-    // handle(controllerState: controllerState)
-
-    // if the opperation does not change the program counter
-    // we need to increment it by the number of bytes in the instruction
-    let postOpcodePC = PC
-
-    if programCounterAtOppcodeRun == 0xFFFF {
+    if PC == 0xFFFF {
       loop = false
       return
     }
 
-    if programCounterAtOppcodeRun == postOpcodePC {
-      setProgramCounter(postOpcodePC + UInt16(instruction.bytes) - 1)
+    let opcode: UInt8 = readMem(at: PC)
+    let instruction: Instruction = getInstructions(for: opcode)
+
+    if buildState {
+      let vector = (0 ..< instruction.bytes).map { PC + UInt16($0) }
+      let state = StateBuilder(cpu: self, instruction: instruction, instructionVector: vector).build()
+      callback(state)
     }
+
+    incrementProgramCounter()
+
+    instruction.fn()
+
+    // handle(controllerState: controllerState)
+    updateProgramCounterIfRequired(opcode: instruction.name, bytes: instruction.bytes)
   }
 
+  func updateProgramCounterIfRequired(opcode: String, bytes: UInt8) {
+    switch opcode {
+    case "BCC", "BCS", "BEQ", "BNE", "BMI", "BPL", "BVC", "BVS", "JMP", "JSR", "RTS":
+      return
+    default:
+      setProgramCounter(PC + UInt16(bytes) - 1)
+    }
+  }
 
   func stop() {
     loop = false
@@ -109,15 +105,14 @@ final class CPU {
   }
 
   func getProgramCounter() -> UInt16 {
-    return PC
+    PC
   }
 
   func getAddressForOpperateAtPC(with mode: AddressingMode) -> UInt16 {
-//    let ptr = PC + 1
-    return getAddressForOpperate(with: mode, at: PC)
+    getAddressForOpperand(with: mode, at: PC)
   }
 
-  func getAddressForOpperate(with mode: AddressingMode, at ptr: UInt16) -> UInt16 {
+  func getAddressForOpperand(with mode: AddressingMode, at ptr: UInt16) -> UInt16 {
     switch mode {
     case .absolute, .none:
       return getLittleEndianAddress(at: ptr)
@@ -202,8 +197,6 @@ final class CPU {
 }
 
 private extension CPU {
-  // MARK: - Addressing mode
-
   func handle(controllerState state: UInt8) {
     if state & ControllerButton.left.mask != 0 {
       writeMem(at: 0xFF, value: 0x61)
@@ -239,6 +232,8 @@ extension CPU {
       let targetAddress = PC &+ (UInt16(data) ^ 0x80) &- 0x80
 
       setProgramCounter(targetAddress &+ 1)
+    } else {
+      incrementProgramCounter()
     }
   }
 
@@ -247,7 +242,7 @@ extension CPU {
   }
 
   func compare(against value: Int, mode: AddressingMode) {
-    let addr = getAddressForOpperate(with: mode, at: PC)
+    let addr = getAddressForOpperand(with: mode, at: PC)
     let data = Int(readMem(at: addr))
 
     let result = value - data
@@ -274,51 +269,19 @@ extension CPU {
     }
   }
 
-  func setCarryFlag(_ set: Bool) {
-    if set {
-      registers.set(.carry)
-    } else {
-      registers.clear(.carry)
-    }
-  }
-
   func setCarryFlag(_ value: UInt8) {
-    setCarryFlag(value >> 7 == 1)
-  }
-
-  func setZeroFlag(_ condition: Bool) {
-    if condition {
-      registers.set(.zero)
-    } else {
-      registers.clear(.zero)
-    }
+    setFlag(.carry, condition: (value & 0x1) == 1)
   }
 
   func setZeroFlag(_ value: UInt8) {
-    setZeroFlag(value == 0)
-  }
-
-  func setOverflowFlag(_ condition: Bool) {
-    if condition {
-      registers.set(.overflow)
-    } else {
-      registers.clear(.overflow)
-    }
+    setFlag(.zero, condition: value == 0)
   }
 
   func setOverflowFlag(_ value: UInt8) {
-    setOverflowFlag((value & 1 << 6) != 0)
-  }
-
-  func setNegativeFlag(_ condition: Bool) {
-    if condition {
-      registers.set(.negative)
-    } else {
-      registers.clear(.negative)
-    }
+    setFlag(.overflow, condition: ((value >> 6) & 0x1) == 1)
   }
 
   func setNegativeFlag(_ value: UInt8) {
-    setNegativeFlag(value >> 7 == 1)
+    setFlag(.negative, condition: (value >> 7) & 0x1 == 1)
   }
 }

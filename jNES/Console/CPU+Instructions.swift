@@ -8,7 +8,7 @@ extension CPU {
 
     let result = UInt16(registers.A) + data + (registers.isSet(.carry) ? 1 : 0)
 
-    setZeroFlag((result & 0xFF) == 0)
+    setFlag(.zero, condition: (result & 0xFF) == 0)
 
     if ((data ^ result) & (result ^ UInt16(registers.A)) & 0x80) != 0 {
       registers.set(.overflow)
@@ -18,8 +18,8 @@ extension CPU {
 
     registers.set(.A, to: UInt8(result & 0xFF))
 
-    setCarryFlag(result > 0xFF)
-    setNegativeFlag((result >> 7) & 0x1 == 1)
+    setFlag(.carry, condition: result > 0xFF)
+    setNegativeFlag(UInt8(result & 0xFF))
   }
 
   func AND(mode: AddressingMode) {
@@ -31,12 +31,12 @@ extension CPU {
   }
 
   private func ASL_Logic(_ data: inout UInt8) {
-    setCarryFlag(data >> 7 == 1)
+    setFlag(.carry, condition: data >> 7 == 1)
 
     data = (data << 1) & 0xFE
 
-    setZeroFlag(data == 0)
-    setNegativeFlag(data >> 7 == 1)
+    setZeroFlag(data)
+    setNegativeFlag(data)
   }
 
   private func ASL_accumulator() {
@@ -82,9 +82,9 @@ extension CPU {
 
     let result = data & a
 
-    setFlag(.negative, condition: (data >> 7) == 1)
-    setFlag(.overflow, condition: ((data >> 6) & 0x1) == 1)
-    setFlag(.zero, condition: result == 0)
+    setNegativeFlag(data)
+    setOverflowFlag(data)
+    setZeroFlag(result)
   }
 
   func BMI() {
@@ -117,7 +117,7 @@ extension CPU {
   }
 
   func CLC() {
-    setCarryFlag(false)
+    setFlag(.carry, condition: false)
   }
 
   func CLD() {
@@ -129,7 +129,7 @@ extension CPU {
   }
 
   func CLV() {
-    setOverflowFlag(false)
+    setFlag(.overflow, condition: false)
   }
 
   func CMP(mode: AddressingMode) {
@@ -146,8 +146,9 @@ extension CPU {
 
   private func decrement(_ value: UInt8) -> UInt8 {
     let result = UInt8((Int(value) - 1) & 0xFF)
-    setNegativeFlag((result >> 7) & 0x1 == 1)
-    setZeroFlag(result == 0)
+
+    setNegativeFlag(result)
+    setZeroFlag(result)
 
     return result
   }
@@ -180,28 +181,29 @@ extension CPU {
     let addr = getAddressForOpperateAtPC(with: mode)
     let data = Int(readMem(at: addr)) + 1
 
-    setNegativeFlag((data >> 7) == 1)
-    setZeroFlag((data & 0xFF) == 0)
+    let result = UInt8(data & 0xFF)
+    setNegativeFlag(result)
+    setZeroFlag(result)
 
-    writeMem(at: addr, value: UInt8(data & 0xFF))
+    writeMem(at: addr, value: result)
   }
 
   func INX() {
-    let data = Int(registers.X) + 1
+    let data = UInt8((Int(registers.X) + 1) & 0xFF)
 
-    setNegativeFlag((data >> 7) == 1)
-    setZeroFlag((data & 0xFF) == 0)
+    setNegativeFlag(data)
+    setZeroFlag(data)
 
-    registers.set(.X, to: UInt8(data & 0xFF))
+    registers.set(.X, to: data)
   }
 
   func INY() {
-    let data = Int(registers.Y) + 1
+    let data = UInt8((Int(registers.Y) + 1) & 0xFF)
 
-    setNegativeFlag((data >> 7) == 1)
-    setZeroFlag((data & 0xFF) == 0)
+    setNegativeFlag(data)
+    setZeroFlag(data)
 
-    registers.set(.Y, to: UInt8(data & 0xFF))
+    registers.set(.Y, to: data)
   }
 
   func JMP(mode: AddressingMode) {
@@ -250,17 +252,17 @@ extension CPU {
     stackPush(hi)
     stackPush(lo)
 
-    let addr = getAddressForOpperate(with: .absolute, at: PC)
+    let addr = getAddressForOpperand(with: .absolute, at: PC)
     setProgramCounter(addr)
   }
 
   private func LSR_Logic(_ data: inout UInt8) {
     setFlag(.negative, condition: false)
-    setFlag(.carry, condition: (data & 0x1) == 1)
+    setCarryFlag(data)
 
     data = (data >> 1) & 0x7F
 
-    setFlag(.zero, condition: data == 0)
+    setZeroFlag(data)
   }
 
   private func LSR_Accumulator() {
@@ -322,13 +324,13 @@ extension CPU {
 
   private func ROL_logic(_ data: inout UInt8) {
     let carry = (data >> 7) & 0x1
-    setCarryFlag(carry == 1)
+    setFlag(.carry, condition: carry == 1)
 
     data = data << 1
     data += (registers.isSet(.carry) ? 1 : 0)
 
-    setZeroFlag(data == 0)
-    setNegativeFlag(data >> 7 == 1)
+    setZeroFlag(data)
+    setNegativeFlag(data)
   }
 
   private func ROL_accumulator() {
@@ -364,8 +366,10 @@ extension CPU {
     data = data | (registers.isSet(.carry) ? 0x80 : 0)
 
     setFlag(.carry, condition: carry == 1)
-    setFlag(.zero, condition: data == 0)
-    setFlag(.negative, condition: (data >> 7) & 0x1 == 1)
+
+    setZeroFlag(data)
+
+    setNegativeFlag(data)
   }
 
   private func ROR_accumulator() {
@@ -573,8 +577,8 @@ extension CPU {
     writeMem(at: addr, value: result)
 
     setFlag(.carry, condition: ((data >> 7) & 0x1) == 1)
-    setFlag(.zero, condition: a == 0)
-    setFlag(.negative, condition: ((a >> 7) & 0x1) == 1)
+    setZeroFlag(a)
+    setNegativeFlag(a)
   }
 
   func RRA(mode: AddressingMode) {
@@ -589,8 +593,10 @@ extension CPU {
     let a = UInt16(registers.A) + UInt16(data) + UInt16(carry)
 
     setFlag(.carry, condition: a > 0xFF)
+
     setFlag(.zero, condition: (a & 0xFF) == 0)
     setFlag(.negative, condition: ((a >> 7) & 0x1) == 1)
+
     setFlag(.overflow, condition: (~(registers.A ^ data) & (registers.A ^ UInt8(a & 0xFF)) & 0x80) == 0x80)
 
     registers.set(.A, to: UInt8(a & 0xFF))
@@ -607,9 +613,8 @@ extension CPU {
     registers.set(.A, to: a)
 
     setFlag(.carry, condition: ((data >> 7) & 0x1) == 1)
-    setFlag(.zero, condition: a == 0)
     setFlag(.negative, condition: ((a >> 7) & 0x1) == 1)
-
+    setNegativeFlag(a)
     writeMem(at: addr, value: result)
   }
 
@@ -622,9 +627,10 @@ extension CPU {
 
     registers.set(.A, to: a)
 
-    setFlag(.carry, condition: (data & 0x1) == 1)
-    setFlag(.zero, condition: a == 0)
-    setFlag(.negative, condition: ((a >> 7) & 0x1) == 1)
+    setCarryFlag(data)
+//    setFlag(.zero, condition: a == 0)
+    setZeroFlag(a)
+    setNegativeFlag(a)
 
     writeMem(at: addr, value: result)
   }

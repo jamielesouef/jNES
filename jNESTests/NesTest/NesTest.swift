@@ -52,7 +52,7 @@ final class NesTest: XCTestCase {
     for i in 0 ..< exptectedNesTestResult.count {
       var r: CPUState!
       let e = exptectedNesTestResult[i]
-//      print(i, e.address)
+      print(i, e.address)
       cpu.__tick_with_trace { r = $0 }
 
       test(e.address, r.address, e.address, i)

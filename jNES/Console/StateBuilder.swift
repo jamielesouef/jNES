@@ -33,7 +33,7 @@ struct StateBuilder {
   }
 
   private func getAddressAndValue() -> (UInt16, UInt8) {
-    let addr = cpu.getAddressForOpperate(with: instruction.mode, at: instructionVector[1])
+    let addr = cpu.getAddressForOpperand(with: instruction.mode, at: instructionVector[1])
     let mem = cpu.readMem(at: addr)
     return (addr, mem)
   }
@@ -124,7 +124,8 @@ struct StateBuilder {
         arg = String(format: "$%04X", memAddr, cpu.readMem(at: address))
       }
     case .absolute:
-      // https://forums.nesdev.org/viewtopic.php?t=17748
+
+      // skipping PPU registers for now
 
       switch memAddr {
       case 0x4015, 0x4004, 0x4005, 0x4006, 0x4007: arg = String(format: "$%04X = %02X", memAddr, 255)
