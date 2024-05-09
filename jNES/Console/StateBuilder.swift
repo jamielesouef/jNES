@@ -81,7 +81,7 @@ struct StateBuilder {
                    address, memAdr, data)
 
     case .none:
-      let _a = (cpu.PC + 2) &+ UInt16(address)
+      let _a = (cpu.getProgramCounter() + 2) &+ UInt16(address)
 
       // this is nasty AF but I can't work out why the value is different
       // in this trace verses what is actually being set in the CPU

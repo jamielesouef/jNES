@@ -1,6 +1,6 @@
 import Foundation
 
-class Registers {
+final class Registers {
   // https://www.nesdev.org/wiki/Status_flags
 
 //  7  bit  0

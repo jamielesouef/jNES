@@ -3,7 +3,7 @@ import Foundation
 // swiftlint:disable file_length
 extension CPU {
   func ADC(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     let data = UInt16(readMem(at: addr))
 
     let result = UInt16(registers.A) + data + (registers.isSet(.carry) ? 1 : 0)
@@ -23,7 +23,7 @@ extension CPU {
   }
 
   func AND(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     let data = readMem(at: addr)
     let result = data & registers.A
 
@@ -46,7 +46,7 @@ extension CPU {
   }
 
   private func ASL_memory(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     var data = readMem(at: addr)
 
     ASL_Logic(&data)
@@ -76,7 +76,7 @@ extension CPU {
   }
 
   func BIT(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     let data = readMem(at: addr)
     let a = registers.A
 
@@ -154,7 +154,7 @@ extension CPU {
   }
 
   func DEC(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     let data = readMem(at: addr)
 
     let result = decrement(data)
@@ -170,7 +170,7 @@ extension CPU {
   }
 
   func EOR(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     let data = readMem(at: addr)
     let result = registers.A ^ data
 
@@ -178,7 +178,7 @@ extension CPU {
   }
 
   func INC(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     let data = Int(readMem(at: addr)) + 1
 
     let result = UInt8(data & 0xFF)
@@ -210,12 +210,12 @@ extension CPU {
     switch mode {
     case .absolute:
 
-      let ptr: UInt16 = getLittleEndianAddress(at: PC)
+      let ptr: UInt16 = getLittleEndianAddress(at: getProgramCounter())
       setProgramCounter(ptr)
 
     case .indirect:
 
-      let ptr: UInt16 = getLittleEndianAddress(at: PC)
+      let ptr: UInt16 = getLittleEndianAddress(at: getProgramCounter())
 
       /*
        NB:
@@ -245,14 +245,15 @@ extension CPU {
   }
 
   func JSR() {
-    let value = PC + 1
+    let value = getProgramCounter() + 1
     let hi = UInt8(value >> 8)
     let lo = UInt8(value & 0xFF)
 
     stackPush(hi)
     stackPush(lo)
 
-    let addr = getAddressForOpperand(with: .absolute, at: PC)
+    let addr = getAddressForOpperandAtPC(with: .absolute)
+
     setProgramCounter(addr)
   }
 
@@ -272,7 +273,7 @@ extension CPU {
   }
 
   private func LSR_Memory(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     var data = readMem(at: addr)
 
     LSR_Logic(&data)
@@ -294,7 +295,7 @@ extension CPU {
   }
 
   func ORA(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     let data = readMem(at: addr)
     let result = registers.A | data
 
@@ -342,7 +343,7 @@ extension CPU {
   }
 
   private func ROL_memory(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     var data = readMem(at: addr)
 
     ROL_logic(&data)
@@ -381,7 +382,7 @@ extension CPU {
   }
 
   private func ROR_memory(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     var data = readMem(at: addr)
 
     ROR_Logic(&data)
@@ -420,7 +421,7 @@ extension CPU {
   }
 
   func SBC(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     let data = readMem(at: addr)
 
     let result = Int(registers.A) - Int(data) - (registers.isSet(.carry) ? 0 : 1)
@@ -446,14 +447,14 @@ extension CPU {
   }
 
   func LDA(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     let data = readMem(at: addr)
 
     setRegisterA(data)
   }
 
   func LDX(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     let data = readMem(at: addr)
     registers.set(.X, to: data)
     setZeroFlag(data)
@@ -461,7 +462,7 @@ extension CPU {
   }
 
   func LDY(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     let data = readMem(at: addr)
     registers.set(.Y, to: data)
 
@@ -470,17 +471,17 @@ extension CPU {
   }
 
   func STA(mode: AddressingMode) {
-    let address = getAddressForOpperateAtPC(with: mode)
+    let address = getAddressForOpperandAtPC(with: mode)
     writeMem(at: address, value: registers.A)
   }
 
   func STX(mode: AddressingMode) {
-    let address = getAddressForOpperateAtPC(with: mode)
+    let address = getAddressForOpperandAtPC(with: mode)
     writeMem(at: address, value: registers.X)
   }
 
   func STY(mode: AddressingMode) {
-    let address = getAddressForOpperateAtPC(with: mode)
+    let address = getAddressForOpperandAtPC(with: mode)
     writeMem(at: address, value: registers.Y)
   }
 
@@ -521,11 +522,11 @@ extension CPU {
 
   func SAX(mode: AddressingMode) {
     let result = registers.A & registers.X
-    writeMem(at: getAddressForOpperateAtPC(with: mode), value: result)
+    writeMem(at: getAddressForOpperandAtPC(with: mode), value: result)
   }
 
   func DCP(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     var data = Int(readMem(at: addr))
     data -= 1
 
@@ -539,7 +540,7 @@ extension CPU {
   }
 
   func ISB(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     var data = Int(readMem(at: addr))
 
     data += 1
@@ -557,7 +558,7 @@ extension CPU {
   }
 
   func LAX(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     let data = readMem(at: addr)
     registers.set(.A, to: data)
     registers.set(.X, to: data)
@@ -567,7 +568,7 @@ extension CPU {
   }
 
   func RLA(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     let data = readMem(at: addr)
 
     let result = (data << 1) &+ (registers.isSet(.carry) ? 1 : 0)
@@ -582,7 +583,7 @@ extension CPU {
   }
 
   func RRA(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     var data = readMem(at: addr)
 
     let carry = data & 0x1
@@ -604,7 +605,7 @@ extension CPU {
   }
 
   func SLO(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     let data = readMem(at: addr)
 
     let result = (data << 1)
@@ -619,7 +620,7 @@ extension CPU {
   }
 
   func SRE(mode: AddressingMode) {
-    let addr = getAddressForOpperateAtPC(with: mode)
+    let addr = getAddressForOpperandAtPC(with: mode)
     let data = readMem(at: addr)
 
     let result = (data >> 1)

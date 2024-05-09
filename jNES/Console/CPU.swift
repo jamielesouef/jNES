@@ -5,9 +5,9 @@ final class CPU {
 
   private var loop = true
   private var trace: Bool = false
+  private var PC: UInt16 = 0x00
 
   private(set) var registers: Registers
-  private(set) var PC: UInt16 = 0x00
 
   typealias RunCallback = (CPUState) -> Void
 
@@ -108,7 +108,7 @@ final class CPU {
     PC
   }
 
-  func getAddressForOpperateAtPC(with mode: AddressingMode) -> UInt16 {
+  func getAddressForOpperandAtPC(with mode: AddressingMode) -> UInt16 {
     getAddressForOpperand(with: mode, at: PC)
   }
 
@@ -242,7 +242,7 @@ extension CPU {
   }
 
   func compare(against value: Int, mode: AddressingMode) {
-    let addr = getAddressForOpperand(with: mode, at: PC)
+    let addr = getAddressForOpperandAtPC(with: mode)
     let data = Int(readMem(at: addr))
 
     let result = value - data

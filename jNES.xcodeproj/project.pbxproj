@@ -28,7 +28,7 @@
 		E42A9ED32BD9EE3B00858AFC /* RegisteresSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9ECD2BD9EE3B00858AFC /* RegisteresSpec.swift */; };
 		E45964382BE48AD200481956 /* nestest_no_clock.log in Resources */ = {isa = PBXBuildFile; fileRef = E45964372BE48AD200481956 /* nestest_no_clock.log */; };
 		E459643A2BE48ADC00481956 /* nestest.log in Resources */ = {isa = PBXBuildFile; fileRef = E45964392BE48ADC00481956 /* nestest.log */; };
-		E459643C2BE48D4A00481956 /* CPU+Instructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E459643B2BE48D4A00481956 /* CPU+Instructions.swift */; };
+		E459643C2BE48D4A00481956 /* Instructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E459643B2BE48D4A00481956 /* Instructions.swift */; };
 		E459643E2BE48FA700481956 /* NesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E459643D2BE48FA700481956 /* NesTest.swift */; };
 		E4810D962BE4BC8D008CFA93 /* nestest.nes in Resources */ = {isa = PBXBuildFile; fileRef = E45964342BE481DE00481956 /* nestest.nes */; };
 		E4810D972BE4BC8E008CFA93 /* nestest.nes in Resources */ = {isa = PBXBuildFile; fileRef = E45964342BE481DE00481956 /* nestest.nes */; };
@@ -75,7 +75,7 @@
 		E45964352BE4892E00481956 /* CPUState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUState.swift; sourceTree = "<group>"; };
 		E45964372BE48AD200481956 /* nestest_no_clock.log */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nestest_no_clock.log; sourceTree = "<group>"; };
 		E45964392BE48ADC00481956 /* nestest.log */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nestest.log; sourceTree = "<group>"; };
-		E459643B2BE48D4A00481956 /* CPU+Instructions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPU+Instructions.swift"; sourceTree = "<group>"; };
+		E459643B2BE48D4A00481956 /* Instructions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Instructions.swift; sourceTree = "<group>"; };
 		E459643D2BE48FA700481956 /* NesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NesTest.swift; sourceTree = "<group>"; };
 		E4810D9A2BE71631008CFA93 /* StateBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateBuilder.swift; sourceTree = "<group>"; };
 		E4A20B8F2BDB26F60070509A /* PixelData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelData.swift; sourceTree = "<group>"; };
@@ -158,7 +158,7 @@
 				E45964352BE4892E00481956 /* CPUState.swift */,
 				E42A9EAE2BD9EDB100858AFC /* Controller.swift */,
 				E42A9EB22BD9EDB100858AFC /* CPU.swift */,
-				E459643B2BE48D4A00481956 /* CPU+Instructions.swift */,
+				E459643B2BE48D4A00481956 /* Instructions.swift */,
 				E42A9EB02BD9EDB100858AFC /* InstructionsTable.swift */,
 				E42A9EAF2BD9EDB100858AFC /* Bus.swift */,
 				E42A9EAD2BD9EDB100858AFC /* NES.swift */,
@@ -310,7 +310,7 @@
 				E42A9EB42BD9EDB100858AFC /* NES.swift in Sources */,
 				E4E57D652BD9F0C500A2E1A9 /* DPadView.swift in Sources */,
 				E42A9EBA2BD9EDB100858AFC /* Rom.swift in Sources */,
-				E459643C2BE48D4A00481956 /* CPU+Instructions.swift in Sources */,
+				E459643C2BE48D4A00481956 /* Instructions.swift in Sources */,
 				E42A9EB62BD9EDB100858AFC /* Bus.swift in Sources */,
 				E42A9EB92BD9EDB100858AFC /* CPU.swift in Sources */,
 				E42A9EC82BD9EDDD00858AFC /* Array+extensions.swift in Sources */,
