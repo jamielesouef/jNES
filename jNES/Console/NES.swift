@@ -74,7 +74,7 @@ final class NES {
 
   func powerOn() {
     cpu.reset()
-    cpu.setProgramCounter(0xC000)
+    cpu.registers.setProgramCounter(0xC000)
     cpu.run { _ in
       self.udpateScreenIfRequired()
     }

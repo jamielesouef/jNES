@@ -47,7 +47,7 @@ final class NesTest: XCTestCase {
     let cpu = CPU(bus: bus)
 
     cpu.reset()
-    cpu.setProgramCounter(0xC000)
+    cpu.registers.setProgramCounter(0xC000)
 
     for i in 0 ..< exptectedNesTestResult.count {
       var r: CPUState!

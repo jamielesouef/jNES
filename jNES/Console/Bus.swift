@@ -29,7 +29,7 @@ import Foundation
 // |_______________| $0000 |_______________|
 
 final class Bus {
-  private var sp: UInt8 = 0xFD
+//  private var sp: UInt8 = 0xFD
   private var cpu_vram: [UInt8]
   private var rom: Rom
 
@@ -52,30 +52,19 @@ final class Bus {
     }
   }
 
-  func stackPush(_ value: UInt8) {
-    let sp = getStackPointer()
-    let stackAddress = 0x0100 | UInt16(sp)
-    writeMem(at: stackAddress, value: value)
-    setStackPointer(sp - 1)
+  func stackPush(_ value: UInt8, at sp: UInt8) {
+    let addr = (0x0100 | UInt16(sp)) & 0x01FF
+    writeMem(at: addr, value: value)
   }
 
-  func stackPop() -> UInt8 {
-    let sp = getStackPointer() + 1
-    setStackPointer(sp)
-    let value = readMem(at: 0x100 + UInt16(sp))
+  func stackPop(at sp: UInt8) -> UInt8 {
+    let addr = (0x0100 | UInt16(sp)) & 0x01FF
+    let value = readMem(at: addr)
     return value
   }
 
   func reset() {
-    sp = 0xFD
-  }
 
-  func setStackPointer(_ value: UInt8) {
-    sp = value
-  }
-
-  func getStackPointer() -> UInt8 {
-    return sp
   }
 }
 

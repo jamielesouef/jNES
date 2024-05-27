@@ -38,12 +38,16 @@ final class Registers {
   private(set) var X: UInt8
   private(set) var Y: UInt8
   private(set) var p: UInt8 // NV-BDIZC
+  private(set) var PC: UInt16
+  private(set) var SP: UInt8
 
-  init(A: UInt8 = 0, X: UInt8 = 0, Y: UInt8 = 0, p: UInt8 = 0xFD) {
+  init(A: UInt8 = 0, X: UInt8 = 0, Y: UInt8 = 0, p: UInt8 = 0xFD, PC: UInt16 = 0, SP: UInt8 = 0xFF) {
     self.A = A
     self.X = X
     self.Y = Y
     self.p = p
+    self.PC = PC
+    self.SP = SP
   }
 
   func set(_ flag: StatusFlag) {
@@ -70,10 +74,39 @@ final class Registers {
     }
   }
 
+  func incrementProgramCounter(by value: UInt16 = 1) {
+    PC += value
+  }
+
+  func setProgramCounter(_ value: UInt16) {
+    PC = value
+  }
+
+  func getProgramCounter() -> UInt16 {
+    PC
+  }
+
+  func setStackPointer(_ value: UInt8) {
+    SP = value
+  }
+
+  func getStackPointer() -> UInt8 {
+    SP
+  }
+
+  func incrementStackPointer() {
+    SP += 1
+  }
+
+  func decrementStackPointer() {
+    SP -= 1
+  }
+
   func reset() {
     A = 0
     X = 0
     p = 0b0010_0100
+    SP = 0xFD
   }
 }
 

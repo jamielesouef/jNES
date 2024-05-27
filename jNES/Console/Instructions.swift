@@ -210,12 +210,12 @@ extension CPU {
     switch mode {
     case .absolute:
 
-      let ptr: UInt16 = getLittleEndianAddress(at: getProgramCounter())
-      setProgramCounter(ptr)
+      let ptr: UInt16 = getLittleEndianAddress(at: registers.getProgramCounter())
+      registers.setProgramCounter(ptr)
 
     case .indirect:
 
-      let ptr: UInt16 = getLittleEndianAddress(at: getProgramCounter())
+      let ptr: UInt16 = getLittleEndianAddress(at: registers.getProgramCounter())
 
       /*
        NB:
@@ -237,7 +237,7 @@ extension CPU {
         indrectPtr = getLittleEndianAddress(at: ptr)
       }
 
-      setProgramCounter(indrectPtr)
+      registers.setProgramCounter(indrectPtr)
 
     default:
       fatalError("Invalid addressing mode for JMP")
@@ -245,7 +245,7 @@ extension CPU {
   }
 
   func JSR() {
-    let value = getProgramCounter() + 1
+    let value = registers.getProgramCounter() + 1
     let hi = UInt8(value >> 8)
     let lo = UInt8(value & 0xFF)
 
@@ -254,7 +254,7 @@ extension CPU {
 
     let addr = getAddressForOpperandAtPC(with: .absolute)
 
-    setProgramCounter(addr)
+    registers.setProgramCounter(addr)
   }
 
   private func LSR_Logic(_ data: inout UInt8) {
@@ -409,7 +409,7 @@ extension CPU {
     registers.set(programStatus: programStatus)
     registers.clear(.brk)
     registers.set(.brk2)
-    setProgramCounter(pc)
+    registers.setProgramCounter(pc)
   }
 
   func RTS() {
@@ -417,7 +417,7 @@ extension CPU {
     let hi = UInt16(stackPop())
     let address = hi << 8 | lo
 
-    setProgramCounter(address + 1)
+    registers.setProgramCounter(address + 1)
   }
 
   func SBC(mode: AddressingMode) {
@@ -497,8 +497,9 @@ extension CPU {
     setNegativeFlag(registers.Y)
   }
 
+  // Transfer Stack Pointer to X
   func TSX() {
-    registers.set(.X, to: getStackPointer())
+    registers.set(.X, to: registers.SP)
     setZeroFlag(registers.X)
     setNegativeFlag(registers.X)
   }
@@ -509,9 +510,10 @@ extension CPU {
     setZeroFlag(registers.X)
     setNegativeFlag(registers.X)
   }
-
+  
+  
   func TXS() {
-    setStackPointer(registers.X)
+    registers.setStackPointer(registers.X)
   }
 
   func TYA() {

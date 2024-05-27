@@ -15,7 +15,7 @@ struct JNESApp: App {
 //      EmulatorView()
       Button("GO!") {
         console?.reset()
-        console?.cpu.setProgramCounter(0xC000)
+        console?.cpu.registers.setProgramCounter(0xC000)
         console?.cpu.run { _ in
         }
       }

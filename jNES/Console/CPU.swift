@@ -5,8 +5,7 @@ final class CPU {
 
   private var loop = true
   private var trace: Bool = false
-  private var PC: UInt16 = 0x00
-
+  
   private(set) var registers: Registers
 
   typealias RunCallback = (CPUState) -> Void
@@ -60,21 +59,21 @@ final class CPU {
   }
 
   private func tick(buildState: Bool = false, callback: @escaping RunCallback) {
-    if PC == 0xFFFF {
+    if registers.PC == 0xFFFF {
       loop = false
       return
     }
 
-    let opcode: UInt8 = readMem(at: PC)
+    let opcode: UInt8 = readMem(at: registers.PC)
     let instruction: Instruction = getInstructions(for: opcode)
 
     if buildState {
-      let vector = (0 ..< instruction.bytes).map { PC + UInt16($0) }
+      let vector = (0 ..< instruction.bytes).map { registers.PC + UInt16($0) }
       let state = StateBuilder(cpu: self, instruction: instruction, instructionVector: vector).build()
       callback(state)
     }
 
-    incrementProgramCounter()
+    registers.incrementProgramCounter()
 
     instruction.fn()
 
@@ -87,7 +86,7 @@ final class CPU {
     case "BCC", "BCS", "BEQ", "BNE", "BMI", "BPL", "BVC", "BVS", "JMP", "JSR", "RTS":
       return
     default:
-      setProgramCounter(PC + UInt16(bytes) - 1)
+      registers.setProgramCounter(registers.PC + UInt16(bytes) - 1)
     }
   }
 
@@ -96,20 +95,8 @@ final class CPU {
     reset()
   }
 
-  func incrementProgramCounter(by value: UInt16 = 1) {
-    PC += value
-  }
-
-  func setProgramCounter(_ value: UInt16) {
-    PC = value
-  }
-
-  func getProgramCounter() -> UInt16 {
-    PC
-  }
-
   func getAddressForOpperandAtPC(with mode: AddressingMode) -> UInt16 {
-    getAddressForOpperand(with: mode, at: PC)
+    getAddressForOpperand(with: mode, at: registers.PC)
   }
 
   func getAddressForOpperand(with mode: AddressingMode, at ptr: UInt16) -> UInt16 {
@@ -180,19 +167,17 @@ final class CPU {
   }
 
   func stackPush(_ value: UInt8) {
-    bus.stackPush(value)
+    bus.stackPush(value, at: registers.SP)
+    registers.decrementStackPointer()
   }
 
   func stackPop() -> UInt8 {
-    bus.stackPop()
+    registers.incrementStackPointer()
+    return bus.stackPop(at: registers.SP)
   }
 
-  func setStackPointer(_ value: UInt8) {
-    bus.setStackPointer(value)
-  }
-
-  func getStackPointer() -> UInt8 {
-    bus.getStackPointer()
+  func getFromStack() -> UInt8 {
+    bus.readMem(at: UInt16(registers.SP))
   }
 }
 
@@ -227,13 +212,13 @@ private extension CPU {
 extension CPU {
   func branch(when condition: Bool) {
     if condition {
-      let data = readMem(at: PC)
+      let data = readMem(at: registers.PC)
 
-      let targetAddress = PC &+ (UInt16(data) ^ 0x80) &- 0x80
+      let targetAddress = registers.PC &+ (UInt16(data) ^ 0x80) &- 0x80
 
-      setProgramCounter(targetAddress &+ 1)
+      registers.setProgramCounter(targetAddress &+ 1)
     } else {
-      incrementProgramCounter()
+      registers.incrementProgramCounter()
     }
   }
 
