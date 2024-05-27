@@ -33,7 +33,7 @@ final class Bus {
   private var cpu_vram: [UInt8]
   private var rom: Rom
 
-  init(buffer: [UInt8] = .init(repeating: 0, count: 0xFFFF), rom: Rom) {
+  init(buffer: [UInt8] = .init(repeating: 0, count: 0x8000), rom: Rom) {
     cpu_vram = buffer
     self.rom = rom
   }

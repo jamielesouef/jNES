@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		7006EF7C2BDF3C0900AF8681 /* RomSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7006EF7B2BDF3C0900AF8681 /* RomSpec.swift */; };
-		E40749DE2BDB3EFA006DF2EB /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40749DD2BDB3EFA006DF2EB /* ImageView.swift */; };
 		E42A9E832BD9ED8100858AFC /* jNESApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9E822BD9ED8100858AFC /* jNESApp.swift */; };
 		E42A9E872BD9ED8200858AFC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E42A9E862BD9ED8200858AFC /* Assets.xcassets */; };
 		E42A9E8A2BD9ED8200858AFC /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E42A9E892BD9ED8200858AFC /* Preview Assets.xcassets */; };
@@ -34,9 +33,6 @@
 		E4810D972BE4BC8E008CFA93 /* nestest.nes in Resources */ = {isa = PBXBuildFile; fileRef = E45964342BE481DE00481956 /* nestest.nes */; };
 		E4810D982BE4BDEF008CFA93 /* CPUState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45964352BE4892E00481956 /* CPUState.swift */; };
 		E4810D9B2BE71631008CFA93 /* StateBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4810D9A2BE71631008CFA93 /* StateBuilder.swift */; };
-		E4A20B902BDB26F60070509A /* PixelData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A20B8F2BDB26F60070509A /* PixelData.swift */; };
-		E4E57D612BD9EECB00A2E1A9 /* EmulatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E57D602BD9EECB00A2E1A9 /* EmulatorView.swift */; };
-		E4E57D652BD9F0C500A2E1A9 /* DPadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E57D642BD9F0C500A2E1A9 /* DPadView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,7 +47,6 @@
 
 /* Begin PBXFileReference section */
 		7006EF7B2BDF3C0900AF8681 /* RomSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RomSpec.swift; sourceTree = "<group>"; };
-		E40749DD2BDB3EFA006DF2EB /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		E42A9E7F2BD9ED8100858AFC /* jNES.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = jNES.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E42A9E822BD9ED8100858AFC /* jNESApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = jNESApp.swift; sourceTree = "<group>"; };
 		E42A9E862BD9ED8200858AFC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -78,9 +73,6 @@
 		E459643B2BE48D4A00481956 /* Instructions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Instructions.swift; sourceTree = "<group>"; };
 		E459643D2BE48FA700481956 /* NesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NesTest.swift; sourceTree = "<group>"; };
 		E4810D9A2BE71631008CFA93 /* StateBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateBuilder.swift; sourceTree = "<group>"; };
-		E4A20B8F2BDB26F60070509A /* PixelData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelData.swift; sourceTree = "<group>"; };
-		E4E57D602BD9EECB00A2E1A9 /* EmulatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatorView.swift; sourceTree = "<group>"; };
-		E4E57D642BD9F0C500A2E1A9 /* DPadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DPadView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,6 +147,7 @@
 		E42A9EAC2BD9EDA500858AFC /* Console */ = {
 			isa = PBXGroup;
 			children = (
+				E42A9EC12BD9EDDD00858AFC /* Array+extensions.swift */,
 				E45964352BE4892E00481956 /* CPUState.swift */,
 				E42A9EAE2BD9EDB100858AFC /* Controller.swift */,
 				E42A9EB22BD9EDB100858AFC /* CPU.swift */,
@@ -183,13 +176,8 @@
 		E4A20B982BDB29950070509A /* Emulator */ = {
 			isa = PBXGroup;
 			children = (
-				E42A9EC12BD9EDDD00858AFC /* Array+extensions.swift */,
 				E42A9EBC2BD9EDDD00858AFC /* log.swift */,
-				E4A20B8F2BDB26F60070509A /* PixelData.swift */,
-				E4E57D602BD9EECB00A2E1A9 /* EmulatorView.swift */,
-				E4E57D642BD9F0C500A2E1A9 /* DPadView.swift */,
 				E42A9E822BD9ED8100858AFC /* jNESApp.swift */,
-				E40749DD2BDB3EFA006DF2EB /* ImageView.swift */,
 			);
 			path = Emulator;
 			sourceTree = "<group>";
@@ -302,13 +290,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E4E57D612BD9EECB00A2E1A9 /* EmulatorView.swift in Sources */,
 				E42A9EC32BD9EDDD00858AFC /* log.swift in Sources */,
 				E4810D982BE4BDEF008CFA93 /* CPUState.swift in Sources */,
 				E42A9E832BD9ED8100858AFC /* jNESApp.swift in Sources */,
-				E4A20B902BDB26F60070509A /* PixelData.swift in Sources */,
 				E42A9EB42BD9EDB100858AFC /* NES.swift in Sources */,
-				E4E57D652BD9F0C500A2E1A9 /* DPadView.swift in Sources */,
 				E42A9EBA2BD9EDB100858AFC /* Rom.swift in Sources */,
 				E459643C2BE48D4A00481956 /* Instructions.swift in Sources */,
 				E42A9EB62BD9EDB100858AFC /* Bus.swift in Sources */,
@@ -316,7 +301,6 @@
 				E42A9EC82BD9EDDD00858AFC /* Array+extensions.swift in Sources */,
 				E42A9EB82BD9EDB100858AFC /* Registers.swift in Sources */,
 				E42A9EB72BD9EDB100858AFC /* InstructionsTable.swift in Sources */,
-				E40749DE2BDB3EFA006DF2EB /* ImageView.swift in Sources */,
 				E42A9EB52BD9EDB100858AFC /* Controller.swift in Sources */,
 				E4810D9B2BE71631008CFA93 /* StateBuilder.swift in Sources */,
 			);

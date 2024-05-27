@@ -12,13 +12,7 @@ struct JNESApp: App {
   let console = try? NES()
   var body: some Scene {
     WindowGroup {
-//      EmulatorView()
-      Button("GO!") {
-        console?.reset()
-        console?.cpu.registers.setProgramCounter(0xC000)
-        console?.cpu.run { _ in
-        }
-      }
+      EmptyView()
     }
   }
 }
