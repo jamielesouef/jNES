@@ -125,7 +125,7 @@ struct StateBuilder {
       }
     case .absolute:
 
-      // skipping PPU registers for now
+      // skipping APU and IO registers for now
 
       switch memAddr {
       case 0x4015, 0x4004, 0x4005, 0x4006, 0x4007: arg = String(format: "$%04X = %02X", memAddr, 255)

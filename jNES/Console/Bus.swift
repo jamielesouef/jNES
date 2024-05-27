@@ -29,7 +29,7 @@ import Foundation
 // |_______________| $0000 |_______________|
 
 final class Bus {
-//  private var sp: UInt8 = 0xFD
+
   private var cpu_vram: [UInt8]
   private var rom: Rom
 
@@ -40,13 +40,19 @@ final class Bus {
 
   func readMem(at address: UInt16) -> UInt8 {
     return switch address {
+    case 0x0000 ... 0x1FFF: cpu_vram[address & 0x07FF]
+    case 0x2000 ... 0x3FFF: readPPU(at: address)
+    case 0x6000 ... 0x7FFF: cpu_vram[address]
     case 0x8000 ... 0xFFFF: readProgramRom(at: address)
+
     default: cpu_vram[address]
     }
   }
 
   func writeMem(at address: UInt16, value: UInt8) {
     switch address {
+    case 0x0000 ... 0x1FFF: cpu_vram[address & 0x07FF] = value
+    case 0x2000 ... 0x3FFF: writePPU(at: address, value: value)
     case 0x8000 ... 0xFFFF: fatalError("Cannot write to ROM")
     default: cpu_vram[address] = value
     }
@@ -69,12 +75,18 @@ final class Bus {
 }
 
 private extension Bus {
-  func readProgramRom(at address: UInt16) -> UInt8 {
-    var addr = address - 0x8000
-    if rom.prgRom.count == 0x4000 && addr >= 0x4000 {
-      addr = (addr % 0x4000)
-    }
+  private func writePPU(at address: UInt16, value: UInt8){
+    let addr = address & 0x2007
+    cpu_vram[addr] = value
+  }
 
-    return rom.prgRom[addr]
+  private func readPPU(at address: UInt16) -> UInt8 {
+    let addr = address & 0x2007
+    return cpu_vram[addr]
+  }
+
+  func readProgramRom(at address: UInt16) -> UInt8 {
+    let ptr = (address - 0x8000) & 0x3FFF
+    return rom.prgRom[ptr]
   }
 }
